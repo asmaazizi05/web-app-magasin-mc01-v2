@@ -1,0 +1,29 @@
+{
+  "name": "jesa-ocp-mc01",
+  "private": true,
+  "version": "1.0.0",
+  "description": "JESA OCP – Magasin Central MC01 : gestion d'entrepôt (Next.js + NestJS + Prisma + PostgreSQL)",
+  "packageManager": "pnpm@9.15.9",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "pnpm --parallel --filter api --filter web dev",
+    "preview": "bash scripts/dev.sh",
+    "build": "pnpm --filter api build && pnpm --filter web build",
+    "typecheck": "pnpm -r typecheck",
+    "db:up": "docker compose up -d",
+    "db:down": "docker compose down"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@nestjs/core",
+      "@prisma/client",
+      "@prisma/engines",
+      "prisma",
+      "esbuild",
+      "sharp",
+      "unrs-resolver"
+    ]
+  }
+}

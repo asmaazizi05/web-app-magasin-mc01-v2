@@ -1,0 +1,400 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Palette JESA : bleu du logo (#003088). En thème sombre, variantes plus lumineuses pour rester lisibles. */
+:root {
+  --jesa: 0 48 136;
+  --jesa-light: 30 86 214;
+  --jesa-dark: 0 32 92;
+}
+.dark {
+  --jesa: 26 82 204;
+  --jesa-light: 116 164 255;
+  --jesa-dark: 0 48 136;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+/* ───── Animations : opacité, transformation et flou (fluides, sans recalcul de mise en page) ───── */
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+/* Chute depuis le haut : le bloc descend, devient net et se pose */
+@keyframes drop {
+  from {
+    opacity: 0;
+    transform: translateY(-26px);
+    filter: blur(4px);
+  }
+  60% {
+    filter: blur(0);
+  }
+}
+@keyframes drop-soft {
+  from {
+    opacity: 0;
+    transform: translateY(-12px);
+  }
+}
+
+/* Entrée de page : les blocs tombent du haut l'un après l'autre, dans l'ordre de lecture (--b = rang du bloc).
+   « backwards » : aucune transformation ne reste après l'animation (sinon les fenêtres en position fixe seraient décalées). */
+.page-enter > * > *:not([role='dialog']) {
+  animation: drop 0.55s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--b, 0) * 70ms);
+}
+.page-enter > * > *:nth-child(2) { --b: 1; }
+.page-enter > * > *:nth-child(3) { --b: 2; }
+.page-enter > * > *:nth-child(4) { --b: 3; }
+.page-enter > * > *:nth-child(5) { --b: 4; }
+.page-enter > * > *:nth-child(n + 6) { --b: 5; }
+
+/* Cascade à l'intérieur des blocs : cartes des grilles et premières lignes des tableaux descendent à leur tour,
+   juste après l'arrivée de leur bloc (les lignes suivantes s'affichent directement) */
+.stagger > *,
+.page-enter > * > .grid > * {
+  animation: drop-soft 0.45s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--b, 0) * 70ms + 80ms + var(--i, 0) * 55ms);
+}
+.page-enter tbody > tr:nth-child(-n + 14) {
+  animation: drop-soft 0.4s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  animation-delay: calc(var(--b, 0) * 70ms + 150ms + var(--i, 0) * 35ms);
+}
+:is(.stagger, .page-enter > * > .grid, tbody) > :nth-child(1) { --i: 0; }
+:is(.stagger, .page-enter > * > .grid, tbody) > :nth-child(2) { --i: 1; }
+:is(.stagger, .page-enter > * > .grid, tbody) > :nth-child(3) { --i: 2; }
+:is(.stagger, .page-enter > * > .grid, tbody) > :nth-child(4) { --i: 3; }
+:is(.stagger, .page-enter > * > .grid, tbody) > :nth-child(5) { --i: 4; }
+:is(.stagger, .page-enter > * > .grid, tbody) > :nth-child(6) { --i: 5; }
+:is(.stagger, .page-enter > * > .grid, tbody) > :nth-child(7) { --i: 6; }
+:is(.stagger, .page-enter > * > .grid, tbody) > :nth-child(8) { --i: 7; }
+:is(.stagger, .page-enter > * > .grid, tbody) > :nth-child(9) { --i: 8; }
+:is(.stagger, .page-enter > * > .grid, tbody) > :nth-child(10) { --i: 9; }
+:is(.stagger, .page-enter > * > .grid, tbody) > :nth-child(11) { --i: 10; }
+:is(.stagger, .page-enter > * > .grid, tbody) > :nth-child(12) { --i: 11; }
+:is(.stagger, .page-enter > * > .grid, tbody) > :nth-child(13) { --i: 12; }
+:is(.stagger, .page-enter > * > .grid, tbody) > :nth-child(14) { --i: 13; }
+:is(.stagger, .page-enter > * > .grid) > :nth-child(n + 15) { --i: 14; }
+
+/* Badge de statut : petit zoom à l'apparition (pas au-delà des premières lignes d'un long tableau) */
+@keyframes badge-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+.badge-pop {
+  animation: badge-pop 0.3s cubic-bezier(0.22, 1, 0.36, 1) 0.15s backwards;
+}
+tbody > tr:nth-child(n + 15) .badge-pop {
+  animation: none;
+}
+
+/* Alerte critique : halo rouge qui pulse en continu (seule l'opacité est animée) */
+@keyframes halo {
+  50% {
+    opacity: 1;
+  }
+}
+.alert-halo {
+  position: relative;
+}
+.alert-halo::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  box-shadow: 0 0 0 3px rgb(239 68 68 / 0.35), 0 0 26px 2px rgb(239 68 68 / 0.55);
+  opacity: 0;
+  pointer-events: none;
+  animation: halo 2.4s ease-in-out infinite;
+}
+
+/* Cloche : balancement bref, répété tant qu'il reste des alertes */
+@keyframes bell-swing {
+  0%, 18%, 100% { transform: rotate(0); }
+  3% { transform: rotate(16deg); }
+  6% { transform: rotate(-13deg); }
+  9% { transform: rotate(9deg); }
+  12% { transform: rotate(-6deg); }
+  15% { transform: rotate(3deg); }
+}
+.bell-swing {
+  transform-origin: 50% 10%;
+  animation: bell-swing 4s ease-in-out 1s infinite;
+}
+
+/* Camembert : tracé progressif (masque dont le trait se déroule) */
+@keyframes donut-draw {
+  from {
+    stroke-dashoffset: 377;
+  }
+}
+.donut-draw {
+  stroke-dasharray: 377;
+  animation: donut-draw 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.25s backwards;
+}
+
+/* Blocs d'attente : reflet qui glisse */
+@keyframes shimmer {
+  to {
+    transform: translateX(100%);
+  }
+}
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+.shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.7), transparent);
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+.dark .shimmer::after {
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.08), transparent);
+}
+
+/* Changement de thème : fondu de toute la page */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+}
+
+/* Trait de progression en haut de l'écran pendant le chargement d'une page */
+@keyframes route-run {
+  from { transform: scaleX(0); }
+  15% { transform: scaleX(0.45); }
+  to { transform: scaleX(0.92); }
+}
+.route-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 70;
+  height: 3px;
+  transform: scaleX(0);
+  transform-origin: left;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgb(var(--jesa)), rgb(var(--jesa-light)));
+  box-shadow: 0 0 10px rgb(var(--jesa-light) / 0.7);
+}
+.route-progress[data-phase='run'] {
+  opacity: 1;
+  animation: route-run 12s cubic-bezier(0.1, 0.7, 0.1, 1) forwards;
+}
+.route-progress[data-phase='done'] {
+  transform: scaleX(1);
+  transition: transform 0.2s ease-out, opacity 0.3s ease 0.15s;
+}
+
+/* Défilement doux de la zone de contenu */
+[data-export-root] {
+  scroll-behavior: smooth;
+}
+
+/* Onglets / filtres : la pastille glissante remplace le fond du choix actif */
+[data-pill-ready] > [data-active='true'] {
+  position: relative;
+  border-color: transparent !important;
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Bouton d'enregistrement pendant l'envoi : petit cercle qui tourne */
+@keyframes spin-btn {
+  to { transform: rotate(360deg); }
+}
+html[data-submitting] button:disabled:not([type='button'])::before {
+  content: '';
+  display: inline-block;
+  flex: none;
+  width: 0.8em;
+  height: 0.8em;
+  margin-inline-end: 0.15em;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 9999px;
+  vertical-align: -0.1em;
+  animation: spin-btn 0.7s linear infinite;
+}
+
+/* Erreur de saisie : bref tremblement du message et du champ refusé */
+@keyframes shake {
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(3px); }
+}
+.shake {
+  animation: shake 0.4s ease;
+}
+:is(input, select, textarea):user-invalid {
+  animation: shake 0.4s ease;
+}
+
+/* Carte qui se soulève au survol */
+.lift {
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+}
+@media (hover: hover) {
+  .lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 28px -12px rgb(0 0 0 / 0.45);
+  }
+}
+
+/* Reflet qui suit la souris sur la carte survolée (position posée par Motion.tsx) */
+.lift::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(220px circle at var(--mx, 50%) var(--my, 50%), rgb(var(--jesa-light) / 0.16), transparent 65%);
+}
+@media (hover: hover) {
+  .lift:hover::before {
+    opacity: 1;
+  }
+}
+
+@layer base {
+  /* Léger enfoncement au clic (propriété « scale » : ne touche pas aux transformations existantes) */
+  button,
+  a {
+    transition: scale 0.15s ease;
+  }
+  button:not(:disabled):active,
+  a[class*='rounded']:active {
+    scale: 0.96;
+  }
+  /* Boutons principaux : reflet lumineux qui traverse au survol */
+  :is(button, a).bg-jesa {
+    position: relative;
+    overflow: hidden;
+  }
+  :is(button, a).bg-jesa::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(110deg, transparent 35%, rgb(255 255 255 / 0.3) 50%, transparent 65%);
+    transform: translateX(-120%);
+    pointer-events: none;
+  }
+  @media (hover: hover) {
+    :is(button, a).bg-jesa:not(:disabled):hover::after {
+      transform: translateX(120%);
+      transition: transform 0.7s ease;
+    }
+  }
+  /* Champs de saisie : halo bleu doux à la sélection */
+  input,
+  select,
+  textarea {
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  :is(input:not([type='checkbox'], [type='radio'], [type='file'], [type='range']), select, textarea):focus {
+    box-shadow: 0 0 0 3px rgb(var(--jesa-light) / 0.3);
+  }
+  /* Lignes de tableau : surbrillance douce au survol */
+  tbody tr {
+    transition: background-color 0.15s ease;
+  }
+  @media (hover: hover) {
+    tbody tr:hover {
+      background-color: rgb(15 23 42 / 0.04);
+    }
+    .dark tbody tr:hover {
+      background-color: rgb(255 255 255 / 0.04);
+    }
+  }
+}
+
+/* Rubriques repliables des Paramètres : ouverture et fermeture progressives (navigateurs récents) */
+.settings-group {
+  interpolate-size: allow-keywords;
+}
+.settings-group::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition: block-size 0.3s cubic-bezier(0.22, 1, 0.36, 1), content-visibility 0.3s allow-discrete;
+}
+.settings-group[open]::details-content {
+  block-size: auto;
+}
+.settings-group[open] > :not(summary) {
+  animation: fade-in 0.3s ease backwards;
+}
+
+/* Appareils réglés pour réduire les mouvements : tout est instantané */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+@media print {
+  /* Rapports et export PDF : aucune animation (sinon des blocs pourraient être capturés à moitié apparus) */
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  /* Blocs masqués en attente de défilement (Motion.tsx) : toujours visibles à l'impression */
+  .page-enter > * > * {
+    opacity: 1 !important;
+  }
+  html,
+  body {
+    height: auto;
+    background: #fff !important;
+  }
+  /* Rapport : marges A4 et couleurs conservées (bandeaux bleus, barres) */
+  @page {
+    size: A4;
+    margin: 14mm;
+  }
+  /* Export PDF : blocs décochés dans la fenêtre de choix */
+  [data-export-skip] {
+    display: none !important;
+  }
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

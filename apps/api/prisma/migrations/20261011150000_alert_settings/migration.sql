@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Settings" ADD COLUMN     "enginAlertDays" INTEGER NOT NULL DEFAULT 30,
+ADD COLUMN     "enginAlertHours" INTEGER NOT NULL DEFAULT 25,
+ADD COLUMN     "stockLimitMarginPct" INTEGER NOT NULL DEFAULT 25;

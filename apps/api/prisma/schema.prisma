@@ -1,0 +1,683 @@
+// JESA OCP – Magasin Central MC01
+// Modèle de données de l'application de gestion d'entrepôt.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AbcClass {
+  A
+  B
+  C
+}
+
+enum ArticleCategory {
+  MECANIQUE
+  TUYAUTERIE
+  OUTILLAGE
+  ELECTRIQUE
+  CONSOMMABLES
+}
+
+/// Origine / source de l'article (filtre « Origine » du catalogue)
+enum ArticleOrigin {
+  JESA
+  OCP
+  CESSION
+  /// Articles arrivés par le projet (PDR projet)
+  ANNEXE_D
+}
+
+enum ZoneType {
+  HANGAR
+  ABRI
+  EXTERIEUR
+  MODULAIRE
+}
+
+enum ShiftType {
+  MATIN
+  APRES_MIDI
+  NUIT
+  OFF
+  CONGE
+  FORMATION
+  ABSENT
+}
+
+enum ReceptionStatus {
+  VALIDE
+  CONTROLE_QUALITE
+}
+
+enum ExpeditionPriority {
+  URGENT
+  HAUTE
+  NORMALE
+}
+
+enum ExpeditionStatus {
+  EN_ATTENTE
+  EN_PICKING
+  LIVRE
+  ANNULE
+}
+
+enum MovementType {
+  IN
+  OUT
+}
+
+enum AuditStatus {
+  TERMINE
+  PLANIFIE
+  A_VENIR
+}
+
+model Zone {
+  id            Int            @id @default(autoincrement())
+  code          String         @unique
+  position      Int            @unique
+  name          String
+  /// Libellé de catégorie affiché en petites capitales (ex. « Hangar Rayonnages »)
+  category      String
+  description   String
+  planTitle     String
+  planSubtitle  String
+  type          ZoneType
+  /// Capacité de stockage en unités physiques
+  capacity      Int
+  areaM2        Int?
+  racks         Rack[]
+  articles      Article[]
+  interventions Intervention[]
+}
+
+model Rack {
+  id         Int       @id @default(autoincrement())
+  code       String    @unique
+  zoneId     Int
+  zone       Zone      @relation(fields: [zoneId], references: [id])
+  aisle      Int
+  aisleLabel String
+  levels     Int
+  /// Capacité du rayonnage en unités (sert au calcul de saturation)
+  capacity   Int
+  articles   Article[]
+}
+
+model Article {
+  id             Int                  @id @default(autoincrement())
+  code           String               @unique
+  designation    String
+  category       ArticleCategory
+  origin         ArticleOrigin
+  originLabel    String
+  zoneId         Int
+  zone           Zone                 @relation(fields: [zoneId], references: [id])
+  rackId         Int?
+  rack           Rack?                @relation(fields: [rackId], references: [id])
+  rackLevel      Int?
+  rackLocation   String
+  currentStock   Int                  @default(0)
+  minStock       Int                  @default(0)
+  unitCostCMP    Decimal              @db.Decimal(12, 2)
+  abcClass       AbcClass
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+  receptions     Reception[]
+  expeditions    Expedition[]
+  movements      StockMovement[]
+  inventoryLines InventoryCountLine[]
+  sheets         StockSheet[]
+
+  @@index([zoneId])
+  @@index([rackId])
+}
+
+model Storekeeper {
+  id              Int              @id @default(autoincrement())
+  matricule       String           @unique
+  name            String
+  role            String
+  specialty       String
+  phone           String?
+  email           String?
+  /// Société d'appartenance (JESA, sous-traitant…)
+  company         String?
+  hireDate        DateTime?        @db.Date
+  /// Poste fixe : la personne ne tourne pas, la prolongation de rotation lui attribue toujours ce poste
+  fixedPost       ShiftType?
+  trainings       Training[]
+  habilitations   Habilitation[]
+  shifts          Shift[]
+  receptions      Reception[]
+  expeditions     Expedition[]
+  movements       StockMovement[]
+  sheets          StockSheet[]
+  enginChecks     EnginCheck[]
+  inventoryCounts InventoryCount[]
+}
+
+/// Affectation d'un magasinier pour une semaine réelle du calendrier (lundi → dimanche)
+model Shift {
+  id            Int         @id @default(autoincrement())
+  storekeeperId Int
+  storekeeper   Storekeeper @relation(fields: [storekeeperId], references: [id], onDelete: Cascade)
+  /// Lundi de la semaine
+  weekStart     DateTime    @db.Date
+  type          ShiftType
+  /// Semaine verrouillée : ni modification manuelle ni prolongation automatique tant qu'elle n'est pas déverrouillée
+  locked        Boolean     @default(false)
+
+  @@unique([storekeeperId, weekStart])
+  @@index([weekStart])
+}
+
+/// Bon de Réception (BR)
+model Reception {
+  id         Int             @id @default(autoincrement())
+  number     String          @unique
+  supplier   String
+  articleId  Int
+  article    Article         @relation(fields: [articleId], references: [id])
+  quantity   Int
+  receivedAt DateTime
+  receiverId Int
+  receiver   Storekeeper     @relation(fields: [receiverId], references: [id])
+  status     ReceptionStatus
+  movement   StockMovement?
+  sheet      StockSheet?
+}
+
+/// Bon de Sortie (BS) / ordre de picking
+model Expedition {
+  id               Int                @id @default(autoincrement())
+  number           String             @unique
+  requesterService String
+  articleId        Int
+  article          Article            @relation(fields: [articleId], references: [id])
+  quantity         Int
+  priority         ExpeditionPriority
+  status           ExpeditionStatus
+  requestedAt      DateTime
+  dueAt            DateTime
+  servedAt         DateTime?
+  preparerId       Int?
+  preparer         Storekeeper?       @relation(fields: [preparerId], references: [id])
+  movement         StockMovement?
+  sheet            StockSheet?
+}
+
+/// Historique central des mouvements de stock
+model StockMovement {
+  id             Int          @id @default(autoincrement())
+  type           MovementType
+  documentNumber String       @unique
+  articleId      Int
+  article        Article      @relation(fields: [articleId], references: [id])
+  /// Quantité toujours positive ; le sens est donné par `type`
+  quantity       Int
+  date           DateTime
+  source         String?
+  destination    String?
+  storekeeperId  Int?
+  storekeeper    Storekeeper? @relation(fields: [storekeeperId], references: [id])
+  stockAfter     Int
+  receptionId    Int?         @unique
+  reception      Reception?   @relation(fields: [receptionId], references: [id])
+  expeditionId   Int?         @unique
+  expedition     Expedition?  @relation(fields: [expeditionId], references: [id])
+
+  @@index([date])
+  @@index([type])
+}
+
+/// Inventaire tournant (cycle count) hebdomadaire
+model InventoryAudit {
+  id            Int         @id @default(autoincrement())
+  weekNumber    Int
+  startDate     DateTime
+  endDate       DateTime
+  scope         String
+  status        AuditStatus
+  countedLines  Int         @default(0)
+  accurateLines Int         @default(0)
+  countedValue  Decimal     @default(0) @db.Decimal(14, 2)
+  varianceValue Decimal     @default(0) @db.Decimal(14, 2)
+}
+
+/// Paramètres du site et du connecteur SAP (ligne unique id = 1)
+model Settings {
+  id                    Int      @id @default(1)
+  siteName              String
+  siteCode              String
+  /// En-tête de l'application : titre et nom du site
+  appTitle              String   @default("Gestion Intégrée Magasin")
+  siteLabel             String   @default("MC01 Benguerir")
+  /// Valeurs proposées par défaut : contrôle périodique d'un nouvel engin (mois), semaines ajoutées par « Prolonger la rotation »
+  enginInspectionMonths Int      @default(6)
+  rotationExtendWeeks   Int      @default(4)
+  /// Délai d'alerte avant expiration d'une habilitation (jours)
+  habilitationAlertDays Int      @default(60)
+  /// Stock : marge « Limite Approche » au-dessus du stock minimum (%)
+  stockLimitMarginPct   Int      @default(25)
+  /// Engins : alerte « bientôt » N jours avant une échéance / N heures de compteur avant un entretien
+  enginAlertDays        Int      @default(30)
+  enginAlertHours       Int      @default(25)
+  sapSystem             String
+  sapHost               String
+  sapClient             String
+  sapPlant              String
+  sapStorageLocation    String
+  syncIntervalMinutes   Int
+  autoSync              Boolean  @default(true)
+  connected             Boolean  @default(true)
+  lastSyncAt            DateTime
+}
+
+/// Fiche de saisie « Mouvements de stock (E/S) » telle que remplie par le magasinier.
+/// Chaque fiche génère le BR (entrée) ou le BS (sortie) correspondant et son mouvement de stock.
+model StockSheet {
+  id              Int               @id @default(autoincrement())
+  type            MovementType
+  date            DateTime
+  /// Désignation / référence telle que saisie
+  designation     String
+  articleId       Int
+  article         Article           @relation(fields: [articleId], references: [id])
+  category        String
+  quantity        Int
+  unit            String
+  requesterType   String
+  requesterName   String
+  storekeeperId   Int
+  storekeeper     Storekeeper       @relation(fields: [storekeeperId], references: [id])
+  post            ShiftType
+  /// Entrée : fournisseur
+  supplier        String?
+  /// Sortie : zone de destination (LAVERIE, TREMIE, LIAISON) et secteur de cette zone
+  destinationZone String?
+  destinationArea String?
+  /// Clé d'import (horodateur + désignation) : rend l'import d'un export Google Sheet idempotent
+  sourceRef       String?           @unique
+  receptionId     Int?              @unique
+  reception       Reception?        @relation(fields: [receptionId], references: [id])
+  expeditionId    Int?              @unique
+  expedition      Expedition?       @relation(fields: [expeditionId], references: [id])
+  createdAt       DateTime          @default(now())
+  photos          StockSheetPhoto[]
+
+  @@index([date])
+}
+
+model StockSheetPhoto {
+  id           Int        @id @default(autoincrement())
+  sheetId      Int
+  sheet        StockSheet @relation(fields: [sheetId], references: [id], onDelete: Cascade)
+  /// Photo téléversée (dossier uploads/) …
+  fileName     String?    @unique
+  /// … ou lien externe (ex. Google Drive, pour les fiches importées)
+  externalUrl  String?
+  originalName String
+  mimeType     String?
+  size         Int?
+}
+
+// ───────────────────────── Personnel : formations & habilitations ─────────────────────────
+
+model Training {
+  id            Int         @id @default(autoincrement())
+  storekeeperId Int
+  storekeeper   Storekeeper @relation(fields: [storekeeperId], references: [id], onDelete: Cascade)
+  title         String
+  organization  String?
+  date          DateTime    @db.Date
+  durationHours Int?
+  /// Certificat éventuel (fichier dans uploads/)
+  fileName      String?     @unique
+  originalName  String?
+  createdAt     DateTime    @default(now())
+}
+
+/// Catalogue des habilitations (modifiable dans Paramètres)
+model HabilitationType {
+  id             Int            @id @default(autoincrement())
+  name           String         @unique
+  description    String?
+  /// Durée de validité par défaut (mois) : sert à calculer la date d'expiration
+  validityMonths Int
+  position       Int            @default(0)
+  habilitations  Habilitation[]
+  engins         Engin[]
+}
+
+model Habilitation {
+  id            Int              @id @default(autoincrement())
+  storekeeperId Int
+  storekeeper   Storekeeper      @relation(fields: [storekeeperId], references: [id], onDelete: Cascade)
+  typeId        Int
+  type          HabilitationType @relation(fields: [typeId], references: [id])
+  /// N° de certificat / d'autorisation
+  reference     String?
+  organization  String?
+  obtainedAt    DateTime         @db.Date
+  expiresAt     DateTime         @db.Date
+  fileName      String?          @unique
+  originalName  String?
+  createdAt     DateTime         @default(now())
+
+  @@index([expiresAt])
+}
+
+// ───────────────────────── Parc engins ─────────────────────────
+
+enum EnginStatus {
+  DISPONIBLE
+  MAINTENANCE
+  EN_PANNE
+  HORS_SERVICE
+}
+
+enum EnginOwnership {
+  /// Propriété (service d'origine renseigné)
+  PROPRE
+  LOCATION
+}
+
+enum MaintenanceType {
+  PREVENTIVE
+  CORRECTIVE
+  PANNE
+  CONTROLE_PERIODIQUE
+}
+
+model Engin {
+  id                         Int                @id @default(autoincrement())
+  code                       String             @unique
+  name                       String
+  type                       String
+  /// Immatriculation / n° de parc
+  reference                  String?
+  status                     EnginStatus        @default(DISPONIBLE)
+  requiredHabilitationTypeId Int?
+  requiredHabilitationType   HabilitationType?  @relation(fields: [requiredHabilitationTypeId], references: [id])
+  tasks                      InterventionTask[]
+
+  // Identification
+  brand                    String?
+  model                    String?
+  serialNumber             String?
+  commissioningYear        Int?
+  photoFileName            String?
+  // Propriété
+  ownership                EnginOwnership @default(PROPRE)
+  /// Service d'origine / propriétaire (engin non loué)
+  ownerService             String?
+  rentalCompany            String?
+  rentalEndDate            DateTime?      @db.Date
+  // Caractéristiques techniques
+  /// Électrique, Diesel, Gaz (GPL), Essence, Manuel
+  energy                   String?
+  capacityKg               Int?
+  weightKg                 Int?
+  /// Hauteur de levée (chariot, gerbeur) en mètres
+  liftHeightM              Float?
+  /// Hauteur de travail (nacelle) en mètres
+  workingHeightM           Float?
+  forkLengthMm             Int?
+  batteryVoltage           Int?
+  batteryCapacityAh        Int?
+  /// Nombre de personnes (nacelle)
+  maxPersons               Int?
+  /// Intérieur, Extérieur, Intérieur / Extérieur
+  usage                    String?
+  /// L × l × h
+  dimensions               String?
+  notes                    String?
+  // Compteur d'heures
+  hourMeter                Int?
+  hourMeterAt              DateTime?      @db.Date
+  // Plan d'entretien préventif (le premier seuil atteint déclenche l'échéance)
+  serviceIntervalHours     Int?
+  serviceIntervalMonths    Int?
+  lastServiceDate          DateTime?      @db.Date
+  lastServiceHours         Int?
+  // Contrôle périodique réglementaire (organisme agréé)
+  inspectionIntervalMonths Int            @default(6)
+  lastInspectionDate       DateTime?      @db.Date
+  createdAt                DateTime       @default(now())
+  /// Check-list de prise de poste propre à cet engin [{ key, label }] ; null = liste type de sa famille
+  checklist                Json?
+  /// Donnée de démonstration (supprimable d'un clic)
+  isDemo                   Boolean        @default(false)
+
+  maintenance MaintenanceRecord[]
+  checks      EnginCheck[]
+}
+
+/// Historique de maintenance : entretien préventif, réparation, panne, contrôle périodique
+model MaintenanceRecord {
+  id            Int             @id @default(autoincrement())
+  enginId       Int
+  engin         Engin           @relation(fields: [enginId], references: [id], onDelete: Cascade)
+  type          MaintenanceType
+  /// Début (date de la panne / de l'intervention)
+  date          DateTime        @db.Date
+  /// Remise en service ; null = intervention / panne en cours
+  endDate       DateTime?       @db.Date
+  hourMeter     Int?
+  description   String
+  partsReplaced String?
+  cost          Decimal?        @db.Decimal(12, 2)
+  /// Intervenant : atelier interne, prestataire, organisme de contrôle
+  provider      String?
+  /// Contrôle périodique : Conforme, Avec réserves, Non conforme
+  result        String?
+  fileName      String?         @unique
+  originalName  String?
+  createdAt     DateTime        @default(now())
+
+  @@index([enginId, date])
+}
+
+/// Check-list de prise de poste remplie par le conducteur
+model EnginCheck {
+  id            Int          @id @default(autoincrement())
+  enginId       Int
+  engin         Engin        @relation(fields: [enginId], references: [id], onDelete: Cascade)
+  storekeeperId Int?
+  storekeeper   Storekeeper? @relation(fields: [storekeeperId], references: [id], onDelete: SetNull)
+  operatorName  String
+  date          DateTime     @default(now())
+  hourMeter     Int?
+  /// [{ key, label, ok }]
+  items         Json
+  allOk         Boolean
+  comment       String?
+
+  @@index([enginId, date])
+}
+
+// ───────────────────────── Équipes support & prestations ─────────────────────────
+
+enum ProviderKind {
+  PRESTATAIRE
+  SUPPORT_INTERNE
+}
+
+enum InterventionStatus {
+  PLANIFIEE
+  EN_COURS
+  SUSPENDUE
+  TERMINEE
+  CLOTUREE
+}
+
+enum TaskStatus {
+  A_FAIRE
+  EN_COURS
+  BLOQUEE
+  TERMINEE
+}
+
+model Intervention {
+  id           Int                  @id @default(autoincrement())
+  /// INT-YYYY-###
+  code         String               @unique
+  title        String
+  /// Nettoyage, Réimplantation, Inventaire…
+  workType     String
+  providerKind ProviderKind
+  company      String
+  managerName  String
+  managerPhone String?
+  zoneId       Int?
+  zone         Zone?                @relation(fields: [zoneId], references: [id])
+  description  String?
+  plannedStart DateTime             @db.Date
+  plannedEnd   DateTime             @db.Date
+  actualStart  DateTime?            @db.Date
+  actualEnd    DateTime?            @db.Date
+  status       InterventionStatus   @default(PLANIFIEE)
+  createdAt    DateTime             @default(now())
+  members      InterventionMember[]
+  tasks        InterventionTask[]
+  logs         WorkLog[]
+}
+
+model InterventionMember {
+  id             Int                @id @default(autoincrement())
+  interventionId Int
+  intervention   Intervention       @relation(fields: [interventionId], references: [id], onDelete: Cascade)
+  name           String
+  role           String
+  company        String?
+  phone          String?
+  tasks          InterventionTask[]
+}
+
+model InterventionTask {
+  id             Int                  @id @default(autoincrement())
+  interventionId Int
+  intervention   Intervention         @relation(fields: [interventionId], references: [id], onDelete: Cascade)
+  title          String
+  description    String?
+  plannedStart   DateTime             @db.Date
+  plannedEnd     DateTime             @db.Date
+  /// Avancement 0–100 %
+  progress       Int                  @default(0)
+  status         TaskStatus           @default(A_FAIRE)
+  position       Int                  @default(0)
+  members        InterventionMember[]
+  engins         Engin[]
+  logs           WorkLog[]
+}
+
+/// Journal des travaux exécutés (alimente le rapport d'avancement)
+model WorkLog {
+  id             Int               @id @default(autoincrement())
+  interventionId Int
+  intervention   Intervention      @relation(fields: [interventionId], references: [id], onDelete: Cascade)
+  taskId         Int?
+  task           InterventionTask? @relation(fields: [taskId], references: [id], onDelete: SetNull)
+  date           DateTime          @db.Date
+  description    String
+  /// Avancement de la tâche atteint à cette date (met à jour la tâche)
+  progressAfter  Int?
+  author         String
+  createdAt      DateTime          @default(now())
+}
+
+// ───────────────────────── Saisie d'inventaire ─────────────────────────
+
+/// Volet achat de l'article compté
+enum PurchaseScope {
+  OCP
+  CESSION
+  JESA
+  /// Annexe D : articles arrivés par le projet (PDR projet)
+  ANNEXE_D
+}
+
+enum InventoryLineStatus {
+  /// Rattachée à un article du référentiel, en attente de validation par un responsable
+  A_VALIDER
+  /// Désignation / référence libre : à rattacher ou à créer par un responsable
+  DEMANDE_DESIGNATION
+  /// Validée : stock régularisé
+  VALIDEE
+  REJETEE
+}
+
+/// Fiche de comptage saisie par un magasinier
+model InventoryCount {
+  id            Int                  @id @default(autoincrement())
+  /// CPT-YYYY-####
+  number        String               @unique
+  storekeeperId Int
+  storekeeper   Storekeeper          @relation(fields: [storekeeperId], references: [id])
+  countedAt     DateTime             @db.Date
+  /// Emplacement / zone comptée (texte libre)
+  location      String?
+  /// Poste de travail du magasinier pendant le comptage
+  post          ShiftType?
+  comment       String?
+  createdAt     DateTime             @default(now())
+  lines         InventoryCountLine[]
+}
+
+model InventoryCountLine {
+  id                 Int                 @id @default(autoincrement())
+  countId            Int
+  count              InventoryCount      @relation(fields: [countId], references: [id], onDelete: Cascade)
+  articleId          Int?
+  article            Article?            @relation(fields: [articleId], references: [id])
+  /// Saisie libre du magasinier quand l'article n'est pas trouvé dans le référentiel
+  enteredReference   String?
+  enteredDesignation String?
+  quantity           Int
+  unit               String
+  purchaseScope      PurchaseScope
+  /// Catégorie (liste de la fiche « Mouvements de stock (E/S) »)
+  category           String?
+  /// Photo de l'article compté (dossier uploads/)
+  photoFileName      String?             @unique
+  photoName          String?
+  status             InventoryLineStatus
+  /// Responsable ayant traité la ligne (rattachement, création, validation, rejet)
+  resolvedBy         String?
+  resolvedAt         DateTime?
+  rejectReason       String?
+  /// Régularisation : stock avant / après et n° du mouvement INV-YYYY-####
+  stockBefore        Int?
+  stockAfter         Int?
+  movementNumber     String?
+  createdAt          DateTime            @default(now())
+
+  @@index([status])
+  @@index([articleId])
+}
+
+/// Personne utilisant l'application (sélecteur de profil) et rubriques du menu qui lui sont masquées.
+/// Ce n'est pas une authentification : le profil choisi ne fait que filtrer le menu et les actions affichées.
+model AppProfile {
+  id           Int      @id @default(autoincrement())
+  name         String
+  /// Titre / poste affiché sous le nom
+  role         String
+  /// Administrateur : accès complet + actions de responsable (validation des comptages, paramètres)
+  admin        Boolean  @default(false)
+  phone        String?
+  email        String?
+  /// Rubriques du menu masquées (ex. « /shifts », « /parametres »)
+  hiddenRoutes String[] @default([])
+  /// Rubriques visibles en consultation seulement (aucune modification possible)
+  readOnlyRoutes String[] @default([])
+  createdAt    DateTime @default(now())
+}

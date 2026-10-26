@@ -1,0 +1,1553 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JESA OCP - Magasin Central MC01 Dashboard Complete</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        ocp: {
+                            DEFAULT: '#008343',
+                            light: '#00A859',
+                            dark: '#005C2F'
+                        },
+                        navy: {
+                            DEFAULT: '#0A1A2E',
+                            light: '#132A45',
+                            dark: '#050D17'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .sidebar-item-active {
+            background-color: #008343;
+            color: #FFFFFF !important;
+            font-weight: 600;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+        .rack-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 10px;
+        }
+    </style>
+</head>
+<body class="bg-[#0A1A2E] dark:bg-[#0A1A2E] text-gray-900 dark:text-gray-100 h-full flex flex-col font-sans transition-colors duration-200">
+
+    <!-- BARRE D'ACTION SUPÉRIEURE AVEC SÉLECTEUR DE PROFIL -->
+    <header class="bg-white dark:bg-[#132A45]/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-800 px-6 py-2 flex items-center justify-between z-30 transition-colors">
+        <div class="flex items-center gap-3">
+            <span class="text-xs font-semibold text-gray-800 dark:text-gray-300 tracking-wide">JESA OCP - Magasin Central MC01 Dashboard</span>
+            <span class="text-gray-500 dark:text-gray-400 text-xs flex items-center gap-1">☁️ <span>Sync SAP (04/10/2026 - 09:15)</span></span>
+        </div>
+
+        <!-- BASCULEUR DE PROFIL UTILISATEUR DIRECT -->
+        <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 bg-gray-100 dark:bg-[#050D17] px-3 py-1 rounded-xl border border-gray-300 dark:border-gray-700">
+                <i data-lucide="user-cog" class="w-4 h-4 text-ocp-light"></i>
+                <span class="text-[11px] font-bold text-gray-700 dark:text-gray-300">Profil Actif :</span>
+                <select onchange="changeActiveUser(this.value)" id="profile-switcher" class="bg-transparent text-xs font-extrabold text-ocp-light dark:text-ocp-light outline-none cursor-pointer">
+                    <option value="raid" class="bg-slate-900 text-white">EL ATYQY mohamed raid (Responsable Magasin / Propriétaire)</option>
+                    <option value="azizi" class="bg-slate-900 text-white">yassine AZIZI (Responsable Magasin / Propriétaire)</option>
+                    <option value="soufiane" class="bg-slate-900 text-white">soufiane BOUHZAM (Approvisionneur Mécanique)</option>
+                    <option value="omar" class="bg-slate-900 text-white">Omar BENALLA (Approvisionneur Électrique)</option>
+                    <option value="ghizlan" class="bg-slate-900 text-white">Ghizlan (Préparatrice)</option>
+                </select>
+            </div>
+
+            <!-- COMMUTATEUR DE THÈME -->
+            <button onclick="toggleTheme()" id="theme-toggle-btn" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-[#0A1A2E] dark:hover:bg-slate-800 text-xs text-gray-800 dark:text-gray-200 font-medium rounded-xl flex items-center gap-1.5 border border-gray-300 dark:border-gray-700/50 transition">
+                <i data-lucide="sun" id="theme-icon-sun" class="w-3.5 h-3.5 text-amber-500 hidden"></i>
+                <i data-lucide="moon" id="theme-icon-moon" class="w-3.5 h-3.5 text-blue-400"></i>
+                <span id="theme-toggle-text">Mode Sombre</span>
+            </button>
+
+            <button onclick="window.print()" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-[#132A45] dark:hover:bg-slate-700 text-xs text-gray-800 dark:text-gray-200 font-medium rounded-xl flex items-center gap-1.5 border border-gray-300 dark:border-gray-700/50 transition">
+                <i data-lucide="download" class="w-3.5 h-3.5"></i> Imprimer / Exporter PDF
+            </button>
+        </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- SIDEBAR NAVIGATION DYNAMIQUE -->
+        <aside class="w-64 bg-slate-900 dark:bg-[#050D17] text-white flex flex-col flex-shrink-0 shadow-xl z-20 border-r border-gray-800">
+            <div class="p-4 border-b border-gray-800 flex items-center justify-between">
+                <div>
+                    <h1 class="text-lg font-extrabold tracking-wider flex items-center gap-1.5">
+                        <span class="text-white">JESA</span> 
+                        <span class="text-xs bg-ocp text-white px-1.5 py-0.5 rounded font-bold">OCP</span>
+                    </h1>
+                    <p class="text-[11px] text-gray-400 font-medium mt-0.5">Magasin Central MC01</p>
+                </div>
+            </div>
+
+            <!-- Menu Navigation -->
+            <nav class="flex-1 p-3 space-y-1 overflow-y-auto custom-scrollbar" id="sidebar-menu">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="sidebar-btn sidebar-item-active w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-navy-light transition">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Tableau de bord & KPIs
+                </button>
+                <button onclick="switchTab('charts')" id="nav-charts" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-navy-light transition">
+                    <i data-lucide="line-chart" class="w-4 h-4 text-amber-400"></i> Graphiques & Analytics
+                </button>
+                <button onclick="switchTab('carto')" id="nav-carto" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-navy-light transition">
+                    <i data-lucide="map" class="w-4 h-4"></i> Cartographie 2D (5 Zones)
+                </button>
+                <button onclick="switchTab('shifts')" id="nav-shifts" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-navy-light transition">
+                    <i data-lucide="users" class="w-4 h-4"></i> Rotation Magasiniers (Shifts)
+                </button>
+                <button onclick="switchTab('stock')" id="nav-stock" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-navy-light transition">
+                    <i data-lucide="package" class="w-4 h-4"></i> Stock & Articles (Filtres)
+                </button>
+                <button onclick="switchTab('reception')" id="nav-reception" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-navy-light transition">
+                    <i data-lucide="arrow-down-to-line" class="w-4 h-4"></i> Réceptions & Entrées
+                </button>
+                <button onclick="switchTab('expedition')" id="nav-expedition" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-navy-light transition">
+                    <i data-lucide="arrow-up-from-line" class="w-4 h-4"></i> Sorties & Expéditions
+                </button>
+                <button onclick="switchTab('inventory')" id="nav-inventory" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-navy-light transition">
+                    <i data-lucide="clipboard-check" class="w-4 h-4"></i> Inventaire & Audits
+                </button>
+                <button onclick="switchTab('settings')" id="nav-settings" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-navy-light transition">
+                    <i data-lucide="settings" class="w-4 h-4"></i> Paramètres & Droits
+                </button>
+            </nav>
+
+            <div class="p-3 border-t border-gray-800 bg-[#050D17] flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-ocp text-white flex items-center justify-center font-bold text-xs shadow-md" id="user-avatar">RA</div>
+                    <div>
+                        <p class="text-xs font-semibold text-white" id="user-display-name">EL ATYQY mohamed raid</p>
+                        <p class="text-[10px] text-gray-400" id="user-display-role">Responsable / Propriétaire</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CONTENEUR PRINCIPAL -->
+        <main class="flex-1 flex flex-col overflow-hidden bg-slate-100 dark:bg-[#0A1A2E] transition-colors">
+            
+            <header class="bg-white dark:bg-[#0A1A2E] border-b border-gray-200 dark:border-gray-800 px-6 py-3 flex items-center justify-between shadow-sm z-10 transition-colors">
+                <div class="flex items-center gap-4 flex-1 max-w-xl">
+                    <div class="relative w-full">
+                        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-gray-400"></i>
+                        <input type="text" placeholder="Rechercher code article, désignation, bon, zone..." class="w-full pl-9 pr-4 py-1.5 bg-gray-100 dark:bg-[#132A45]/60 border border-gray-300 dark:border-gray-700/60 rounded-xl text-xs text-gray-900 dark:text-white focus:ring-2 focus:ring-ocp outline-none transition placeholder-gray-500 dark:placeholder-gray-400">
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-1.5 text-xs text-gray-700 dark:text-gray-300 font-medium">
+                        <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                        <span>Site: <strong>Magasin MC01 (Online)</strong></span>
+                    </div>
+                    <button class="relative p-1.5 bg-gray-100 dark:bg-[#132A45] hover:bg-gray-200 dark:hover:bg-slate-700 rounded-xl text-gray-700 dark:text-gray-300 transition">
+                        <i data-lucide="bell" class="w-4 h-4"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="p-6 flex-1 overflow-y-auto custom-scrollbar">
+
+                <!-- BANNIÈRE INDICATRICE DU PROFIL CONSULTÉ -->
+                <div id="role-notification" class="bg-blue-900/40 border border-blue-500/50 p-3 rounded-xl mb-5 flex justify-between items-center text-xs">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="eye" class="w-4 h-4 text-blue-400"></i>
+                        <span>Vous visualisez actuellement l'interface comme : <strong id="notify-user-role" class="text-white">EL ATYQY mohamed raid (Responsable / Propriétaire)</strong></span>
+                    </div>
+                    <span id="notify-access-level" class="bg-ocp text-white font-bold text-[10px] px-2 py-0.5 rounded">Accès Admin Complet</span>
+                </div>
+
+                <!-- 1. TABLEAU DE BORD GLOBAL RESTRUCTURÉ -->
+                <div id="view-dashboard" class="space-y-6">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Tableau de Bord Global & KPIs d'Exploitation</h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Synthèse des volumes, valorisation, alerte stock minimum, effectif et camemberts de flux par catégorie.</p>
+                        </div>
+                        <span class="text-xs bg-[#008343]/10 dark:bg-[#008343]/20 text-[#008343] dark:text-[#00A859] font-semibold px-3 py-1.5 rounded-lg border border-[#008343]/30 dark:border-[#008343]/40 flex items-center gap-1.5">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Données synchronisées SAP
+                        </span>
+                    </div>
+
+                    <!-- 1. KPIS EN HAUT : TOTAL ARTICLES & VALORISATION -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="bg-white dark:bg-[#132A45] text-gray-900 dark:text-white p-6 rounded-2xl relative overflow-hidden shadow-lg border border-gray-200 dark:border-gray-800 flex justify-between items-center transition-colors">
+                            <div class="z-10 space-y-2">
+                                <p class="text-[11px] font-semibold tracking-wider text-blue-600 dark:text-blue-200 uppercase">TOTAL GÉNÉRAL D'ARTICLES (UNITÉS PHYSIQUES)</p>
+                                <h3 class="text-3xl font-extrabold tracking-tight">148 312 <span class="text-lg font-normal text-gray-500 dark:text-gray-300">unités</span></h3>
+                                <p class="text-xs text-blue-600 dark:text-blue-200 flex items-center gap-1 pt-1">
+                                    <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-ocp-light"></i> Catalogue : <strong>5 références actives sur 4 zones physiques</strong>
+                                </p>
+                            </div>
+                            <div class="text-blue-500/10 dark:text-blue-400/10 z-0">
+                                <i data-lucide="boxes" class="w-28 h-28"></i>
+                            </div>
+                        </div>
+
+                        <div class="bg-[#008343] text-white p-6 rounded-2xl relative overflow-hidden shadow-lg flex justify-between items-center">
+                            <div class="z-10 space-y-2">
+                                <p class="text-[11px] font-semibold tracking-wider text-green-100 uppercase">VALORISATION TOTALE DU STOCK</p>
+                                <h3 class="text-3xl font-extrabold tracking-tight">20 760 582 <span class="text-lg font-normal text-gray-100">DH</span></h3>
+                                <p class="text-xs text-green-100 flex items-center gap-1 pt-1">
+                                    <i data-lucide="coins" class="w-3.5 h-3.5"></i> Valorisation calculée au Coût Moyen Pondéré (CMP)
+                                </p>
+                            </div>
+                            <div class="text-white/10 z-0">
+                                <i data-lucide="trending-up" class="w-28 h-28"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. BANDEAU ALERTE CRITIQUE STOCK MINIMUM -->
+                    <div class="bg-red-100 dark:bg-red-900/30 border-2 border-red-500/80 p-4 rounded-2xl flex items-center justify-between shadow-lg">
+                        <div class="flex items-center gap-3.5">
+                            <div class="p-2.5 bg-red-500/20 text-red-600 dark:text-red-400 rounded-xl border border-red-500/40">
+                                <i data-lucide="alert-triangle" class="w-6 h-6 animate-pulse"></i>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h4 class="font-bold text-sm text-red-900 dark:text-red-200">ALERTE STOCK MINIMUM : Réapprovisionnement Requis</h4>
+                                    <span class="bg-red-600 text-white font-bold text-[10px] px-2 py-0.5 rounded-full">CRITIQUE</span>
+                                </div>
+                                <p class="text-xs text-gray-700 dark:text-gray-300 mt-0.5">
+                                    Article : <strong>Vanne à papillon DN100 (Code: ART-1002)</strong> | Stock actuel : <span class="font-bold text-red-600 dark:text-red-400">12 units</span> (Seuil Min : <strong>25 units</strong>).
+                                </p>
+                            </div>
+                        </div>
+                        <button onclick="switchTab('stock')" class="px-3.5 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-xl shadow transition flex items-center gap-1.5">
+                            <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> Passer Commande SAP
+                        </button>
+                    </div>
+
+                    <!-- 3. AFFECTATION DES 5 MAGASINIERS PAR POSTE (AUJOURD'HUI) -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="users" class="w-4 h-4 text-ocp-light"></i> Affectation des 5 Magasiniers par Poste (Aujourd'hui)
+                            </p>
+                            <button onclick="switchTab('shifts')" class="text-xs text-ocp-light hover:underline font-semibold flex items-center gap-1">
+                                Voir le planning mensuel <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-green-500/50 shadow-sm relative overflow-hidden">
+                                <div class="w-1.5 h-full bg-green-500 absolute left-0 top-0"></div>
+                                <div class="pl-2 space-y-1.5">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-[11px] font-bold text-green-600 dark:text-green-400">1er Poste (Matin)</span>
+                                        <span class="text-[9px] bg-green-100 dark:bg-green-900/60 text-green-800 dark:text-green-300 px-1.5 py-0.5 rounded font-mono">06:00 - 14:00</span>
+                                    </div>
+                                    <p class="text-xs font-extrabold text-gray-900 dark:text-white">Karim BENANI <span class="text-[10px] text-gray-500 dark:text-gray-400 font-normal">(Chef)</span></p>
+                                    <p class="text-xs font-bold text-gray-800 dark:text-gray-200">Mohammed ALAMI <span class="text-[10px] text-gray-500 dark:text-gray-400 font-normal">(Cariste)</span></p>
+                                    <div class="pt-1 flex items-center gap-1 text-[10px] text-green-600 dark:text-green-400 font-bold">
+                                        <span class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span> En Service Actif (Réceptions)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-blue-500/50 shadow-sm relative overflow-hidden">
+                                <div class="w-1.5 h-full bg-blue-500 absolute left-0 top-0"></div>
+                                <div class="pl-2 space-y-1.5">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-[11px] font-bold text-blue-600 dark:text-blue-400">2ème Poste (A-M)</span>
+                                        <span class="text-[9px] bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-300 px-1.5 py-0.5 rounded font-mono">14:00 - 22:00</span>
+                                    </div>
+                                    <p class="text-xs font-bold text-gray-900 dark:text-white">Youssef CHRAIBI</p>
+                                    <p class="text-[10px] text-gray-500 dark:text-gray-400">Spécialité : Expéditions / Picking</p>
+                                    <div class="pt-1 flex items-center gap-1 text-[10px] text-blue-600 dark:text-blue-400 font-semibold">
+                                        <i data-lucide="clock" class="w-3 h-3"></i> Prochain Shift (À venir)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-purple-500/50 shadow-sm relative overflow-hidden">
+                                <div class="w-1.5 h-full bg-purple-500 absolute left-0 top-0"></div>
+                                <div class="pl-2 space-y-1.5">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-[11px] font-bold text-purple-600 dark:text-purple-400">3ème Poste (Nuit)</span>
+                                        <span class="text-[9px] bg-purple-100 dark:bg-purple-900/60 text-purple-800 dark:text-purple-300 px-1.5 py-0.5 rounded font-mono">22:00 - 06:00</span>
+                                    </div>
+                                    <p class="text-xs font-bold text-gray-900 dark:text-white">Omar DRIOUCH</p>
+                                    <p class="text-[10px] text-gray-500 dark:text-gray-400">Spécialité : Garde & Urgences</p>
+                                    <div class="pt-1 flex items-center gap-1 text-[10px] text-purple-600 dark:text-purple-400 font-semibold">
+                                        <i data-lucide="moon" class="w-3 h-3"></i> En Repos (Début 22h00)
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-300 dark:border-gray-700 shadow-sm relative overflow-hidden">
+                                <div class="w-1.5 h-full bg-gray-500 absolute left-0 top-0"></div>
+                                <div class="pl-2 space-y-1.5">
+                                    <div class="flex justify-between items-center">
+                                        <span class="text-[11px] font-bold text-gray-700 dark:text-gray-300">Poste Normal / OFF</span>
+                                        <span class="text-[9px] bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-1.5 py-0.5 rounded font-mono">08:00 - 16:30</span>
+                                    </div>
+                                    <p class="text-xs font-bold text-gray-900 dark:text-white">Hassan KABBAB</p>
+                                    <p class="text-[10px] text-gray-500 dark:text-gray-400">Soutien Inventaire & Admin</p>
+                                    <div class="pt-1 flex items-center gap-1 text-[10px] text-gray-500 dark:text-gray-400 font-semibold">
+                                        <i data-lucide="coffee" class="w-3 h-3"></i> Journée Admin / OFF
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4. CAMEMBERTS 1 & 2 DANS LE TABLEAU DE BORD -->
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                            <i data-lucide="pie-chart" class="w-4 h-4 text-ocp-light"></i> Répartition des Mouvements par Catégorie d'Articles (Camemberts)
+                        </p>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                            <!-- CAMEMBERT 1 : SORTIES PAR CATÉGORIE -->
+                            <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                                        <i data-lucide="arrow-up-right" class="w-4 h-4 text-blue-500"></i> Camembert 1 : Répartition des Sorties par Catégorie
+                                    </h3>
+                                    <span class="text-[10px] text-blue-500 font-bold bg-blue-100 dark:bg-blue-950/40 px-2 py-0.5 rounded">Expéditions</span>
+                                </div>
+                                <div class="h-60 relative flex justify-center items-center">
+                                    <canvas id="pieChartSorties"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- CAMEMBERT 2 : ENTRÉES PAR CATÉGORIE -->
+                            <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                                        <i data-lucide="arrow-down-left" class="w-4 h-4 text-ocp-light"></i> Camembert 2 : Répartition des Entrées par Catégorie
+                                    </h3>
+                                    <span class="text-[10px] text-ocp-light font-bold bg-ocp/10 px-2 py-0.5 rounded">Réceptions</span>
+                                </div>
+                                <div class="h-60 relative flex justify-center items-center">
+                                    <canvas id="pieChartEntrees"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5. OCCUPATION ET CAPACITÉ DÉTAILLÉE PAR ZONE -->
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                                <i data-lucide="layers" class="w-4 h-4 text-ocp-light"></i> Occupation, Nombre d'Articles & Capacité Restante par Zone
+                            </p>
+                            <button onclick="switchTab('carto')" class="text-xs text-ocp-light hover:underline font-semibold flex items-center gap-1">
+                                Plan spatial 2D <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                            </button>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">Hangar Rayonnages</span>
+                                        <h4 class="text-xs font-extrabold text-gray-900 dark:text-white mt-0.5">Rayonnage Lourd & Mi-Lourd</h4>
+                                    </div>
+                                    <span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 text-[10px] font-bold rounded-lg">78.5% Occupé</span>
+                                </div>
+                                <div class="space-y-1 text-xs">
+                                    <div class="flex justify-between text-gray-600 dark:text-gray-300">
+                                        <span>Articles Stockés :</span>
+                                        <strong class="text-gray-900 dark:text-white">62 415 units</strong>
+                                    </div>
+                                    <div class="flex justify-between text-gray-600 dark:text-gray-300">
+                                        <span>Reste à Stocker :</span>
+                                        <strong class="text-ocp-light">17 085 units</strong>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden mt-1">
+                                        <div class="bg-ocp h-full rounded-full" style="width: 78.5%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">Grand Abri (600 m²)</span>
+                                        <h4 class="text-xs font-extrabold text-gray-900 dark:text-white mt-0.5">Matériel Lourd & Palettes</h4>
+                                    </div>
+                                    <span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 text-[10px] font-bold rounded-lg">68.2% Occupé</span>
+                                </div>
+                                <div class="space-y-1 text-xs">
+                                    <div class="flex justify-between text-gray-600 dark:text-gray-300">
+                                        <span>Articles Stockés :</span>
+                                        <strong class="text-gray-900 dark:text-white">35 800 units</strong>
+                                    </div>
+                                    <div class="flex justify-between text-gray-600 dark:text-gray-300">
+                                        <span>Reste à Stocker :</span>
+                                        <strong class="text-blue-500">16 700 units</strong>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden mt-1">
+                                        <div class="bg-blue-500 h-full rounded-full" style="width: 68.2%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">Petit Abri</span>
+                                        <h4 class="text-xs font-extrabold text-gray-900 dark:text-white mt-0.5">Outillage & Consommables</h4>
+                                    </div>
+                                    <span class="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300 text-[10px] font-bold rounded-lg">82.0% Occupé</span>
+                                </div>
+                                <div class="space-y-1 text-xs">
+                                    <div class="flex justify-between text-gray-600 dark:text-gray-300">
+                                        <span>Articles Stockés :</span>
+                                        <strong class="text-gray-900 dark:text-white">12 350 units</strong>
+                                    </div>
+                                    <div class="flex justify-between text-gray-600 dark:text-gray-300">
+                                        <span>Reste à Stocker :</span>
+                                        <strong class="text-amber-500">2 710 units</strong>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden mt-1">
+                                        <div class="bg-amber-500 h-full rounded-full" style="width: 82%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                                <div class="flex justify-between items-start">
+                                    <div>
+                                        <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">Parc Extérieur</span>
+                                        <h4 class="text-xs font-extrabold text-gray-900 dark:text-white mt-0.5">Tuyauterie & Cuves Lourd</h4>
+                                    </div>
+                                    <span class="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-300 text-[10px] font-bold rounded-lg">65.4% Occupé</span>
+                                </div>
+                                <div class="space-y-1 text-xs">
+                                    <div class="flex justify-between text-gray-600 dark:text-gray-300">
+                                        <span>Articles Stockés :</span>
+                                        <strong class="text-gray-900 dark:text-white">37 747 units</strong>
+                                    </div>
+                                    <div class="flex justify-between text-gray-600 dark:text-gray-300">
+                                        <span>Reste à Stocker :</span>
+                                        <strong class="text-purple-400">19 973 units</strong>
+                                    </div>
+                                    <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden mt-1">
+                                        <div class="bg-purple-500 h-full rounded-full" style="width: 65.4%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. SECTION GRAPHIQUES & ANALYTICS COMPLÈTE -->
+                <div id="view-charts" class="hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Graphiques & Analytics Avancés du Stock</h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Suivi des tendances temporelles, flux, rotation et analyse des stocks dormants.</p>
+                        </div>
+                    </div>
+
+                    <!-- BLOC 1 : ÉVOLUTION DU STOCK AVEC FILTRE TEMPOREL (JOUR, SEMAINE, MOIS, ANNÉE) -->
+                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4">
+                        <div class="flex flex-wrap justify-between items-center gap-3">
+                            <div>
+                                <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
+                                    <i data-lucide="trending-up" class="w-4 h-4 text-ocp-light"></i> Évolution du Volume de Stock Global
+                                </h3>
+                                <p class="text-[11px] text-gray-500 dark:text-gray-400">Variation des unités en stock selon la temporalité sélectionnée</p>
+                            </div>
+                            <div class="flex items-center gap-1 bg-gray-100 dark:bg-[#050D17] p-1 rounded-xl border border-gray-300 dark:border-gray-700 text-xs font-semibold">
+                                <button onclick="updateEvolutionChart('day')" id="time-btn-day" class="px-3 py-1 rounded-lg text-gray-600 dark:text-gray-300 hover:text-white transition">Jour</button>
+                                <button onclick="updateEvolutionChart('week')" id="time-btn-week" class="px-3 py-1 rounded-lg text-gray-600 dark:text-gray-300 hover:text-white transition">Semaine</button>
+                                <button onclick="updateEvolutionChart('month')" id="time-btn-month" class="px-3 py-1 rounded-lg bg-ocp text-white shadow transition">Mois</button>
+                                <button onclick="updateEvolutionChart('year')" id="time-btn-year" class="px-3 py-1 rounded-lg text-gray-600 dark:text-gray-300 hover:text-white transition">Année</button>
+                            </div>
+                        </div>
+                        <div class="h-64 relative">
+                            <canvas id="evolutionStockChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- BLOC 2 : ENTRÉES VS SORTIES AVEC FILTRE DYNAMIQUE (JOUR, SEMAINE, MOIS) ET VALEUR DU STOCK -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                            <div class="flex flex-wrap justify-between items-center gap-2">
+                                <div>
+                                    <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
+                                        <i data-lucide="arrow-right-left" class="w-4 h-4 text-blue-500"></i> Flux : Entrées VS Sorties
+                                    </h3>
+                                    <p class="text-[10px] text-gray-500 dark:text-gray-400">Comparatif réceptions / expéditions</p>
+                                </div>
+                                <div class="flex items-center gap-1 bg-gray-100 dark:bg-[#050D17] p-1 rounded-xl border border-gray-300 dark:border-gray-700 text-[11px] font-semibold">
+                                    <button onclick="updateEntriesExitsChart('day')" id="ee-btn-day" class="px-2.5 py-0.5 rounded-lg text-gray-600 dark:text-gray-300 hover:text-white transition">Jour</button>
+                                    <button onclick="updateEntriesExitsChart('week')" id="ee-btn-week" class="px-2.5 py-0.5 rounded-lg text-gray-600 dark:text-gray-300 hover:text-white transition">Semaine</button>
+                                    <button onclick="updateEntriesExitsChart('month')" id="ee-btn-month" class="px-2.5 py-0.5 rounded-lg bg-blue-600 text-white shadow transition">Mois</button>
+                                </div>
+                            </div>
+                            <div class="h-56 relative">
+                                <canvas id="entriesExitsChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                            <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
+                                <i data-lucide="coins" class="w-4 h-4 text-amber-500"></i> Courbe : Valeur du Stock par Mois (en Millions DH)
+                            </h3>
+                            <div class="h-56 relative">
+                                <canvas id="stockValueChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BLOC 3 : ROTATION ET HISTOGRAMME ARTICLES SANS MOUVEMENT -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                            <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
+                                <i data-lucide="rotate-cw" class="w-4 h-4 text-purple-500"></i> Courbe : Taux de Rotation des Stocks
+                            </h3>
+                            <div class="h-56 relative">
+                                <canvas id="rotationChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                            <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
+                                <i data-lucide="clock" class="w-4 h-4 text-red-500"></i> Histogramme : Articles Sans Mouvement (Immobilisés)
+                            </h3>
+                            <p class="text-[11px] text-gray-500 dark:text-gray-400">Ventilation par tranche d'inactivité (3 mois, 6 mois, 12 mois, 24 mois+)</p>
+                            <div class="h-52 relative">
+                                <canvas id="noMovementChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BLOC 4 : CLASSEMENTS TOP 20 ARTICLES -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                            <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-2">
+                                <h3 class="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                                    <i data-lucide="flame" class="w-4 h-4 text-orange-500"></i> Top 20 : Articles les Plus Utilisés (Forte Rotation)
+                                </h3>
+                                <span class="text-[10px] text-ocp-light font-bold bg-ocp/10 px-2 py-0.5 rounded">Année 2026</span>
+                            </div>
+                            <div class="overflow-y-auto max-h-72 custom-scrollbar">
+                                <table class="w-full text-left text-xs">
+                                    <thead class="bg-gray-100 dark:bg-[#050D17] text-gray-500 dark:text-gray-400">
+                                        <tr>
+                                            <th class="p-2">#</th>
+                                            <th class="p-2">Code</th>
+                                            <th class="p-2">Désignation</th>
+                                            <th class="p-2">Sorties (2026)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
+                                        <tr><td class="p-2 font-bold text-ocp-light">1</td><td class="p-2 font-mono">ART-1001</td><td class="p-2 font-bold">Roulements SKF 6205</td><td class="p-2 font-bold">1 240 units</td></tr>
+                                        <tr><td class="p-2 font-bold text-ocp-light">2</td><td class="p-2 font-mono">ART-1002</td><td class="p-2 font-bold">Vanne à papillon DN100</td><td class="p-2 font-bold">980 units</td></tr>
+                                        <tr><td class="p-2 font-bold text-ocp-light">3</td><td class="p-2 font-mono">ART-1004</td><td class="p-2 font-bold">Filtre Hydraulique Cartouche</td><td class="p-2 font-bold">850 units</td></tr>
+                                        <tr><td class="p-2 font-bold text-ocp-light">4</td><td class="p-2 font-mono">ART-1008</td><td class="p-2 font-bold">Joint Torique Nitrile DN80</td><td class="p-2 font-bold">720 units</td></tr>
+                                        <tr><td class="p-2 font-bold text-ocp-light">5</td><td class="p-2 font-mono">ART-1012</td><td class="p-2 font-bold">Relais Électrique 24V DC</td><td class="p-2 font-bold">690 units</td></tr>
+                                        <tr><td class="p-2 font-bold text-gray-500">6 à 20</td><td class="p-2 text-gray-400">ART-1015 à 1030</td><td class="p-2 text-gray-400">Consommables & Outillage Express</td><td class="p-2 text-gray-400">Passages réguliers</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                            <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-2">
+                                <h3 class="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+                                    <i data-lucide="archive" class="w-4 h-4 text-red-500"></i> Top 20 : Stock Dormant / Valorisation Immobilisée
+                                </h3>
+                                <span class="text-[10px] text-red-500 font-bold bg-red-100 dark:bg-red-950/40 px-2 py-0.5 rounded">À Révision</span>
+                            </div>
+                            <div class="overflow-y-auto max-h-72 custom-scrollbar">
+                                <table class="w-full text-left text-xs">
+                                    <thead class="bg-gray-100 dark:bg-[#050D17] text-gray-500 dark:text-gray-400">
+                                        <tr>
+                                            <th class="p-2">#</th>
+                                            <th class="p-2">Code</th>
+                                            <th class="p-2">Désignation</th>
+                                            <th class="p-2">Inactif depuis</th>
+                                            <th class="p-2">Valeur Bloquée</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
+                                        <tr><td class="p-2 font-bold text-red-500">1</td><td class="p-2 font-mono">ART-9012</td><td class="p-2 font-bold">Moteur Triphasé 45kW (Spécial)</td><td class="p-2 text-red-400 font-semibold">24 mois+</td><td class="p-2 font-bold text-red-500">185 000 DH</td></tr>
+                                        <tr><td class="p-2 font-bold text-red-500">2</td><td class="p-2 font-mono">ART-9015</td><td class="p-2 font-bold">Roue Broyeur Phosphoric Acid</td><td class="p-2 text-red-400 font-semibold">18 mois</td><td class="p-2 font-bold text-red-500">142 000 DH</td></tr>
+                                        <tr><td class="p-2 font-bold text-amber-500">3</td><td class="p-2 font-mono">ART-9022</td><td class="p-2 font-bold">Transformateur HT 10kV</td><td class="p-2 text-amber-400 font-semibold">12 mois</td><td class="p-2 font-bold text-amber-500">98 000 DH</td></tr>
+                                        <tr><td class="p-2 font-bold text-amber-500">4</td><td class="p-2 font-mono">ART-9030</td><td class="p-2 font-bold">Vanne Guillotine Inox DN400</td><td class="p-2 text-amber-400 font-semibold">12 mois</td><td class="p-2 font-bold text-amber-500">76 000 DH</td></tr>
+                                        <tr><td class="p-2 font-bold text-gray-500">5 à 20</td><td class="p-2 text-gray-400">ART-9035 à 9050</td><td class="p-2 text-gray-400">Pièces de rechange secours chantiers</td><td class="p-2 text-gray-400">6 à 12 mois</td><td class="p-2 text-gray-400">520 000 DH Total</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. SECTION STOCK & ARTICLES -->
+                <div id="view-stock" class="hidden space-y-5">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-900 dark:text-white">Gestion du Stock & Catalogue d'Articles</h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Filtrage par origine des articles (JESA, OCP, et Cessions intra-site OCP).</p>
+                        </div>
+                        <button class="px-3 py-1.5 bg-ocp hover:bg-ocp-light text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1.5">
+                            <i data-lucide="plus" class="w-4 h-4"></i> Ajouter un Article
+                        </button>
+                    </div>
+
+                    <div class="bg-white dark:bg-[#132A45] p-3 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-wrap items-center justify-between gap-3">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1">
+                                <i data-lucide="filter" class="w-3.5 h-3.5 text-ocp-light"></i> Origine :
+                            </span>
+                            <div class="flex items-center gap-1.5 bg-gray-100 dark:bg-[#050D17] p-1 rounded-xl border border-gray-300 dark:border-gray-700">
+                                <button onclick="filterStock('all')" id="filter-btn-all" class="px-3 py-1 text-xs font-bold rounded-lg bg-ocp text-white shadow transition">Tous</button>
+                                <button onclick="filterStock('jesa')" id="filter-btn-jesa" class="px-3 py-1 text-xs font-medium rounded-lg text-gray-600 dark:text-gray-300 hover:text-white transition">JESA</button>
+                                <button onclick="filterStock('ocp')" id="filter-btn-ocp" class="px-3 py-1 text-xs font-medium rounded-lg text-gray-600 dark:text-gray-300 hover:text-white transition">OCP</button>
+                                <button onclick="filterStock('cession')" id="filter-btn-cession" class="px-3 py-1 text-xs font-medium rounded-lg text-gray-600 dark:text-gray-300 hover:text-white transition">Cession Intra-Site OCP</button>
+                            </div>
+                        </div>
+
+                        <div class="text-xs text-gray-500 dark:text-gray-400">
+                            Résultat : <strong id="filter-count" class="text-gray-900 dark:text-white">5 articles</strong> affichés
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-gray-100 dark:bg-[#050D17] text-gray-600 dark:text-gray-400 uppercase font-semibold">
+                                    <tr>
+                                        <th class="p-3">Code Article</th>
+                                        <th class="p-3">Désignation</th>
+                                        <th class="p-3">Origine / Source</th>
+                                        <th class="p-3">Emplacement</th>
+                                        <th class="p-3">Stock Actuel</th>
+                                        <th class="p-3">Stock Min</th>
+                                        <th class="p-3">Prix Unitaire (CMP)</th>
+                                        <th class="p-3">Statut Alerte</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 dark:divide-gray-800" id="stock-table-body">
+                                    <tr class="stock-row ocp bg-red-50 dark:bg-red-950/20 border-l-4 border-red-500">
+                                        <td class="p-3 font-mono font-bold text-red-600 dark:text-red-300">ART-1002</td>
+                                        <td class="p-3 font-bold text-gray-900 dark:text-white">Vanne à papillon DN100</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 font-bold rounded">Magasin OCP</span></td>
+                                        <td class="p-3 text-gray-600 dark:text-gray-300">Rayonnage R1 - Niv 2</td>
+                                        <td class="p-3 font-extrabold text-red-600 dark:text-red-400">12 units</td>
+                                        <td class="p-3 text-gray-500 dark:text-gray-400 font-bold">25 units</td>
+                                        <td class="p-3 text-gray-600 dark:text-gray-300">1 450 DH</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-red-100 dark:bg-red-900/60 text-red-800 dark:text-red-300 rounded-lg font-extrabold flex items-center gap-1 w-fit"><i data-lucide="alert-circle" class="w-3 h-3"></i> ALERTE REAPPRO</span></td>
+                                    </tr>
+                                    <tr class="stock-row jesa">
+                                        <td class="p-3 font-mono text-gray-500 dark:text-gray-400">ART-1001</td>
+                                        <td class="p-3 font-bold text-gray-900 dark:text-white">Roulements SKF 6205</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 font-bold rounded">Projet JESA</span></td>
+                                        <td class="p-3 text-gray-600 dark:text-gray-300">Rayonnage R1 - Niv 3</td>
+                                        <td class="p-3 font-bold text-green-600 dark:text-green-400">150 units</td>
+                                        <td class="p-3 text-gray-500 dark:text-gray-400">50 units</td>
+                                        <td class="p-3 text-gray-600 dark:text-gray-300">220 DH</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-lg font-bold">Conforme</span></td>
+                                    </tr>
+                                    <tr class="stock-row cession">
+                                        <td class="p-3 font-mono text-gray-500 dark:text-gray-400">ART-1003</td>
+                                        <td class="p-3 font-bold text-gray-900 dark:text-white">Clé Dynamométrique 1/2"</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-300 font-bold rounded flex items-center gap-1 w-fit"><i data-lucide="arrow-right-left" class="w-3 h-3"></i> Cession OCP Jorf</span></td>
+                                        <td class="p-3 text-gray-600 dark:text-gray-300">Rayonnage R6 - Niv 3</td>
+                                        <td class="p-3 font-bold text-green-600 dark:text-green-400">5 units</td>
+                                        <td class="p-3 text-gray-500 dark:text-gray-400">2 units</td>
+                                        <td class="p-3 text-gray-600 dark:text-gray-300">3 800 DH</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-lg font-bold">Conforme</span></td>
+                                    </tr>
+                                    <tr class="stock-row cession">
+                                        <td class="p-3 font-mono text-gray-500 dark:text-gray-400">ART-1004</td>
+                                        <td class="p-3 font-bold text-gray-900 dark:text-white">Filtre Hydraulique Cartouche</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-300 font-bold rounded flex items-center gap-1 w-fit"><i data-lucide="arrow-right-left" class="w-3 h-3"></i> Cession OCP Khouribga</span></td>
+                                        <td class="p-3 text-gray-600 dark:text-gray-300">Rayonnage R3 - Niv 3</td>
+                                        <td class="p-3 font-bold text-amber-600 dark:text-amber-400">18 units</td>
+                                        <td class="p-3 text-gray-500 dark:text-gray-400">15 units</td>
+                                        <td class="p-3 text-gray-600 dark:text-gray-300">850 DH</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 rounded-lg font-bold">Limite Approche</span></td>
+                                    </tr>
+                                    <tr class="stock-row jesa">
+                                        <td class="p-3 font-mono text-gray-500 dark:text-gray-400">ART-1005</td>
+                                        <td class="p-3 font-bold text-gray-900 dark:text-white">Tuyauterie Acier DN300 (6m)</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 font-bold rounded">Projet JESA</span></td>
+                                        <td class="p-3 text-gray-600 dark:text-gray-300">Zone Extérieure - Parc Lourd</td>
+                                        <td class="p-3 font-bold text-green-600 dark:text-green-400">42 units</td>
+                                        <td class="p-3 text-gray-500 dark:text-gray-400">10 units</td>
+                                        <td class="p-3 text-gray-600 dark:text-gray-300">12 500 DH</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-lg font-bold">Conforme</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. CARTOGRAPHIE 2D (5 ZONES) -->
+                <div id="view-carto" class="hidden space-y-5">
+                    <div>
+                        <h2 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Cartographie 2D du Magasin Central MC01</h2>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Plan spatial interactif des 5 zones de stockage : Hangar Rayonnages, Abris et Parc Extérieur.</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+                        <button onclick="selectZone('hangar-racks')" class="p-3 bg-ocp/20 border-2 border-ocp rounded-xl text-left hover:bg-ocp/30 transition">
+                            <p class="font-bold text-xs text-gray-900 dark:text-white">1. Hangar Rayonnage</p>
+                            <p class="text-[10px] text-gray-600 dark:text-gray-300">Plan 13085x6485 (6 Allées)</p>
+                        </button>
+                        <button onclick="selectZone('grand-abri')" class="p-3 bg-white dark:bg-[#132A45] border border-gray-300 dark:border-gray-700 rounded-xl text-left hover:border-ocp transition">
+                            <p class="font-bold text-xs text-gray-900 dark:text-white">2. Grand Abri (600 m²)</p>
+                            <p class="text-[10px] text-gray-500 dark:text-gray-400">Stockage Matériel Lourd</p>
+                        </button>
+                        <button onclick="selectZone('petit-abri')" class="p-3 bg-white dark:bg-[#132A45] border border-gray-300 dark:border-gray-700 rounded-xl text-left hover:border-ocp transition">
+                            <p class="font-bold text-xs text-gray-900 dark:text-white">3. Petit Abri</p>
+                            <p class="text-[10px] text-gray-500 dark:text-gray-400">Consommables & Outillage</p>
+                        </button>
+                        <button onclick="selectZone('zone-ext')" class="p-3 bg-white dark:bg-[#132A45] border border-gray-300 dark:border-gray-700 rounded-xl text-left hover:border-ocp transition">
+                            <p class="font-bold text-xs text-gray-900 dark:text-white">4. Zone Extérieure</p>
+                            <p class="text-[10px] text-gray-500 dark:text-gray-400">Parc Tuyauterie & Cuves</p>
+                        </button>
+                        <button onclick="selectZone('grand-modulaire')" class="p-3 bg-white dark:bg-[#132A45] border border-gray-300 dark:border-gray-700 rounded-xl text-left hover:border-ocp transition">
+                            <p class="font-bold text-xs text-gray-900 dark:text-white">5. Grand Modulaire</p>
+                            <p class="text-[10px] text-gray-500 dark:text-gray-400">Bureaux & Tool Crib</p>
+                        </button>
+                    </div>
+
+                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-xl space-y-4">
+                        <div class="flex justify-between items-center text-xs border-b border-gray-200 dark:border-gray-700/80 pb-3">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="map-pin" class="w-4 h-4 text-ocp-light"></i>
+                                <span class="font-bold text-gray-900 dark:text-white text-sm" id="zone-title">Aménagement Hangar Rayonnages (Dimension: 13 085mm x 6 485mm)</span>
+                            </div>
+                        </div>
+
+                        <div class="relative bg-gray-50 dark:bg-[#050D17] border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-4 overflow-x-auto min-h-[460px]">
+                            <div class="w-full min-w-[680px] border-4 border-gray-400 dark:border-gray-600 p-4 rounded-lg bg-gray-100 dark:bg-[#0A1A2E] space-y-6">
+                                <div class="flex justify-between items-center bg-white dark:bg-[#132A45]/80 p-3 rounded-md border border-gray-200 dark:border-gray-700 text-[10px] text-gray-600 dark:text-gray-300">
+                                    <span>ZONE MANŒUVRE NORD (Passage Chariot 200cm)</span>
+                                    <span class="bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded border border-amber-300 dark:border-amber-500/50">Chariot Élévateur 85x200</span>
+                                </div>
+
+                                <div class="rack-grid text-center">
+                                    <div onclick="inspectRack('Allée 1 - Rack R1')" class="cursor-pointer bg-white dark:bg-[#132A45] border-2 border-red-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
+                                        <span class="text-[10px] font-bold text-red-600 dark:text-red-400">RACK R1 (ALERTE)</span>
+                                        <div class="space-y-1">
+                                            <div class="bg-green-100 dark:bg-green-600/30 text-[9px] p-1 rounded text-green-800 dark:text-green-200">SKF 6205</div>
+                                            <div class="bg-red-200 dark:bg-red-600/50 text-[9px] p-1 rounded text-red-900 dark:text-red-200 font-bold">Vannes DN100 (12)</div>
+                                        </div>
+                                        <span class="text-[9px] text-gray-500 dark:text-gray-400">Allée 1 (120cm)</span>
+                                    </div>
+
+                                    <div onclick="inspectRack('Allée 2 - Rack R2')" class="cursor-pointer bg-white dark:bg-[#132A45] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
+                                        <span class="text-[10px] font-bold text-green-600 dark:text-green-400">RACK R2</span>
+                                        <div class="space-y-1">
+                                            <div class="bg-green-100 dark:bg-green-600/30 text-[9px] p-1 rounded text-green-800 dark:text-green-200">Joints Toriques</div>
+                                            <div class="bg-amber-100 dark:bg-amber-600/30 text-[9px] p-1 rounded text-amber-800 dark:text-amber-200">Capteurs</div>
+                                        </div>
+                                        <span class="text-[9px] text-gray-500 dark:text-gray-400">Allée 2 (120cm)</span>
+                                    </div>
+
+                                    <div onclick="inspectRack('Allée 3 - Rack R3')" class="cursor-pointer bg-white dark:bg-[#132A45] border-2 border-amber-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
+                                        <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400">RACK R3</span>
+                                        <div class="space-y-1">
+                                            <div class="bg-amber-100 dark:bg-amber-600/30 text-[9px] p-1 rounded text-amber-800 dark:text-amber-200">Filtres Hydr.</div>
+                                            <div class="bg-red-100 dark:bg-red-600/30 text-[9px] p-1 rounded text-red-800 dark:text-red-200">Hydrocyclone</div>
+                                        </div>
+                                        <span class="text-[9px] text-gray-500 dark:text-gray-400">Allée 3 (120cm)</span>
+                                    </div>
+
+                                    <div onclick="inspectRack('Allée 4 - Rack R4')" class="cursor-pointer bg-white dark:bg-[#132A45] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
+                                        <span class="text-[10px] font-bold text-green-600 dark:text-green-400">RACK R4</span>
+                                        <div class="space-y-1">
+                                            <div class="bg-green-100 dark:bg-green-600/30 text-[9px] p-1 rounded text-green-800 dark:text-green-200">Relais 24V</div>
+                                            <div class="bg-green-100 dark:bg-green-600/30 text-[9px] p-1 rounded text-green-800 dark:text-green-200">Contacteurs</div>
+                                        </div>
+                                        <span class="text-[9px] text-gray-500 dark:text-gray-400">Allée 4 (120cm)</span>
+                                    </div>
+
+                                    <div onclick="inspectRack('Allée 5 - Rack R5')" class="cursor-pointer bg-white dark:bg-[#132A45] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
+                                        <span class="text-[10px] font-bold text-green-600 dark:text-green-400">RACK R5</span>
+                                        <div class="space-y-1">
+                                            <div class="bg-green-100 dark:bg-green-600/30 text-[9px] p-1 rounded text-green-800 dark:text-green-200">Blindage Broyeur</div>
+                                            <div class="bg-green-100 dark:bg-green-600/30 text-[9px] p-1 rounded text-green-800 dark:text-green-200">Moteur 15kW</div>
+                                        </div>
+                                        <span class="text-[9px] text-gray-500 dark:text-gray-400">Allée 5 (120cm)</span>
+                                    </div>
+
+                                    <div onclick="inspectRack('Allée 6 - Rack R6')" class="cursor-pointer bg-white dark:bg-[#132A45] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
+                                        <span class="text-[10px] font-bold text-green-600 dark:text-green-400">RACK R6</span>
+                                        <div class="space-y-1">
+                                            <div class="bg-green-100 dark:bg-green-600/30 text-[9px] p-1 rounded text-green-800 dark:text-green-200">Clés Dynamom.</div>
+                                            <div class="bg-green-100 dark:bg-green-600/30 text-[9px] p-1 rounded text-green-800 dark:text-green-200">Coffret Laser</div>
+                                        </div>
+                                        <span class="text-[9px] text-gray-500 dark:text-gray-400">Bordure (110cm)</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-between items-center bg-white dark:bg-[#132A45]/80 p-3 rounded-md border border-gray-200 dark:border-gray-700 text-[10px] text-gray-600 dark:text-gray-300">
+                                    <span class="font-bold text-gray-900 dark:text-white">ENTRÉE PRINCIPALE MAGASIN (Largeur 648.5cm)</span>
+                                    <span>Dégagement Réception : 519cm x 625cm</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="rack-details-box" class="bg-gray-100 dark:bg-[#050D17] p-4 rounded-xl border border-gray-200 dark:border-gray-800 text-xs space-y-2">
+                            <p class="font-bold text-ocp-light">Cliquez sur un Rayonnage (R1 à R6) dans le plan ci-dessus pour afficher la liste des pièces stockées.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 5. ROTATION DES MAGASINIERS -->
+                <div id="view-shifts" class="hidden space-y-5">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-900 dark:text-white">Rotation des Magasiniers (Planning Mensuel sur 3 Postes)</h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Planning de rotation continue des 5 magasiniers assurant la couverture 24/7 du Magasin MC01.</p>
+                        </div>
+                        <span class="text-xs bg-ocp/20 text-ocp-light px-3 py-1 rounded-lg border border-ocp/30 font-semibold">Semaine Actuelle : Semaine 1</span>
+                    </div>
+
+                    <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                        <h3 class="font-bold text-xs text-gray-900 dark:text-white">Planning de Rotation Mensuel des 5 Magasiniers</h3>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-gray-100 dark:bg-[#050D17] text-gray-600 dark:text-gray-400 uppercase font-semibold">
+                                    <tr>
+                                        <th class="p-3">Magasinier</th>
+                                        <th class="p-3">Matricule</th>
+                                        <th class="p-3">Semaine 1</th>
+                                        <th class="p-3">Semaine 2</th>
+                                        <th class="p-3">Semaine 3</th>
+                                        <th class="p-3">Semaine 4</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
+                                    <tr>
+                                        <td class="p-3 font-bold text-gray-900 dark:text-white">Karim BENANI</td>
+                                        <td class="p-3 text-gray-500 dark:text-gray-400 font-mono">M-8801</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded font-semibold">Poste 1 (Matin)</span></td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 rounded font-semibold">Poste 2 (A-M)</span></td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 rounded font-semibold">Poste 3 (Nuit)</span></td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-300 rounded font-semibold">Journée / OFF</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-gray-900 dark:text-white">Mohammed ALAMI</td>
+                                        <td class="p-3 text-gray-500 dark:text-gray-400 font-mono">M-8802</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded font-semibold">Poste 1 (Matin)</span></td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 rounded font-semibold">Poste 2 (A-M)</span></td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-300 rounded font-semibold">Journée / OFF</span></td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 rounded font-semibold">Poste 3 (Nuit)</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-gray-900 dark:text-white">Youssef CHRAIBI</td>
+                                        <td class="p-3 text-gray-500 dark:text-gray-400 font-mono">M-8803</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 rounded font-semibold">Poste 2 (A-M)</span></td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 rounded font-semibold">Poste 3 (Nuit)</span></td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded font-semibold">Poste 1 (Matin)</span></td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-300 rounded font-semibold">Journée / OFF</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-gray-900 dark:text-white">Hassan KABBAB</td>
+                                        <td class="p-3 text-gray-500 dark:text-gray-400 font-mono">M-8804</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-300 rounded font-semibold">Journée / OFF</span></td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded font-semibold">Poste 1 (Matin)</span></td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 rounded font-semibold">Poste 2 (A-M)</span></td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 rounded font-semibold">Poste 3 (Nuit)</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-bold text-gray-900 dark:text-white">Omar DRIOUCH</td>
+                                        <td class="p-3 text-gray-500 dark:text-gray-400 font-mono">M-8805</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 rounded font-semibold">Poste 3 (Nuit)</span></td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-300 rounded font-semibold">Journée / OFF</span></td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded font-semibold">Poste 1 (Matin)</span></td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 rounded font-semibold">Poste 2 (A-M)</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. SECTION RÉCEPTIONS & ENTRÉES -->
+                <div id="view-reception" class="hidden space-y-5">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-900 dark:text-white">Réceptions & Entrées de Stock</h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Historique des Bons de Réception (BR) contrôlés et enregistrés dans SAP.</p>
+                        </div>
+                        <button class="px-3 py-1.5 bg-ocp hover:bg-ocp-light text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1.5">
+                            <i data-lucide="plus-circle" class="w-4 h-4"></i> Créer Bon de Réception (BR)
+                        </button>
+                    </div>
+
+                    <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-gray-100 dark:bg-[#050D17] text-gray-600 dark:text-gray-400 uppercase font-semibold">
+                                    <tr>
+                                        <th class="p-3">N° BR (SAP)</th>
+                                        <th class="p-3">Date & Heure Réception</th>
+                                        <th class="p-3">Fournisseur / Origine</th>
+                                        <th class="p-3">Articles</th>
+                                        <th class="p-3">Quantité</th>
+                                        <th class="p-3">Magasinier Récepteur</th>
+                                        <th class="p-3">Statut</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
+                                    <tr>
+                                        <td class="p-3 font-mono text-ocp-light font-bold">BR-2026-0892</td>
+                                        <td class="p-3 font-semibold text-gray-900 dark:text-white"><i data-lucide="calendar" class="w-3 h-3 inline mr-1 text-ocp-light"></i>04/10/2026 <span class="text-gray-400 text-[10px]">08:30</span></td>
+                                        <td class="p-3 text-gray-800 dark:text-gray-200">SKF Maroc SA</td>
+                                        <td class="p-3 text-gray-700 dark:text-gray-300">Roulements SKF 6205</td>
+                                        <td class="p-3 font-bold text-gray-900 dark:text-white">50 units</td>
+                                        <td class="p-3 text-gray-700 dark:text-gray-300">Mohammed ALAMI</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-lg font-bold">Validé SAP</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-mono text-ocp-light font-bold">BR-2026-0891</td>
+                                        <td class="p-3 font-semibold text-gray-900 dark:text-white"><i data-lucide="calendar" class="w-3 h-3 inline mr-1 text-purple-400"></i>03/10/2026 <span class="text-gray-400 text-[10px]">14:15</span></td>
+                                        <td class="p-3 text-purple-600 dark:text-purple-300 font-semibold">Cession Site OCP Jorf</td>
+                                        <td class="p-3 text-gray-700 dark:text-gray-300">Clé Dynamométrique 1/2"</td>
+                                        <td class="p-3 font-bold text-gray-900 dark:text-white">5 units</td>
+                                        <td class="p-3 text-gray-700 dark:text-gray-300">Youssef CHRAIBI</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-lg font-bold">Validé SAP</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-mono text-ocp-light font-bold">BR-2026-0890</td>
+                                        <td class="p-3 font-semibold text-gray-900 dark:text-white"><i data-lucide="calendar" class="w-3 h-3 inline mr-1 text-amber-500"></i>02/10/2026 <span class="text-gray-400 text-[10px]">11:00</span></td>
+                                        <td class="p-3 text-gray-800 dark:text-gray-200">Souss Matériel Industrie</td>
+                                        <td class="p-3 text-gray-700 dark:text-gray-300">Vannes à papillon DN100</td>
+                                        <td class="p-3 font-bold text-gray-900 dark:text-white">10 units</td>
+                                        <td class="p-3 text-gray-700 dark:text-gray-300">Karim BENANI</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 rounded-lg font-bold">Contrôle Qualité</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-mono text-ocp-light font-bold">BR-2026-0889</td>
+                                        <td class="p-3 font-semibold text-gray-900 dark:text-white"><i data-lucide="calendar" class="w-3 h-3 inline mr-1 text-purple-400"></i>01/10/2026 <span class="text-gray-400 text-[10px]">16:45</span></td>
+                                        <td class="p-3 text-purple-600 dark:text-purple-300 font-semibold">Cession Site OCP Khouribga</td>
+                                        <td class="p-3 text-gray-700 dark:text-gray-300">Filtre Hydraulique Cartouche</td>
+                                        <td class="p-3 font-bold text-gray-900 dark:text-white">18 units</td>
+                                        <td class="p-3 text-gray-700 dark:text-gray-300">Omar DRIOUCH</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-lg font-bold">Validé SAP</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 7. SECTION SORTIES & EXPÉDITIONS -->
+                <div id="view-expedition" class="hidden space-y-5">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-xl font-bold text-gray-900 dark:text-white">Sorties de Stock & Expéditions Chantier</h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Suivi chronologique des ordres d'extraction pour la maintenance et les chantiers OCP.</p>
+                        </div>
+                        <button class="px-3 py-1.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow transition flex items-center gap-1.5">
+                            <i data-lucide="file-text" class="w-4 h-4"></i> Créer Bon de Sortie / Picking
+                        </button>
+                    </div>
+
+                    <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-gray-100 dark:bg-[#050D17] text-gray-600 dark:text-gray-400 uppercase font-semibold">
+                                    <tr>
+                                        <th class="p-3">N° Bon Sortie</th>
+                                        <th class="p-3">Date Demande</th>
+                                        <th class="p-3">Demandeur / Service</th>
+                                        <th class="p-3">Article Demandé</th>
+                                        <th class="p-3">Quantité</th>
+                                        <th class="p-3">Priorité</th>
+                                        <th class="p-3">Statut Picking</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
+                                    <tr>
+                                        <td class="p-3 font-mono text-blue-600 dark:text-blue-400 font-bold">BS-2026-1403</td>
+                                        <td class="p-3 font-semibold text-gray-900 dark:text-white"><i data-lucide="clock" class="w-3 h-3 inline mr-1 text-red-500"></i>04/10/2026 <span class="text-gray-400 text-[10px]">09:00</span></td>
+                                        <td class="p-3 text-gray-800 dark:text-gray-200">Maintenance Engrais (Urgence)</td>
+                                        <td class="p-3 text-gray-700 dark:text-gray-300">Vanne à papillon DN100</td>
+                                        <td class="p-3 font-bold text-gray-900 dark:text-white">2 units</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300 rounded font-bold">Urgent</span></td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 rounded-lg font-bold">En Picking (Poste 1)</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-mono text-blue-600 dark:text-blue-400 font-bold">BS-2026-1402</td>
+                                        <td class="p-3 font-semibold text-gray-900 dark:text-white"><i data-lucide="check" class="w-3 h-3 inline mr-1 text-green-500"></i>03/10/2026 <span class="text-gray-400 text-[10px]">15:30</span></td>
+                                        <td class="p-3 text-gray-800 dark:text-gray-200">Projet Extension Modulaire</td>
+                                        <td class="p-3 text-gray-700 dark:text-gray-300">Clé Dynamométrique 1/2"</td>
+                                        <td class="p-3 font-bold text-gray-900 dark:text-white">1 unit</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-300 rounded font-bold">Normale</span></td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-lg font-bold">Servi / Livré</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-3 font-mono text-blue-600 dark:text-blue-400 font-bold">BS-2026-1401</td>
+                                        <td class="p-3 font-semibold text-gray-900 dark:text-white"><i data-lucide="check" class="w-3 h-3 inline mr-1 text-green-500"></i>01/10/2026 <span class="text-gray-400 text-[10px]">10:15</span></td>
+                                        <td class="p-3 text-gray-800 dark:text-gray-200">Chantier Tuyauterie Nord</td>
+                                        <td class="p-3 text-gray-700 dark:text-gray-300">Tuyauterie Acier DN300 (6m)</td>
+                                        <td class="p-3 font-bold text-gray-900 dark:text-white">6 units</td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-300 rounded font-bold">Normale</span></td>
+                                        <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-lg font-bold">Servi / Livré</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 8. SECTION INVENTAIRE & AUDITS -->
+                <div id="view-inventory" class="hidden space-y-5">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Inventaire & Audits Tournants (Planning Octobre 2026)</h2>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Programme daté de contrôle physique contradictoire du stock (IRA).</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                            <h3 class="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+                                <i data-lucide="calendar-check" class="w-4 h-4 text-ocp-light"></i> Planning Hebdomadaire des Audits (Octobre 2026)
+                            </h3>
+                            <div class="space-y-2 text-xs">
+                                <div class="flex justify-between items-center bg-gray-50 dark:bg-[#050D17] p-3 rounded-xl border border-gray-200 dark:border-gray-800">
+                                    <div>
+                                        <p class="font-bold text-gray-900 dark:text-white">Semaine 1 (01/10 au 04/10/2026)</p>
+                                        <p class="text-[10px] text-gray-500 dark:text-gray-400">Rayonnages R1 à R3 (Hangar A)</p>
+                                    </div>
+                                    <span class="text-green-600 dark:text-green-400 font-bold px-2 py-1 bg-green-100 dark:bg-green-900/40 rounded-lg">100% Terminé (0 Écart)</span>
+                                </div>
+                                <div class="flex justify-between items-center bg-gray-50 dark:bg-[#050D17] p-3 rounded-xl border border-gray-200 dark:border-gray-800">
+                                    <div>
+                                        <p class="font-bold text-gray-900 dark:text-white">Semaine 2 (05/10 au 11/10/2026)</p>
+                                        <p class="text-[10px] text-gray-500 dark:text-gray-400">Rayonnages R4 à R6 (Hangar A)</p>
+                                    </div>
+                                    <span class="text-blue-600 dark:text-blue-400 font-bold px-2 py-1 bg-blue-100 dark:bg-blue-900/40 rounded-lg">Planifié (Démarrage 05/10)</span>
+                                </div>
+                                <div class="flex justify-between items-center bg-gray-50 dark:bg-[#050D17] p-3 rounded-xl border border-gray-200 dark:border-gray-800">
+                                    <div>
+                                        <p class="font-bold text-gray-900 dark:text-white">Semaine 3 (12/10 au 18/10/2026)</p>
+                                        <p class="text-[10px] text-gray-500 dark:text-gray-400">Grand Abri & Petit Abri (Abris Couverts)</p>
+                                    </div>
+                                    <span class="text-gray-600 dark:text-gray-400 font-bold px-2 py-1 bg-gray-200 dark:bg-gray-800 rounded-lg">A Venir</span>
+                                </div>
+                                <div class="flex justify-between items-center bg-gray-50 dark:bg-[#050D17] p-3 rounded-xl border border-gray-200 dark:border-gray-800">
+                                    <div>
+                                        <p class="font-bold text-gray-900 dark:text-white">Semaine 4 (19/10 au 25/10/2026)</p>
+                                        <p class="text-[10px] text-gray-500 dark:text-gray-400">Zone Extérieure Parc Lourd & Modulaire</p>
+                                    </div>
+                                    <span class="text-gray-600 dark:text-gray-400 font-bold px-2 py-1 bg-gray-200 dark:bg-gray-800 rounded-lg">A Venir</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                            <h3 class="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider">KPIs Qualité Inventaire (Dernier Audit : 04/10/2026)</h3>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div class="bg-gray-50 dark:bg-[#050D17] p-3 rounded-xl border border-gray-200 dark:border-gray-800">
+                                    <p class="text-[10px] text-gray-500 dark:text-gray-400">Exactitude IRA</p>
+                                    <h4 class="text-xl font-bold text-ocp-light mt-1">99.1%</h4>
+                                </div>
+                                <div class="bg-gray-50 dark:bg-[#050D17] p-3 rounded-xl border border-gray-200 dark:border-gray-800">
+                                    <p class="text-[10px] text-gray-500 dark:text-gray-400">Écart Financier</p>
+                                    <h4 class="text-xl font-bold text-green-600 dark:text-green-400 mt-1">0.02%</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 9. SECTION PARAMÈTRES ET GESTION DES ACCÈS PAR UTILISATEUR -->
+                <div id="view-settings" class="hidden space-y-6">
+                    <div>
+                        <h2 class="text-xl font-bold text-gray-900 dark:text-white">Paramètres Système & Matrice des Droits d'Accès</h2>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Configuration des accès nominatifs et droits de visibilité par profil utilisateur sur l'application Web.</p>
+                    </div>
+
+                    <!-- MATRICE COMPLÈTE DES ACCÈS PAR PERSONNE -->
+                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4">
+                        <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-3">
+                            <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
+                                <i data-lucide="shield-check" class="w-4 h-4 text-ocp-light"></i> Matrice Détaillée des Droits d'Accès et Visibilité Web App
+                            </h3>
+                            <span class="text-[10px] font-bold bg-ocp/20 text-ocp-light px-2.5 py-1 rounded-lg">5 Utilisateurs Référencés</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            
+                            <!-- 1. SOUFIANE BOUHZAM -->
+                            <div class="bg-gray-50 dark:bg-[#050D17] p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3">
+                                <div class="flex items-center gap-3 border-b border-gray-200 dark:border-gray-800 pb-2">
+                                    <div class="w-9 h-9 rounded-lg bg-blue-600 text-white font-bold flex items-center justify-center text-xs">SB</div>
+                                    <div>
+                                        <h4 class="font-bold text-xs text-gray-900 dark:text-white">soufiane BOUHZAM</h4>
+                                        <span class="text-[10px] bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 font-semibold px-2 py-0.5 rounded">Approvisionneur Mécanique</span>
+                                    </div>
+                                </div>
+                                <div class="space-y-1.5 text-[11px]">
+                                    <p class="font-semibold text-gray-700 dark:text-gray-300">Éléments Visibles & Accessibles :</p>
+                                    <ul class="space-y-1 text-gray-600 dark:text-gray-400">
+                                        <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500"></i> Stock & Articles (Filtre Mécanique & Alertes)</li>
+                                        <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500"></i> Réceptions & Entrées (Validation Bons)</li>
+                                        <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500"></i> Graphiques & Top 20 Pièces Mécaniques</li>
+                                        <li class="flex items-center gap-1.5 text-gray-400 dark:text-gray-600"><i data-lucide="x" class="w-3.5 h-3.5 text-red-400"></i> Masqué : Paramètres & Planning Shifts</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- 2. OMAR BENALLA -->
+                            <div class="bg-gray-50 dark:bg-[#050D17] p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3">
+                                <div class="flex items-center gap-3 border-b border-gray-200 dark:border-gray-800 pb-2">
+                                    <div class="w-9 h-9 rounded-lg bg-purple-600 text-white font-bold flex items-center justify-center text-xs">OB</div>
+                                    <div>
+                                        <h4 class="font-bold text-xs text-gray-900 dark:text-white">Omar BENALLA</h4>
+                                        <span class="text-[10px] bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-300 font-semibold px-2 py-0.5 rounded">Approvisionneur Électrique</span>
+                                    </div>
+                                </div>
+                                <div class="space-y-1.5 text-[11px]">
+                                    <p class="font-semibold text-gray-700 dark:text-gray-300">Éléments Visibles & Accessibles :</p>
+                                    <ul class="space-y-1 text-gray-600 dark:text-gray-400">
+                                        <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500"></i> Stock & Articles (Filtre Électrique & Relais)</li>
+                                        <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500"></i> Réceptions & Commandes SAP Électrique</li>
+                                        <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500"></i> Graphiques & Rotation Matériel HT/BT</li>
+                                        <li class="flex items-center gap-1.5 text-gray-400 dark:text-gray-600"><i data-lucide="x" class="w-3.5 h-3.5 text-red-400"></i> Masqué : Planning Shifts Magasiniers</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- 3. YASSINE AZIZI -->
+                            <div class="bg-gray-50 dark:bg-[#050D17] p-4 rounded-xl border border-ocp/50 space-y-3">
+                                <div class="flex items-center gap-3 border-b border-gray-200 dark:border-gray-800 pb-2">
+                                    <div class="w-9 h-9 rounded-lg bg-ocp text-white font-bold flex items-center justify-center text-xs">YA</div>
+                                    <div>
+                                        <h4 class="font-bold text-xs text-gray-900 dark:text-white">yassine AZIZI</h4>
+                                        <span class="text-[10px] bg-ocp/20 text-ocp-light font-bold px-2 py-0.5 rounded">Responsable Magasin Propriétaire</span>
+                                    </div>
+                                </div>
+                                <div class="space-y-1.5 text-[11px]">
+                                    <p class="font-semibold text-gray-700 dark:text-gray-300">Éléments Visibles & Accessibles :</p>
+                                    <ul class="space-y-1 text-gray-600 dark:text-gray-400">
+                                        <li class="flex items-center gap-1.5"><i data-lucide="check-check" class="w-3.5 h-3.5 text-ocp-light"></i> <strong>Accès Total 100% (Administrateur)</strong></li>
+                                        <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500"></i> Tableau de bord & KPIs Financiers (CMP)</li>
+                                        <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500"></i> Cartographie 2D & Saturation des 5 Zones</li>
+                                        <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500"></i> Validation Audit Inventaire & Paramètres</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- 4. EL ATYQY MOHAMED RAID -->
+                            <div class="bg-gray-50 dark:bg-[#050D17] p-4 rounded-xl border border-ocp/50 space-y-3">
+                                <div class="flex items-center gap-3 border-b border-gray-200 dark:border-gray-800 pb-2">
+                                    <div class="w-9 h-9 rounded-lg bg-ocp text-white font-bold flex items-center justify-center text-xs">RA</div>
+                                    <div>
+                                        <h4 class="font-bold text-xs text-gray-900 dark:text-white">EL ATYQY mohamed raid</h4>
+                                        <span class="text-[10px] bg-ocp/20 text-ocp-light font-bold px-2 py-0.5 rounded">Responsable Magasin Propriétaire</span>
+                                    </div>
+                                </div>
+                                <div class="space-y-1.5 text-[11px]">
+                                    <p class="font-semibold text-gray-700 dark:text-gray-300">Éléments Visibles & Accessibles :</p>
+                                    <ul class="space-y-1 text-gray-600 dark:text-gray-400">
+                                        <li class="flex items-center gap-1.5"><i data-lucide="check-check" class="w-3.5 h-3.5 text-ocp-light"></i> <strong>Accès Total 100% (Administrateur)</strong></li>
+                                        <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500"></i> Supervision des 5 Magasiniers & Shifts</li>
+                                        <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500"></i> Analytics Top 20 & Stocks Dormants</li>
+                                        <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500"></i> Synchronisation SAP & Paramétrage Système</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- 5. GHIZLAN -->
+                            <div class="bg-gray-50 dark:bg-[#050D17] p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3">
+                                <div class="flex items-center gap-3 border-b border-gray-200 dark:border-gray-800 pb-2">
+                                    <div class="w-9 h-9 rounded-lg bg-amber-500 text-white font-bold flex items-center justify-center text-xs">GH</div>
+                                    <div>
+                                        <h4 class="font-bold text-xs text-gray-900 dark:text-white">Ghizlan</h4>
+                                        <span class="text-[10px] bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300 font-semibold px-2 py-0.5 rounded">Préparatrice</span>
+                                    </div>
+                                </div>
+                                <div class="space-y-1.5 text-[11px]">
+                                    <p class="font-semibold text-gray-700 dark:text-gray-300">Éléments Visibles & Accessibles :</p>
+                                    <ul class="space-y-1 text-gray-600 dark:text-gray-400">
+                                        <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500"></i> Sorties & Expéditions (Bons de Picking)</li>
+                                        <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500"></i> Cartographie 2D (Localisation Emplacements)</li>
+                                        <li class="flex items-center gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-green-500"></i> Stock & Articles (Consultation)</li>
+                                        <li class="flex items-center gap-1.5 text-gray-400 dark:text-gray-600"><i data-lucide="x" class="w-3.5 h-3.5 text-red-400"></i> Masqué : Paramètres & KPIs Financiers</li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- CONFIGURATION SYSTEME BASE -->
+                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 max-w-2xl text-xs">
+                        <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-3">
+                            <div>
+                                <p class="font-bold text-gray-900 dark:text-white">Connecteur SAP S/4HANA</p>
+                                <p class="text-gray-500 dark:text-gray-400 text-[10px]">Dernière synchronisation réussie : <strong class="text-ocp-light">04/10/2026 à 09:15</strong></p>
+                            </div>
+                            <span class="px-2 py-1 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 font-bold rounded-lg flex items-center gap-1">
+                                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Connecté
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- SCRIPTS INTERACTIFS (THÈME, FILTRES ET CHART.JS) -->
+    <script>
+        lucide.createIcons();
+
+        let evoChart, entriesExitsChartObj, stockValueChartObj, rotationChartObj, noMovementChartObj;
+        let pieSortiesChartObj, pieEntreesChartObj;
+
+        window.addEventListener('DOMContentLoaded', () => {
+            initCharts();
+            changeActiveUser('raid'); // Profil par défaut au démarrage
+        });
+
+        function initCharts() {
+            // CAMEMBERT 1 : SORTIES PAR CATÉGORIE
+            const ctxPieSorties = document.getElementById('pieChartSorties').getContext('2d');
+            pieSortiesChartObj = new Chart(ctxPieSorties, {
+                type: 'pie',
+                data: {
+                    labels: ['Mécanique (Vannes,SKF)', 'Tuyauterie & Acier', 'Outillage & Mesure', 'Électrique & Relais', 'Consommables'],
+                    datasets: [{
+                        data: [35, 25, 20, 12, 8],
+                        backgroundColor: ['#3B82F6', '#00A859', '#F59E0B', '#A855F7', '#64748B']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+            });
+
+            // CAMEMBERT 2 : ENTRÉES PAR CATÉGORIE
+            const ctxPieEntrees = document.getElementById('pieChartEntrees').getContext('2d');
+            pieEntreesChartObj = new Chart(ctxPieEntrees, {
+                type: 'pie',
+                data: {
+                    labels: ['Mécanique (Vannes,SKF)', 'Tuyauterie & Acier', 'Outillage & Mesure', 'Électrique & Relais', 'Consommables'],
+                    datasets: [{
+                        data: [30, 30, 15, 15, 10],
+                        backgroundColor: ['#00A859', '#3B82F6', '#F59E0B', '#A855F7', '#64748B']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+            });
+
+            // CHART ÉVOLUTION DU STOCK GLOBAL
+            const ctxEvo = document.getElementById('evolutionStockChart').getContext('2d');
+            evoChart = new Chart(ctxEvo, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct'],
+                    datasets: [{
+                        label: 'Volume de Stock (Unités)',
+                        data: [120000, 125000, 131000, 128000, 135000, 142000, 139000, 145000, 147500, 148312],
+                        borderColor: '#00A859',
+                        backgroundColor: 'rgba(0, 168, 89, 0.1)',
+                        fill: true,
+                        tension: 0.3,
+                        borderWidth: 3
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // CHART ENTRÉES VS SORTIES AVEC FILTRE TEMPOREL
+            const ctxEE = document.getElementById('entriesExitsChart').getContext('2d');
+            entriesExitsChartObj = new Chart(ctxEE, {
+                type: 'bar',
+                data: {
+                    labels: ['Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct'],
+                    datasets: [
+                        { label: 'Entrées (Réceptions)', data: [1250, 1400, 1100, 1600, 1350, 1500], backgroundColor: '#00A859' },
+                        { label: 'Sorties (Expéditions)', data: [1100, 1200, 1300, 1250, 1400, 1380], backgroundColor: '#3B82F6' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // CHART VALEUR DU STOCK
+            const ctxVal = document.getElementById('stockValueChart').getContext('2d');
+            stockValueChartObj = new Chart(ctxVal, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct'],
+                    datasets: [{
+                        label: 'Valeur (Millions DH)',
+                        data: [16.5, 17.2, 18.0, 17.8, 18.9, 19.4, 19.1, 20.1, 20.5, 20.76],
+                        borderColor: '#F59E0B',
+                        backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                        fill: true,
+                        tension: 0.3
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // CHART ROTATION
+            const ctxRot = document.getElementById('rotationChart').getContext('2d');
+            rotationChartObj = new Chart(ctxRot, {
+                type: 'line',
+                data: {
+                    labels: ['T1 2025', 'T2 2025', 'T3 2025', 'T4 2025', 'T1 2026', 'T2 2026', 'T3 2026'],
+                    datasets: [{
+                        label: 'Taux de Rotation (Ratios/An)',
+                        data: [4.1, 4.3, 4.0, 4.5, 4.7, 4.6, 4.8],
+                        borderColor: '#A855F7',
+                        borderWidth: 2.5,
+                        tension: 0.2
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // HISTOGRAMME ARTICLES SANS MOUVEMENT
+            const ctxNM = document.getElementById('noMovementChart').getContext('2d');
+            noMovementChartObj = new Chart(ctxNM, {
+                type: 'bar',
+                data: {
+                    labels: ['3 Mois', '6 Mois', '12 Mois', '24 Mois+'],
+                    datasets: [{
+                        label: 'Nombre d\'articles inactifs',
+                        data: [42, 28, 15, 8],
+                        backgroundColor: ['#FBBF24', '#F97316', '#EF4444', '#991B1B']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        // BASCULEUR DE PROFIL UTILISATEUR INTERACTIF EN TEMPS RÉEL
+        function changeActiveUser(userKey) {
+            const avatar = document.getElementById('user-avatar');
+            const nameEl = document.getElementById('user-display-name');
+            const roleEl = document.getElementById('user-display-role');
+            const notifyRole = document.getElementById('notify-user-role');
+            const notifyLevel = document.getElementById('notify-access-level');
+
+            const navs = ['dashboard', 'charts', 'carto', 'shifts', 'stock', 'reception', 'expedition', 'inventory', 'settings'];
+            
+            // Re-afficher tous les boutons par défaut
+            navs.forEach(n => {
+                const btn = document.getElementById('nav-' + n);
+                if(btn) btn.style.display = 'flex';
+            });
+
+            if (userKey === 'soufiane') {
+                avatar.innerText = 'SB';
+                avatar.className = 'w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-md';
+                nameEl.innerText = 'soufiane BOUHZAM';
+                roleEl.innerText = 'Approvisionneur Mécanique';
+                notifyRole.innerText = 'soufiane BOUHZAM (Approvisionneur Mécanique)';
+                notifyLevel.innerText = 'Accès Métier Mécanique';
+
+                // Masquer les sections réservées/non-pertinentes
+                document.getElementById('nav-settings').style.display = 'none';
+                document.getElementById('nav-shifts').style.display = 'none';
+            } else if (userKey === 'omar') {
+                avatar.innerText = 'OB';
+                avatar.className = 'w-8 h-8 rounded-lg bg-purple-600 text-white flex items-center justify-center font-bold text-xs shadow-md';
+                nameEl.innerText = 'Omar BENALLA';
+                roleEl.innerText = 'Approvisionneur Électrique';
+                notifyRole.innerText = 'Omar BENALLA (Approvisionneur Électrique)';
+                notifyLevel.innerText = 'Accès Métier Électrique';
+
+                document.getElementById('nav-settings').style.display = 'none';
+                document.getElementById('nav-shifts').style.display = 'none';
+            } else if (userKey === 'azizi') {
+                avatar.innerText = 'YA';
+                avatar.className = 'w-8 h-8 rounded-lg bg-ocp text-white flex items-center justify-center font-bold text-xs shadow-md';
+                nameEl.innerText = 'yassine AZIZI';
+                roleEl.innerText = 'Responsable / Propriétaire';
+                notifyRole.innerText = 'yassine AZIZI (Responsable Magasin / Propriétaire)';
+                notifyLevel.innerText = 'Accès Admin Complet';
+            } else if (userKey === 'raid') {
+                avatar.innerText = 'RA';
+                avatar.className = 'w-8 h-8 rounded-lg bg-ocp text-white flex items-center justify-center font-bold text-xs shadow-md';
+                nameEl.innerText = 'EL ATYQY mohamed raid';
+                roleEl.innerText = 'Responsable / Propriétaire';
+                notifyRole.innerText = 'EL ATYQY mohamed raid (Responsable Magasin / Propriétaire)';
+                notifyLevel.innerText = 'Accès Admin Complet';
+            } else if (userKey === 'ghizlan') {
+                avatar.innerText = 'GH';
+                avatar.className = 'w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center font-bold text-xs shadow-md';
+                nameEl.innerText = 'Ghizlan';
+                roleEl.innerText = 'Préparatrice';
+                notifyRole.innerText = 'Ghizlan (Préparatrice)';
+                notifyLevel.innerText = 'Accès Picking & Préparation';
+
+                document.getElementById('nav-settings').style.display = 'none';
+                document.getElementById('nav-reception').style.display = 'none';
+            }
+        }
+
+        function updateEntriesExitsChart(mode) {
+            const btns = ['day', 'week', 'month'];
+            btns.forEach(b => {
+                const btn = document.getElementById('ee-btn-' + b);
+                if(b === mode) btn.className = "px-2.5 py-0.5 rounded-lg bg-blue-600 text-white shadow transition";
+                else btn.className = "px-2.5 py-0.5 rounded-lg text-gray-600 dark:text-gray-300 hover:text-white transition";
+            });
+
+            if (mode === 'day') {
+                entriesExitsChartObj.data.labels = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00'];
+                entriesExitsChartObj.data.datasets[0].data = [50, 80, 120, 60, 90, 40];
+                entriesExitsChartObj.data.datasets[1].data = [40, 95, 110, 85, 70, 30];
+            } else if (mode === 'week') {
+                entriesExitsChartObj.data.labels = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'];
+                entriesExitsChartObj.data.datasets[0].data = [320, 450, 390, 510, 480, 120];
+                entriesExitsChartObj.data.datasets[1].data = [300, 420, 410, 490, 460, 90];
+            } else if (mode === 'month') {
+                entriesExitsChartObj.data.labels = ['Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct'];
+                entriesExitsChartObj.data.datasets[0].data = [1250, 1400, 1100, 1600, 1350, 1500];
+                entriesExitsChartObj.data.datasets[1].data = [1100, 1200, 1300, 1250, 1400, 1380];
+            }
+            entriesExitsChartObj.update();
+        }
+
+        function updateEvolutionChart(mode) {
+            const btns = ['day', 'week', 'month', 'year'];
+            btns.forEach(b => {
+                const btn = document.getElementById('time-btn-' + b);
+                if(b === mode) btn.className = "px-3 py-1 rounded-lg bg-ocp text-white shadow transition";
+                else btn.className = "px-3 py-1 rounded-lg text-gray-600 dark:text-gray-300 hover:text-white transition";
+            });
+
+            if (mode === 'day') {
+                evoChart.data.labels = ['08:00', '10:00', '12:00', '14:00', '16:00', '18:00', '20:00'];
+                evoChart.data.datasets[0].data = [148200, 148250, 148190, 148300, 148280, 148310, 148312];
+            } else if (mode === 'week') {
+                evoChart.data.labels = ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
+                evoChart.data.datasets[0].data = [147800, 147950, 148100, 148050, 148200, 148290, 148312];
+            } else if (mode === 'month') {
+                evoChart.data.labels = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct'];
+                evoChart.data.datasets[0].data = [120000, 125000, 131000, 128000, 135000, 142000, 139000, 145000, 147500, 148312];
+            } else if (mode === 'year') {
+                evoChart.data.labels = ['2021', '2022', '2023', '2024', '2025', '2026'];
+                evoChart.data.datasets[0].data = [95000, 108000, 122000, 135000, 142000, 148312];
+            }
+            evoChart.update();
+        }
+
+        function filterStock(category) {
+            const rows = document.querySelectorAll('.stock-row');
+            const btns = ['all', 'jesa', 'ocp', 'cession'];
+            let visibleCount = 0;
+
+            btns.forEach(b => {
+                const btn = document.getElementById('filter-btn-' + b);
+                if (btn) {
+                    if (b === category) {
+                        btn.className = "px-3 py-1 text-xs font-bold rounded-lg bg-ocp text-white shadow transition";
+                    } else {
+                        btn.className = "px-3 py-1 text-xs font-medium rounded-lg text-gray-600 dark:text-gray-300 hover:text-white transition";
+                    }
+                }
+            });
+
+            rows.forEach(row => {
+                if (category === 'all' || row.classList.contains(category)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            document.getElementById('filter-count').innerText = visibleCount + " article" + (visibleCount > 1 ? "s" : "");
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btnText = document.getElementById('theme-toggle-text');
+            const sunIcon = document.getElementById('theme-icon-sun');
+            const moonIcon = document.getElementById('theme-icon-moon');
+
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                btnText.innerText = "Mode Clair";
+                sunIcon.classList.remove('hidden');
+                moonIcon.classList.add('hidden');
+            } else {
+                html.classList.add('dark');
+                btnText.innerText = "Mode Sombre";
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            }
+        }
+
+        function switchTab(viewId) {
+            const views = ['dashboard', 'charts', 'carto', 'shifts', 'stock', 'reception', 'expedition', 'inventory', 'settings'];
+            views.forEach(v => {
+                const el = document.getElementById('view-' + v);
+                if(el) el.classList.add('hidden');
+                const btn = document.getElementById('nav-' + v);
+                if(btn) btn.classList.remove('sidebar-item-active');
+            });
+            document.getElementById('view-' + viewId).classList.remove('hidden');
+            document.getElementById('nav-' + viewId).classList.add('sidebar-item-active');
+        }
+
+        function inspectRack(rackName) {
+            const box = document.getElementById('rack-details-box');
+            if(rackName.includes('R1')) {
+                box.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-gray-300 dark:border-gray-700/80 pb-2">
+                        <h4 class="font-bold text-gray-900 dark:text-white text-sm">Contenu détaillé du Rayonnage : ${rackName}</h4>
+                        <span class="text-[10px] bg-red-600 text-white px-2 py-0.5 rounded font-bold">Alerte Stock Critique</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-[11px] pt-1">
+                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg"><strong>Niveau 3 :</strong> Roulements SKF 6205 (150 pcs)</div>
+                        <div class="p-2 bg-red-100 dark:bg-red-900/40 border border-red-500 rounded-lg text-red-900 dark:text-red-200 font-bold"><strong>Niveau 2 :</strong> Vannes à papillon DN100 (12 pcs - MIN: 25)</div>
+                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg"><strong>Niveau 1 :</strong> Vannes Guillotine (30 pcs)</div>
+                    </div>
+                `;
+            } else {
+                box.innerHTML = `
+                    <div class="flex justify-between items-center border-b border-gray-300 dark:border-gray-700/80 pb-2">
+                        <h4 class="font-bold text-gray-900 dark:text-white text-sm">Contenu détaillé du Rayonnage : ${rackName}</h4>
+                        <span class="text-[10px] bg-ocp text-white px-2 py-0.5 rounded font-bold">Statut: Conforme</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2 text-[11px] pt-1">
+                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg"><strong>Niveau 3 :</strong> Pièces conformes</div>
+                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg"><strong>Niveau 2 :</strong> Outillage & Électrique</div>
+                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg"><strong>Niveau 1 :</strong> Consommables</div>
+                    </div>
+                `;
+            }
+        }
+
+        function selectZone(zoneKey) {
+            const title = document.getElementById('zone-title');
+            if(zoneKey === 'grand-abri') title.innerText = 'Grand Abri (Surface: 600 m² - Stockage Matériel Lourd)';
+            else if(zoneKey === 'petit-abri') title.innerText = 'Petit Abri (Outillage spécialisé & Consommables rapides)';
+            else if(zoneKey === 'zone-ext') title.innerText = 'Zone Extérieure (Parc Lourd - Tuyauteries DN300 & Conteneurs)';
+            else if(zoneKey === 'grand-modulaire') title.innerText = 'Grand Modulaire (Bureaux Magasiniers & Tool Crib Outillage)';
+            else title.innerText = 'Aménagement Hangar Rayonnages (Dimension: 13 085mm x 6 485mm)';
+        }
+    </script>
+</body>
+</html>
