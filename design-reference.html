@@ -53,14 +53,14 @@
         }
 
         /* =========================================================================
-           ANIMATIONS SPÉCIFIQUES PAR FENÊTRE (DISTINCTES, LENTES ET EFFICACES)
+           ANIMATIONS SPÉCIFIQUES PAR FENÊTRE (DISTINCTES, ULTRA-LENTES ET FLUIDES)
            ========================================================================= */
 
         /* 1. TABLEAU DE BORD : Cascade Élégante & Élévation Verticale */
         @keyframes animDashboard {
             0% {
                 opacity: 0;
-                transform: translateY(26px);
+                transform: translateY(32px);
             }
             100% {
                 opacity: 1;
@@ -68,7 +68,7 @@
             }
         }
         .anim-dashboard {
-            animation: animDashboard 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: animDashboard 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             will-change: opacity, transform;
         }
 
@@ -76,8 +76,8 @@
         @keyframes animCharts {
             0% {
                 opacity: 0;
-                transform: scale(0.94);
-                filter: blur(4px);
+                transform: scale(0.93);
+                filter: blur(6px);
             }
             100% {
                 opacity: 1;
@@ -86,7 +86,7 @@
             }
         }
         .anim-charts {
-            animation: animCharts 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: animCharts 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             will-change: opacity, transform, filter;
         }
 
@@ -94,7 +94,7 @@
         @keyframes animCarto {
             0% {
                 opacity: 0;
-                transform: perspective(1000px) rotateX(6deg) translateY(22px);
+                transform: perspective(1000px) rotateX(7deg) translateY(28px);
             }
             100% {
                 opacity: 1;
@@ -102,7 +102,7 @@
             }
         }
         .anim-carto {
-            animation: animCarto 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: animCarto 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             will-change: opacity, transform;
         }
 
@@ -110,7 +110,7 @@
         @keyframes animShifts {
             0% {
                 opacity: 0;
-                transform: translateX(36px);
+                transform: translateX(45px);
             }
             100% {
                 opacity: 1;
@@ -118,7 +118,7 @@
             }
         }
         .anim-shifts {
-            animation: animShifts 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: animShifts 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             will-change: opacity, transform;
         }
 
@@ -126,7 +126,7 @@
         @keyframes animStock {
             0% {
                 opacity: 0;
-                transform: translateY(-24px);
+                transform: translateY(-30px);
             }
             100% {
                 opacity: 1;
@@ -134,7 +134,7 @@
             }
         }
         .anim-stock {
-            animation: animStock 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: animStock 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             will-change: opacity, transform;
         }
 
@@ -142,7 +142,7 @@
         @keyframes animReception {
             0% {
                 opacity: 0;
-                transform: translateX(-36px);
+                transform: translateX(-45px);
             }
             100% {
                 opacity: 1;
@@ -150,7 +150,7 @@
             }
         }
         .anim-reception {
-            animation: animReception 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: animReception 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             will-change: opacity, transform;
         }
 
@@ -158,7 +158,7 @@
         @keyframes animExpedition {
             0% {
                 opacity: 0;
-                transform: scale(1.03) translateY(-14px);
+                transform: scale(1.04) translateY(-18px);
             }
             100% {
                 opacity: 1;
@@ -166,7 +166,7 @@
             }
         }
         .anim-expedition {
-            animation: animExpedition 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: animExpedition 1.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             will-change: opacity, transform;
         }
 
@@ -174,8 +174,8 @@
         @keyframes animInventory {
             0% {
                 opacity: 0;
-                transform: scale(0.97);
-                filter: blur(6px) brightness(1.15);
+                transform: scale(0.96);
+                filter: blur(8px) brightness(1.18);
             }
             100% {
                 opacity: 1;
@@ -184,7 +184,7 @@
             }
         }
         .anim-inventory {
-            animation: animInventory 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: animInventory 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             will-change: opacity, transform, filter;
         }
 
@@ -192,7 +192,7 @@
         @keyframes animSettings {
             0% {
                 opacity: 0;
-                transform: perspective(1000px) rotateY(-5deg) translateY(18px);
+                transform: perspective(1000px) rotateY(-6deg) translateY(24px);
             }
             100% {
                 opacity: 1;
@@ -200,11 +200,11 @@
             }
         }
         .anim-settings {
-            animation: animSettings 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: animSettings 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             will-change: opacity, transform;
         }
 
-        /* Cascade échelonnée (Stagger) universelle pour tous les blocs enfants de chaque fenêtre */
+        /* Cascade échelonnée (Stagger) lente et majestueuse pour tous les blocs enfants */
         .anim-dashboard > *,
         .anim-charts > *,
         .anim-carto > *,
@@ -215,38 +215,38 @@
         .anim-inventory > *,
         .anim-settings > * {
             animation: inherit;
-            animation-duration: 0.85s;
+            animation-duration: 1.4s;
             animation-fill-mode: both;
         }
         .anim-dashboard > *:nth-child(1), .anim-charts > *:nth-child(1), .anim-carto > *:nth-child(1),
         .anim-shifts > *:nth-child(1), .anim-stock > *:nth-child(1), .anim-reception > *:nth-child(1),
         .anim-expedition > *:nth-child(1), .anim-inventory > *:nth-child(1), .anim-settings > *:nth-child(1) {
-            animation-delay: 0.05s;
+            animation-delay: 0.10s;
         }
         .anim-dashboard > *:nth-child(2), .anim-charts > *:nth-child(2), .anim-carto > *:nth-child(2),
         .anim-shifts > *:nth-child(2), .anim-stock > *:nth-child(2), .anim-reception > *:nth-child(2),
         .anim-expedition > *:nth-child(2), .anim-inventory > *:nth-child(2), .anim-settings > *:nth-child(2) {
-            animation-delay: 0.12s;
+            animation-delay: 0.22s;
         }
         .anim-dashboard > *:nth-child(3), .anim-charts > *:nth-child(3), .anim-carto > *:nth-child(3),
         .anim-shifts > *:nth-child(3), .anim-stock > *:nth-child(3), .anim-reception > *:nth-child(3),
         .anim-expedition > *:nth-child(3), .anim-inventory > *:nth-child(3), .anim-settings > *:nth-child(3) {
-            animation-delay: 0.20s;
+            animation-delay: 0.36s;
         }
         .anim-dashboard > *:nth-child(4), .anim-charts > *:nth-child(4), .anim-carto > *:nth-child(4),
         .anim-shifts > *:nth-child(4), .anim-stock > *:nth-child(4), .anim-reception > *:nth-child(4),
         .anim-expedition > *:nth-child(4), .anim-inventory > *:nth-child(4), .anim-settings > *:nth-child(4) {
-            animation-delay: 0.28s;
+            animation-delay: 0.50s;
         }
         .anim-dashboard > *:nth-child(5), .anim-charts > *:nth-child(5), .anim-carto > *:nth-child(5),
         .anim-shifts > *:nth-child(5), .anim-stock > *:nth-child(5), .anim-reception > *:nth-child(5),
         .anim-expedition > *:nth-child(5), .anim-inventory > *:nth-child(5), .anim-settings > *:nth-child(5) {
-            animation-delay: 0.36s;
+            animation-delay: 0.64s;
         }
 
-        /* 10. GÉNÉRALISATION : Survol doux des lignes de tableaux */
+        /* 10. GÉNÉRALISATION : Survol doux et lent des lignes de tableaux */
         tbody tr {
-            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
         tbody tr:hover {
             background-color: rgba(0, 168, 89, 0.08) !important;
@@ -275,22 +275,22 @@
 
         /* Micro-interactions sur les cartes (Lévitation douce et ombres OCP) */
         .card-interactive {
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                        box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
-                        border-color 0.4s ease !important;
+            transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                        box-shadow 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+                        border-color 0.5s ease !important;
             will-change: transform, box-shadow;
         }
         .card-interactive:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 18px 32px -10px rgba(0, 0, 0, 0.25), 0 0 18px rgba(0, 168, 89, 0.18);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 36px -10px rgba(0, 0, 0, 0.28), 0 0 22px rgba(0, 168, 89, 0.22);
         }
 
-        /* Boutons du menu latéral avec glissement fluide */
+        /* Boutons du menu latéral avec glissement fluide et lent */
         .sidebar-btn {
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
         .sidebar-btn:hover {
-            transform: translateX(6px);
+            transform: translateX(8px);
         }
 
         /* Respiration lente des indicateurs de statut (Slow Pulse) */
@@ -324,20 +324,20 @@
             animation: alertGlowSlow 3.2s infinite ease-in-out;
         }
 
-        /* Rayonnages interactifs avec zoom fluide */
+        /* Rayonnages interactifs avec zoom fluide et lent */
         .rack-slot {
-            transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1) !important;
             will-change: transform, box-shadow;
         }
         .rack-slot:hover {
-            transform: translateY(-4px) scale(1.04);
-            box-shadow: 0 14px 24px -6px rgba(0, 0, 0, 0.35);
+            transform: translateY(-5px) scale(1.04);
+            box-shadow: 0 16px 28px -6px rgba(0, 0, 0, 0.38);
             z-index: 10;
         }
 
-        /* Barres de progression avec remplissage lent */
+        /* Barres de progression avec remplissage ultra-lent et majestueux */
         .progress-bar-fill {
-            transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            transition: width 2.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
             will-change: width;
         }
 
@@ -1528,7 +1528,7 @@
         window.addEventListener('DOMContentLoaded', () => {
             if (window.Chart) {
                 Chart.defaults.animation = {
-                    duration: 1600,
+                    duration: 2400,
                     easing: 'easeOutQuart'
                 };
             }
@@ -1860,15 +1860,15 @@
                     if (noMovementChartObj) noMovementChartObj.update();
                 }, 90);
             } else if (viewId === 'carto') {
-                // Animation d'apparition séquentielle des rayonnages du plan
+                // Animation d'apparition séquentielle lente des rayonnages du plan
                 document.querySelectorAll('.rack-slot').forEach((rack, idx) => {
                     rack.style.opacity = '0';
-                    rack.style.transform = 'scale(0.92) translateY(12px)';
+                    rack.style.transform = 'scale(0.92) translateY(14px)';
                     setTimeout(() => {
-                        rack.style.transition = 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+                        rack.style.transition = 'all 0.8s cubic-bezier(0.16, 1, 0.3, 1)';
                         rack.style.opacity = '1';
                         rack.style.transform = 'scale(1) translateY(0)';
-                    }, 120 + idx * 55);
+                    }, 150 + idx * 80);
                 });
             } else if (viewId === 'inventory') {
                 animateInventoryKpis();
@@ -1878,8 +1878,8 @@
         function animateInventoryKpis() {
             const elIra = document.getElementById('kpi-inventory-ira');
             const elGap = document.getElementById('kpi-inventory-gap');
-            if (elIra) animateDecimalCounter(elIra, 99.1, 1600, '%', 1);
-            if (elGap) animateDecimalCounter(elGap, 0.02, 1600, '%', 2);
+            if (elIra) animateDecimalCounter(elIra, 99.1, 2600, '%', 1);
+            if (elGap) animateDecimalCounter(elGap, 0.02, 2600, '%', 2);
         }
 
         function animateDecimalCounter(el, target, duration, suffix = '', decimals = 1) {
@@ -1903,11 +1903,11 @@
         function runSmoothCounters() {
             const elArticles = document.getElementById('kpi-articles-count');
             const elValo = document.getElementById('kpi-valorisation-count');
-            if (elArticles) animateCounter(elArticles, 148312, 1600);
-            if (elValo) animateCounter(elValo, 20760582, 1800);
+            if (elArticles) animateCounter(elArticles, 148312, 2800);
+            if (elValo) animateCounter(elValo, 20760582, 3200);
         }
 
-        function animateCounter(el, target, duration = 1600) {
+        function animateCounter(el, target, duration = 2800) {
             if (!el) return;
             const startTime = performance.now();
             function update(currentTime) {
