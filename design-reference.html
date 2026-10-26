@@ -33,9 +33,10 @@
     </script>
     <style>
         .sidebar-item-active {
-            background-color: #008343;
+            background-color: #008343 !important;
             color: #FFFFFF !important;
             font-weight: 600;
+            box-shadow: 0 4px 14px -2px rgba(0, 131, 67, 0.45);
         }
         .custom-scrollbar::-webkit-scrollbar {
             width: 5px;
@@ -49,6 +50,121 @@
             display: grid;
             grid-template-columns: repeat(6, 1fr);
             gap: 10px;
+        }
+
+        /* ========================================================
+           ANIMATIONS LENTES, FLUIDES ET EFFICACES (SMOOTH & ELEGANT)
+           ======================================================== */
+
+        /* 1. Apparition progressive des sections (Transition douce et lente) */
+        @keyframes smoothFadeInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(22px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .view-animated {
+            animation: smoothFadeInUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: opacity, transform;
+        }
+
+        /* Effet d'apparition en cascade (stagger) des éléments */
+        .stagger-item {
+            opacity: 0;
+            animation: smoothFadeInUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: opacity, transform;
+        }
+        .stagger-1 { animation-delay: 0.06s; }
+        .stagger-2 { animation-delay: 0.14s; }
+        .stagger-3 { animation-delay: 0.22s; }
+        .stagger-4 { animation-delay: 0.30s; }
+        .stagger-5 { animation-delay: 0.38s; }
+        .stagger-6 { animation-delay: 0.46s; }
+
+        /* 2. Micro-interactions sur les cartes (Lévitation douce et ombres OCP) */
+        .card-interactive {
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                        box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                        border-color 0.4s ease !important;
+            will-change: transform, box-shadow;
+        }
+        .card-interactive:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 32px -10px rgba(0, 0, 0, 0.25), 0 0 18px rgba(0, 168, 89, 0.18);
+        }
+
+        /* 3. Boutons du menu latéral avec glissement fluide */
+        .sidebar-btn {
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+        .sidebar-btn:hover {
+            transform: translateX(5px);
+        }
+
+        /* 4. Respiration lente des indicateurs de statut (Slow Pulse) */
+        @keyframes gentleBreathe {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.08);
+                opacity: 0.8;
+            }
+        }
+        .pulse-slow {
+            animation: gentleBreathe 3.4s infinite ease-in-out;
+            display: inline-block;
+        }
+
+        /* 5. Alerte avec lueur pulsée lente */
+        @keyframes alertGlowSlow {
+            0%, 100% {
+                border-color: rgba(239, 68, 68, 0.7);
+                box-shadow: 0 4px 14px rgba(239, 68, 68, 0.1);
+            }
+            50% {
+                border-color: rgba(239, 68, 68, 1);
+                box-shadow: 0 8px 24px rgba(239, 68, 68, 0.25);
+            }
+        }
+        .alert-pulse-slow {
+            animation: alertGlowSlow 3.2s infinite ease-in-out;
+        }
+
+        /* 6. Rayonnages interactifs avec zoom fluide */
+        .rack-slot {
+            transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            will-change: transform, box-shadow;
+        }
+        .rack-slot:hover {
+            transform: translateY(-4px) scale(1.04);
+            box-shadow: 0 14px 24px -6px rgba(0, 0, 0, 0.35);
+            z-index: 10;
+        }
+
+        /* 7. Barres de progression avec remplissage lent */
+        .progress-bar-fill {
+            transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            will-change: width;
+        }
+
+        /* 8. Effet de halo doux permanent sur les KPIs clés */
+        @keyframes subtleOcpGlow {
+            0%, 100% {
+                box-shadow: 0 10px 25px -5px rgba(0, 131, 67, 0.3);
+            }
+            50% {
+                box-shadow: 0 14px 34px -3px rgba(0, 168, 89, 0.5);
+            }
+        }
+        .kpi-glow {
+            animation: subtleOcpGlow 4s infinite ease-in-out;
         }
     </style>
 </head>
@@ -178,23 +294,23 @@
                 </div>
 
                 <!-- 1. TABLEAU DE BORD GLOBAL RESTRUCTURÉ -->
-                <div id="view-dashboard" class="space-y-6">
-                    <div class="flex justify-between items-center">
+                <div id="view-dashboard" class="space-y-6 view-animated">
+                    <div class="flex justify-between items-center stagger-item stagger-1">
                         <div>
                             <h2 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Tableau de Bord Global & KPIs d'Exploitation</h2>
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Synthèse des volumes, valorisation, alerte stock minimum, effectif et camemberts de flux par catégorie.</p>
                         </div>
-                        <span class="text-xs bg-[#008343]/10 dark:bg-[#008343]/20 text-[#008343] dark:text-[#00A859] font-semibold px-3 py-1.5 rounded-lg border border-[#008343]/30 dark:border-[#008343]/40 flex items-center gap-1.5">
-                            <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Données synchronisées SAP
+                        <span class="text-xs bg-[#008343]/10 dark:bg-[#008343]/20 text-[#008343] dark:text-[#00A859] font-semibold px-3 py-1.5 rounded-lg border border-[#008343]/30 dark:border-[#008343]/40 flex items-center gap-1.5 pulse-slow">
+                            <i data-lucide="sparkles" class="w-3.5 h-3.5 text-ocp-light"></i> Données synchronisées SAP
                         </span>
                     </div>
 
                     <!-- 1. KPIS EN HAUT : TOTAL ARTICLES & VALORISATION -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="bg-white dark:bg-[#132A45] text-gray-900 dark:text-white p-6 rounded-2xl relative overflow-hidden shadow-lg border border-gray-200 dark:border-gray-800 flex justify-between items-center transition-colors">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 stagger-item stagger-2">
+                        <div class="bg-white dark:bg-[#132A45] text-gray-900 dark:text-white p-6 rounded-2xl relative overflow-hidden shadow-lg border border-gray-200 dark:border-gray-800 flex justify-between items-center transition-colors card-interactive">
                             <div class="z-10 space-y-2">
                                 <p class="text-[11px] font-semibold tracking-wider text-blue-600 dark:text-blue-200 uppercase">TOTAL GÉNÉRAL D'ARTICLES (UNITÉS PHYSIQUES)</p>
-                                <h3 class="text-3xl font-extrabold tracking-tight">148 312 <span class="text-lg font-normal text-gray-500 dark:text-gray-300">unités</span></h3>
+                                <h3 class="text-3xl font-extrabold tracking-tight"><span id="kpi-articles-count">148 312</span> <span class="text-lg font-normal text-gray-500 dark:text-gray-300">unités</span></h3>
                                 <p class="text-xs text-blue-600 dark:text-blue-200 flex items-center gap-1 pt-1">
                                     <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-ocp-light"></i> Catalogue : <strong>5 références actives sur 4 zones physiques</strong>
                                 </p>
@@ -204,10 +320,10 @@
                             </div>
                         </div>
 
-                        <div class="bg-[#008343] text-white p-6 rounded-2xl relative overflow-hidden shadow-lg flex justify-between items-center">
+                        <div class="bg-[#008343] text-white p-6 rounded-2xl relative overflow-hidden shadow-lg flex justify-between items-center card-interactive kpi-glow">
                             <div class="z-10 space-y-2">
                                 <p class="text-[11px] font-semibold tracking-wider text-green-100 uppercase">VALORISATION TOTALE DU STOCK</p>
-                                <h3 class="text-3xl font-extrabold tracking-tight">20 760 582 <span class="text-lg font-normal text-gray-100">DH</span></h3>
+                                <h3 class="text-3xl font-extrabold tracking-tight"><span id="kpi-valorisation-count">20 760 582</span> <span class="text-lg font-normal text-gray-100">DH</span></h3>
                                 <p class="text-xs text-green-100 flex items-center gap-1 pt-1">
                                     <i data-lucide="coins" class="w-3.5 h-3.5"></i> Valorisation calculée au Coût Moyen Pondéré (CMP)
                                 </p>
@@ -219,7 +335,7 @@
                     </div>
 
                     <!-- 2. BANDEAU ALERTE CRITIQUE STOCK MINIMUM -->
-                    <div class="bg-red-100 dark:bg-red-900/30 border-2 border-red-500/80 p-4 rounded-2xl flex items-center justify-between shadow-lg">
+                    <div class="bg-red-100 dark:bg-red-900/30 border-2 border-red-500/80 p-4 rounded-2xl flex items-center justify-between shadow-lg stagger-item stagger-3 alert-pulse-slow">
                         <div class="flex items-center gap-3.5">
                             <div class="p-2.5 bg-red-500/20 text-red-600 dark:text-red-400 rounded-xl border border-red-500/40">
                                 <i data-lucide="alert-triangle" class="w-6 h-6 animate-pulse"></i>
@@ -240,7 +356,7 @@
                     </div>
 
                     <!-- 3. AFFECTATION DES 5 MAGASINIERS PAR POSTE (AUJOURD'HUI) -->
-                    <div class="space-y-3">
+                    <div class="space-y-3 stagger-item stagger-4">
                         <div class="flex justify-between items-center">
                             <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="users" class="w-4 h-4 text-ocp-light"></i> Affectation des 5 Magasiniers par Poste (Aujourd'hui)
@@ -251,7 +367,7 @@
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-green-500/50 shadow-sm relative overflow-hidden">
+                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-green-500/50 shadow-sm relative overflow-hidden card-interactive">
                                 <div class="w-1.5 h-full bg-green-500 absolute left-0 top-0"></div>
                                 <div class="pl-2 space-y-1.5">
                                     <div class="flex justify-between items-center">
@@ -261,12 +377,12 @@
                                     <p class="text-xs font-extrabold text-gray-900 dark:text-white">Karim BENANI <span class="text-[10px] text-gray-500 dark:text-gray-400 font-normal">(Chef)</span></p>
                                     <p class="text-xs font-bold text-gray-800 dark:text-gray-200">Mohammed ALAMI <span class="text-[10px] text-gray-500 dark:text-gray-400 font-normal">(Cariste)</span></p>
                                     <div class="pt-1 flex items-center gap-1 text-[10px] text-green-600 dark:text-green-400 font-bold">
-                                        <span class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span> En Service Actif (Réceptions)
+                                        <span class="w-2 h-2 bg-green-500 rounded-full pulse-slow"></span> En Service Actif (Réceptions)
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-blue-500/50 shadow-sm relative overflow-hidden">
+                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-blue-500/50 shadow-sm relative overflow-hidden card-interactive">
                                 <div class="w-1.5 h-full bg-blue-500 absolute left-0 top-0"></div>
                                 <div class="pl-2 space-y-1.5">
                                     <div class="flex justify-between items-center">
@@ -281,7 +397,7 @@
                                 </div>
                             </div>
 
-                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-purple-500/50 shadow-sm relative overflow-hidden">
+                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-purple-500/50 shadow-sm relative overflow-hidden card-interactive">
                                 <div class="w-1.5 h-full bg-purple-500 absolute left-0 top-0"></div>
                                 <div class="pl-2 space-y-1.5">
                                     <div class="flex justify-between items-center">
@@ -296,7 +412,7 @@
                                 </div>
                             </div>
 
-                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-300 dark:border-gray-700 shadow-sm relative overflow-hidden">
+                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-300 dark:border-gray-700 shadow-sm relative overflow-hidden card-interactive">
                                 <div class="w-1.5 h-full bg-gray-500 absolute left-0 top-0"></div>
                                 <div class="pl-2 space-y-1.5">
                                     <div class="flex justify-between items-center">
@@ -314,14 +430,14 @@
                     </div>
 
                     <!-- 4. CAMEMBERTS 1 & 2 DANS LE TABLEAU DE BORD -->
-                    <div class="space-y-3">
+                    <div class="space-y-3 stagger-item stagger-5">
                         <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
                             <i data-lucide="pie-chart" class="w-4 h-4 text-ocp-light"></i> Répartition des Mouvements par Catégorie d'Articles (Camemberts)
                         </p>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <!-- CAMEMBERT 1 : SORTIES PAR CATÉGORIE -->
-                            <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                            <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                                 <div class="flex justify-between items-center">
                                     <h3 class="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
                                         <i data-lucide="arrow-up-right" class="w-4 h-4 text-blue-500"></i> Camembert 1 : Répartition des Sorties par Catégorie
@@ -334,7 +450,7 @@
                             </div>
 
                             <!-- CAMEMBERT 2 : ENTRÉES PAR CATÉGORIE -->
-                            <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                            <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                                 <div class="flex justify-between items-center">
                                     <h3 class="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
                                         <i data-lucide="arrow-down-left" class="w-4 h-4 text-ocp-light"></i> Camembert 2 : Répartition des Entrées par Catégorie
@@ -349,7 +465,7 @@
                     </div>
 
                     <!-- 5. OCCUPATION ET CAPACITÉ DÉTAILLÉE PAR ZONE -->
-                    <div class="space-y-3">
+                    <div class="space-y-3 stagger-item stagger-6">
                         <div class="flex justify-between items-center">
                             <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
                                 <i data-lucide="layers" class="w-4 h-4 text-ocp-light"></i> Occupation, Nombre d'Articles & Capacité Restante par Zone
@@ -360,7 +476,7 @@
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                                 <div class="flex justify-between items-start">
                                     <div>
                                         <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">Hangar Rayonnages</span>
@@ -378,12 +494,12 @@
                                         <strong class="text-ocp-light">17 085 units</strong>
                                     </div>
                                     <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden mt-1">
-                                        <div class="bg-ocp h-full rounded-full" style="width: 78.5%;"></div>
+                                        <div class="bg-ocp h-full rounded-full progress-bar-fill" style="width: 78.5%;"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                                 <div class="flex justify-between items-start">
                                     <div>
                                         <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">Grand Abri (600 m²)</span>
@@ -401,12 +517,12 @@
                                         <strong class="text-blue-500">16 700 units</strong>
                                     </div>
                                     <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden mt-1">
-                                        <div class="bg-blue-500 h-full rounded-full" style="width: 68.2%;"></div>
+                                        <div class="bg-blue-500 h-full rounded-full progress-bar-fill" style="width: 68.2%;"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                                 <div class="flex justify-between items-start">
                                     <div>
                                         <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">Petit Abri</span>
@@ -424,12 +540,12 @@
                                         <strong class="text-amber-500">2 710 units</strong>
                                     </div>
                                     <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden mt-1">
-                                        <div class="bg-amber-500 h-full rounded-full" style="width: 82%;"></div>
+                                        <div class="bg-amber-500 h-full rounded-full progress-bar-fill" style="width: 82%;"></div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                                 <div class="flex justify-between items-start">
                                     <div>
                                         <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">Parc Extérieur</span>
@@ -447,7 +563,7 @@
                                         <strong class="text-purple-400">19 973 units</strong>
                                     </div>
                                     <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden mt-1">
-                                        <div class="bg-purple-500 h-full rounded-full" style="width: 65.4%;"></div>
+                                        <div class="bg-purple-500 h-full rounded-full progress-bar-fill" style="width: 65.4%;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -748,7 +864,7 @@
                                 </div>
 
                                 <div class="rack-grid text-center">
-                                    <div onclick="inspectRack('Allée 1 - Rack R1')" class="cursor-pointer bg-white dark:bg-[#132A45] border-2 border-red-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
+                                    <div onclick="inspectRack('Allée 1 - Rack R1')" class="rack-slot cursor-pointer bg-white dark:bg-[#132A45] border-2 border-red-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
                                         <span class="text-[10px] font-bold text-red-600 dark:text-red-400">RACK R1 (ALERTE)</span>
                                         <div class="space-y-1">
                                             <div class="bg-green-100 dark:bg-green-600/30 text-[9px] p-1 rounded text-green-800 dark:text-green-200">SKF 6205</div>
@@ -757,7 +873,7 @@
                                         <span class="text-[9px] text-gray-500 dark:text-gray-400">Allée 1 (120cm)</span>
                                     </div>
 
-                                    <div onclick="inspectRack('Allée 2 - Rack R2')" class="cursor-pointer bg-white dark:bg-[#132A45] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
+                                    <div onclick="inspectRack('Allée 2 - Rack R2')" class="rack-slot cursor-pointer bg-white dark:bg-[#132A45] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
                                         <span class="text-[10px] font-bold text-green-600 dark:text-green-400">RACK R2</span>
                                         <div class="space-y-1">
                                             <div class="bg-green-100 dark:bg-green-600/30 text-[9px] p-1 rounded text-green-800 dark:text-green-200">Joints Toriques</div>
@@ -766,7 +882,7 @@
                                         <span class="text-[9px] text-gray-500 dark:text-gray-400">Allée 2 (120cm)</span>
                                     </div>
 
-                                    <div onclick="inspectRack('Allée 3 - Rack R3')" class="cursor-pointer bg-white dark:bg-[#132A45] border-2 border-amber-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
+                                    <div onclick="inspectRack('Allée 3 - Rack R3')" class="rack-slot cursor-pointer bg-white dark:bg-[#132A45] border-2 border-amber-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
                                         <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400">RACK R3</span>
                                         <div class="space-y-1">
                                             <div class="bg-amber-100 dark:bg-amber-600/30 text-[9px] p-1 rounded text-amber-800 dark:text-amber-200">Filtres Hydr.</div>
@@ -775,7 +891,7 @@
                                         <span class="text-[9px] text-gray-500 dark:text-gray-400">Allée 3 (120cm)</span>
                                     </div>
 
-                                    <div onclick="inspectRack('Allée 4 - Rack R4')" class="cursor-pointer bg-white dark:bg-[#132A45] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
+                                    <div onclick="inspectRack('Allée 4 - Rack R4')" class="rack-slot cursor-pointer bg-white dark:bg-[#132A45] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
                                         <span class="text-[10px] font-bold text-green-600 dark:text-green-400">RACK R4</span>
                                         <div class="space-y-1">
                                             <div class="bg-green-100 dark:bg-green-600/30 text-[9px] p-1 rounded text-green-800 dark:text-green-200">Relais 24V</div>
@@ -784,7 +900,7 @@
                                         <span class="text-[9px] text-gray-500 dark:text-gray-400">Allée 4 (120cm)</span>
                                     </div>
 
-                                    <div onclick="inspectRack('Allée 5 - Rack R5')" class="cursor-pointer bg-white dark:bg-[#132A45] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
+                                    <div onclick="inspectRack('Allée 5 - Rack R5')" class="rack-slot cursor-pointer bg-white dark:bg-[#132A45] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
                                         <span class="text-[10px] font-bold text-green-600 dark:text-green-400">RACK R5</span>
                                         <div class="space-y-1">
                                             <div class="bg-green-100 dark:bg-green-600/30 text-[9px] p-1 rounded text-green-800 dark:text-green-200">Blindage Broyeur</div>
@@ -793,7 +909,7 @@
                                         <span class="text-[9px] text-gray-500 dark:text-gray-400">Allée 5 (120cm)</span>
                                     </div>
 
-                                    <div onclick="inspectRack('Allée 6 - Rack R6')" class="cursor-pointer bg-white dark:bg-[#132A45] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
+                                    <div onclick="inspectRack('Allée 6 - Rack R6')" class="rack-slot cursor-pointer bg-white dark:bg-[#132A45] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
                                         <span class="text-[10px] font-bold text-green-600 dark:text-green-400">RACK R6</span>
                                         <div class="space-y-1">
                                             <div class="bg-green-100 dark:bg-green-600/30 text-[9px] p-1 rounded text-green-800 dark:text-green-200">Clés Dynamom.</div>
@@ -1223,8 +1339,16 @@
         let pieSortiesChartObj, pieEntreesChartObj;
 
         window.addEventListener('DOMContentLoaded', () => {
+            if (window.Chart) {
+                Chart.defaults.animation = {
+                    duration: 1600,
+                    easing: 'easeOutQuart'
+                };
+            }
             initCharts();
             changeActiveUser('raid'); // Profil par défaut au démarrage
+            runSmoothCounters();
+            animateProgressBars();
         });
 
         function initCharts() {
@@ -1503,12 +1627,71 @@
             const views = ['dashboard', 'charts', 'carto', 'shifts', 'stock', 'reception', 'expedition', 'inventory', 'settings'];
             views.forEach(v => {
                 const el = document.getElementById('view-' + v);
-                if(el) el.classList.add('hidden');
+                if(el) {
+                    el.classList.add('hidden');
+                    el.classList.remove('view-animated');
+                }
                 const btn = document.getElementById('nav-' + v);
                 if(btn) btn.classList.remove('sidebar-item-active');
             });
-            document.getElementById('view-' + viewId).classList.remove('hidden');
-            document.getElementById('nav-' + viewId).classList.add('sidebar-item-active');
+            const target = document.getElementById('view-' + viewId);
+            if(target) {
+                target.classList.remove('hidden');
+                void target.offsetWidth; // Déclenche le reflow pour relancer l'animation fluide
+                target.classList.add('view-animated');
+            }
+            const activeBtn = document.getElementById('nav-' + viewId);
+            if(activeBtn) activeBtn.classList.add('sidebar-item-active');
+
+            if (viewId === 'dashboard') {
+                runSmoothCounters();
+                animateProgressBars();
+            } else if (viewId === 'charts') {
+                setTimeout(() => {
+                    if (evoChart) evoChart.update();
+                    if (entriesExitsChartObj) entriesExitsChartObj.update();
+                    if (stockValueChartObj) stockValueChartObj.update();
+                    if (rotationChartObj) rotationChartObj.update();
+                    if (noMovementChartObj) noMovementChartObj.update();
+                }, 80);
+            }
+        }
+
+        function runSmoothCounters() {
+            const elArticles = document.getElementById('kpi-articles-count');
+            const elValo = document.getElementById('kpi-valorisation-count');
+            if (elArticles) animateCounter(elArticles, 148312, 1600);
+            if (elValo) animateCounter(elValo, 20760582, 1800);
+        }
+
+        function animateCounter(el, target, duration = 1600) {
+            if (!el) return;
+            const startTime = performance.now();
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                // easeOutQuart (doux, progressif et fluide)
+                const ease = 1 - Math.pow(1 - progress, 4);
+                const val = Math.round(target * ease);
+                el.innerText = val.toLocaleString('fr-FR');
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    el.innerText = target.toLocaleString('fr-FR');
+                }
+            }
+            requestAnimationFrame(update);
+        }
+
+        function animateProgressBars() {
+            document.querySelectorAll('.progress-bar-fill').forEach(bar => {
+                const finalWidth = bar.getAttribute('data-width') || bar.style.width;
+                bar.setAttribute('data-width', finalWidth);
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = finalWidth;
+                }, 100);
+            });
         }
 
         function inspectRack(rackName) {
@@ -1517,27 +1700,30 @@
                 box.innerHTML = `
                     <div class="flex justify-between items-center border-b border-gray-300 dark:border-gray-700/80 pb-2">
                         <h4 class="font-bold text-gray-900 dark:text-white text-sm">Contenu détaillé du Rayonnage : ${rackName}</h4>
-                        <span class="text-[10px] bg-red-600 text-white px-2 py-0.5 rounded font-bold">Alerte Stock Critique</span>
+                        <span class="text-[10px] bg-red-600 text-white px-2 py-0.5 rounded font-bold alert-pulse-slow">Alerte Stock Critique</span>
                     </div>
                     <div class="grid grid-cols-3 gap-2 text-[11px] pt-1">
-                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg"><strong>Niveau 3 :</strong> Roulements SKF 6205 (150 pcs)</div>
-                        <div class="p-2 bg-red-100 dark:bg-red-900/40 border border-red-500 rounded-lg text-red-900 dark:text-red-200 font-bold"><strong>Niveau 2 :</strong> Vannes à papillon DN100 (12 pcs - MIN: 25)</div>
-                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg"><strong>Niveau 1 :</strong> Vannes Guillotine (30 pcs)</div>
+                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg card-interactive"><strong>Niveau 3 :</strong> Roulements SKF 6205 (150 pcs)</div>
+                        <div class="p-2 bg-red-100 dark:bg-red-900/40 border border-red-500 rounded-lg text-red-900 dark:text-red-200 font-bold card-interactive"><strong>Niveau 2 :</strong> Vannes à papillon DN100 (12 pcs - MIN: 25)</div>
+                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg card-interactive"><strong>Niveau 1 :</strong> Vannes Guillotine (30 pcs)</div>
                     </div>
                 `;
             } else {
                 box.innerHTML = `
                     <div class="flex justify-between items-center border-b border-gray-300 dark:border-gray-700/80 pb-2">
                         <h4 class="font-bold text-gray-900 dark:text-white text-sm">Contenu détaillé du Rayonnage : ${rackName}</h4>
-                        <span class="text-[10px] bg-ocp text-white px-2 py-0.5 rounded font-bold">Statut: Conforme</span>
+                        <span class="text-[10px] bg-ocp text-white px-2 py-0.5 rounded font-bold pulse-slow">Statut: Conforme</span>
                     </div>
                     <div class="grid grid-cols-3 gap-2 text-[11px] pt-1">
-                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg"><strong>Niveau 3 :</strong> Pièces conformes</div>
-                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg"><strong>Niveau 2 :</strong> Outillage & Électrique</div>
-                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg"><strong>Niveau 1 :</strong> Consommables</div>
+                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg card-interactive"><strong>Niveau 3 :</strong> Pièces conformes</div>
+                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg card-interactive"><strong>Niveau 2 :</strong> Outillage & Électrique</div>
+                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg card-interactive"><strong>Niveau 1 :</strong> Consommables</div>
                     </div>
                 `;
             }
+            box.classList.remove('view-animated');
+            void box.offsetWidth;
+            box.classList.add('view-animated');
         }
 
         function selectZone(zoneKey) {
