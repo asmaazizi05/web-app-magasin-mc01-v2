@@ -52,41 +52,228 @@
             gap: 10px;
         }
 
-        /* ========================================================
-           ANIMATIONS LENTES, FLUIDES ET EFFICACES (SMOOTH & ELEGANT)
-           ======================================================== */
+        /* =========================================================================
+           ANIMATIONS SPÉCIFIQUES PAR FENÊTRE (DISTINCTES, LENTES ET EFFICACES)
+           ========================================================================= */
 
-        /* 1. Apparition progressive des sections (Transition douce et lente) */
-        @keyframes smoothFadeInUp {
+        /* 1. TABLEAU DE BORD : Cascade Élégante & Élévation Verticale */
+        @keyframes animDashboard {
             0% {
                 opacity: 0;
-                transform: translateY(22px);
+                transform: translateY(26px);
             }
             100% {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-
-        .view-animated {
-            animation: smoothFadeInUp 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        .anim-dashboard {
+            animation: animDashboard 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             will-change: opacity, transform;
         }
 
-        /* Effet d'apparition en cascade (stagger) des éléments */
-        .stagger-item {
-            opacity: 0;
-            animation: smoothFadeInUp 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        /* 2. GRAPHIQUES & ANALYTICS : Expansion Radiale & Défloutage Doux */
+        @keyframes animCharts {
+            0% {
+                opacity: 0;
+                transform: scale(0.94);
+                filter: blur(4px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+                filter: blur(0);
+            }
+        }
+        .anim-charts {
+            animation: animCharts 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: opacity, transform, filter;
+        }
+
+        /* 3. CARTOGRAPHIE 2D : Perspective Spatiale 3D & Zoom Architectural */
+        @keyframes animCarto {
+            0% {
+                opacity: 0;
+                transform: perspective(1000px) rotateX(6deg) translateY(22px);
+            }
+            100% {
+                opacity: 1;
+                transform: perspective(1000px) rotateX(0deg) translateY(0);
+            }
+        }
+        .anim-carto {
+            animation: animCarto 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             will-change: opacity, transform;
         }
-        .stagger-1 { animation-delay: 0.06s; }
-        .stagger-2 { animation-delay: 0.14s; }
-        .stagger-3 { animation-delay: 0.22s; }
-        .stagger-4 { animation-delay: 0.30s; }
-        .stagger-5 { animation-delay: 0.38s; }
-        .stagger-6 { animation-delay: 0.46s; }
 
-        /* 2. Micro-interactions sur les cartes (Lévitation douce et ombres OCP) */
+        /* 4. SHIFTS / ÉQUIPES : Glissement Temporel Latéral (Timeline Flow) */
+        @keyframes animShifts {
+            0% {
+                opacity: 0;
+                transform: translateX(36px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .anim-shifts {
+            animation: animShifts 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: opacity, transform;
+        }
+
+        /* 5. STOCK / CATALOGUE : Déroulement Registre / Vague Verticale */
+        @keyframes animStock {
+            0% {
+                opacity: 0;
+                transform: translateY(-24px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .anim-stock {
+            animation: animStock 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: opacity, transform;
+        }
+
+        /* 6. RÉCEPTION : Quai d'Arrivée & Flux Entrant (Depuis la Gauche) */
+        @keyframes animReception {
+            0% {
+                opacity: 0;
+                transform: translateX(-36px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        .anim-reception {
+            animation: animReception 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: opacity, transform;
+        }
+
+        /* 7. EXPÉDITION : Envoi Chantier & Lévitation Sortante */
+        @keyframes animExpedition {
+            0% {
+                opacity: 0;
+                transform: scale(1.03) translateY(-14px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        .anim-expedition {
+            animation: animExpedition 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: opacity, transform;
+        }
+
+        /* 8. INVENTAIRE : Focus Optique / Balayage Scanner d'Audit */
+        @keyframes animInventory {
+            0% {
+                opacity: 0;
+                transform: scale(0.97);
+                filter: blur(6px) brightness(1.15);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+                filter: blur(0) brightness(1);
+            }
+        }
+        .anim-inventory {
+            animation: animInventory 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: opacity, transform, filter;
+        }
+
+        /* 9. PARAMÈTRES : Volet Console Système & Déploiement Angulaire */
+        @keyframes animSettings {
+            0% {
+                opacity: 0;
+                transform: perspective(1000px) rotateY(-5deg) translateY(18px);
+            }
+            100% {
+                opacity: 1;
+                transform: perspective(1000px) rotateY(0deg) translateY(0);
+            }
+        }
+        .anim-settings {
+            animation: animSettings 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: opacity, transform;
+        }
+
+        /* Cascade échelonnée (Stagger) universelle pour tous les blocs enfants de chaque fenêtre */
+        .anim-dashboard > *,
+        .anim-charts > *,
+        .anim-carto > *,
+        .anim-shifts > *,
+        .anim-stock > *,
+        .anim-reception > *,
+        .anim-expedition > *,
+        .anim-inventory > *,
+        .anim-settings > * {
+            animation: inherit;
+            animation-duration: 0.85s;
+            animation-fill-mode: both;
+        }
+        .anim-dashboard > *:nth-child(1), .anim-charts > *:nth-child(1), .anim-carto > *:nth-child(1),
+        .anim-shifts > *:nth-child(1), .anim-stock > *:nth-child(1), .anim-reception > *:nth-child(1),
+        .anim-expedition > *:nth-child(1), .anim-inventory > *:nth-child(1), .anim-settings > *:nth-child(1) {
+            animation-delay: 0.05s;
+        }
+        .anim-dashboard > *:nth-child(2), .anim-charts > *:nth-child(2), .anim-carto > *:nth-child(2),
+        .anim-shifts > *:nth-child(2), .anim-stock > *:nth-child(2), .anim-reception > *:nth-child(2),
+        .anim-expedition > *:nth-child(2), .anim-inventory > *:nth-child(2), .anim-settings > *:nth-child(2) {
+            animation-delay: 0.12s;
+        }
+        .anim-dashboard > *:nth-child(3), .anim-charts > *:nth-child(3), .anim-carto > *:nth-child(3),
+        .anim-shifts > *:nth-child(3), .anim-stock > *:nth-child(3), .anim-reception > *:nth-child(3),
+        .anim-expedition > *:nth-child(3), .anim-inventory > *:nth-child(3), .anim-settings > *:nth-child(3) {
+            animation-delay: 0.20s;
+        }
+        .anim-dashboard > *:nth-child(4), .anim-charts > *:nth-child(4), .anim-carto > *:nth-child(4),
+        .anim-shifts > *:nth-child(4), .anim-stock > *:nth-child(4), .anim-reception > *:nth-child(4),
+        .anim-expedition > *:nth-child(4), .anim-inventory > *:nth-child(4), .anim-settings > *:nth-child(4) {
+            animation-delay: 0.28s;
+        }
+        .anim-dashboard > *:nth-child(5), .anim-charts > *:nth-child(5), .anim-carto > *:nth-child(5),
+        .anim-shifts > *:nth-child(5), .anim-stock > *:nth-child(5), .anim-reception > *:nth-child(5),
+        .anim-expedition > *:nth-child(5), .anim-inventory > *:nth-child(5), .anim-settings > *:nth-child(5) {
+            animation-delay: 0.36s;
+        }
+
+        /* 10. GÉNÉRALISATION : Survol doux des lignes de tableaux */
+        tbody tr {
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+        tbody tr:hover {
+            background-color: rgba(0, 168, 89, 0.08) !important;
+            transform: scale(1.002) translateX(4px);
+            box-shadow: 0 4px 14px -3px rgba(0, 0, 0, 0.18);
+        }
+
+        /* 11. GÉNÉRALISATION : Champs de formulaire et inputs */
+        input, select, textarea {
+            transition: border-color 0.35s ease, box-shadow 0.35s ease, background-color 0.3s ease !important;
+        }
+        input:focus, select:focus, textarea:focus {
+            box-shadow: 0 0 0 3px rgba(0, 168, 89, 0.25) !important;
+        }
+
+        /* 12. GÉNÉRALISATION : Boutons interactifs avec transition douce */
+        button {
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, background-color 0.3s ease !important;
+        }
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+        }
+        button:active:not(:disabled) {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Micro-interactions sur les cartes (Lévitation douce et ombres OCP) */
         .card-interactive {
             transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
                         box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1),
@@ -98,15 +285,15 @@
             box-shadow: 0 18px 32px -10px rgba(0, 0, 0, 0.25), 0 0 18px rgba(0, 168, 89, 0.18);
         }
 
-        /* 3. Boutons du menu latéral avec glissement fluide */
+        /* Boutons du menu latéral avec glissement fluide */
         .sidebar-btn {
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
         }
         .sidebar-btn:hover {
-            transform: translateX(5px);
+            transform: translateX(6px);
         }
 
-        /* 4. Respiration lente des indicateurs de statut (Slow Pulse) */
+        /* Respiration lente des indicateurs de statut (Slow Pulse) */
         @keyframes gentleBreathe {
             0%, 100% {
                 transform: scale(1);
@@ -122,7 +309,7 @@
             display: inline-block;
         }
 
-        /* 5. Alerte avec lueur pulsée lente */
+        /* Alerte avec lueur pulsée lente */
         @keyframes alertGlowSlow {
             0%, 100% {
                 border-color: rgba(239, 68, 68, 0.7);
@@ -137,7 +324,7 @@
             animation: alertGlowSlow 3.2s infinite ease-in-out;
         }
 
-        /* 6. Rayonnages interactifs avec zoom fluide */
+        /* Rayonnages interactifs avec zoom fluide */
         .rack-slot {
             transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1) !important;
             will-change: transform, box-shadow;
@@ -148,13 +335,13 @@
             z-index: 10;
         }
 
-        /* 7. Barres de progression avec remplissage lent */
+        /* Barres de progression avec remplissage lent */
         .progress-bar-fill {
             transition: width 1.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
             will-change: width;
         }
 
-        /* 8. Effet de halo doux permanent sur les KPIs clés */
+        /* Effet de halo doux permanent sur les KPIs clés */
         @keyframes subtleOcpGlow {
             0%, 100% {
                 box-shadow: 0 10px 25px -5px rgba(0, 131, 67, 0.3);
@@ -294,7 +481,7 @@
                 </div>
 
                 <!-- 1. TABLEAU DE BORD GLOBAL RESTRUCTURÉ -->
-                <div id="view-dashboard" class="space-y-6 view-animated">
+                <div id="view-dashboard" class="space-y-6 anim-dashboard">
                     <div class="flex justify-between items-center stagger-item stagger-1">
                         <div>
                             <h2 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Tableau de Bord Global & KPIs d'Exploitation</h2>
@@ -581,7 +768,7 @@
                     </div>
 
                     <!-- BLOC 1 : ÉVOLUTION DU STOCK AVEC FILTRE TEMPOREL (JOUR, SEMAINE, MOIS, ANNÉE) -->
-                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4">
+                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
                         <div class="flex flex-wrap justify-between items-center gap-3">
                             <div>
                                 <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
@@ -603,7 +790,7 @@
 
                     <!-- BLOC 2 : ENTRÉES VS SORTIES AVEC FILTRE DYNAMIQUE (JOUR, SEMAINE, MOIS) ET VALEUR DU STOCK -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                             <div class="flex flex-wrap justify-between items-center gap-2">
                                 <div>
                                     <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
@@ -622,7 +809,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                             <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
                                 <i data-lucide="coins" class="w-4 h-4 text-amber-500"></i> Courbe : Valeur du Stock par Mois (en Millions DH)
                             </h3>
@@ -634,7 +821,7 @@
 
                     <!-- BLOC 3 : ROTATION ET HISTOGRAMME ARTICLES SANS MOUVEMENT -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                             <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
                                 <i data-lucide="rotate-cw" class="w-4 h-4 text-purple-500"></i> Courbe : Taux de Rotation des Stocks
                             </h3>
@@ -643,7 +830,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                             <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
                                 <i data-lucide="clock" class="w-4 h-4 text-red-500"></i> Histogramme : Articles Sans Mouvement (Immobilisés)
                             </h3>
@@ -656,7 +843,7 @@
 
                     <!-- BLOC 4 : CLASSEMENTS TOP 20 ARTICLES -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                             <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-2">
                                 <h3 class="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
                                     <i data-lucide="flame" class="w-4 h-4 text-orange-500"></i> Top 20 : Articles les Plus Utilisés (Forte Rotation)
@@ -728,7 +915,7 @@
                         </button>
                     </div>
 
-                    <div class="bg-white dark:bg-[#132A45] p-3 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-wrap items-center justify-between gap-3">
+                    <div class="bg-white dark:bg-[#132A45] p-3 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-wrap items-center justify-between gap-3 card-interactive">
                         <div class="flex items-center gap-2">
                             <span class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1">
                                 <i data-lucide="filter" class="w-3.5 h-3.5 text-ocp-light"></i> Origine :
@@ -746,7 +933,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                    <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-xs">
                                 <thead class="bg-gray-100 dark:bg-[#050D17] text-gray-600 dark:text-gray-400 uppercase font-semibold">
@@ -942,7 +1129,7 @@
                         <span class="text-xs bg-ocp/20 text-ocp-light px-3 py-1 rounded-lg border border-ocp/30 font-semibold">Semaine Actuelle : Semaine 1</span>
                     </div>
 
-                    <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                    <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                         <h3 class="font-bold text-xs text-gray-900 dark:text-white">Planning de Rotation Mensuel des 5 Magasiniers</h3>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-xs">
@@ -1015,7 +1202,7 @@
                         </button>
                     </div>
 
-                    <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                    <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-xs">
                                 <thead class="bg-gray-100 dark:bg-[#050D17] text-gray-600 dark:text-gray-400 uppercase font-semibold">
@@ -1084,7 +1271,7 @@
                         </button>
                     </div>
 
-                    <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                    <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-xs">
                                 <thead class="bg-gray-100 dark:bg-[#050D17] text-gray-600 dark:text-gray-400 uppercase font-semibold">
@@ -1140,7 +1327,7 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                             <h3 class="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
                                 <i data-lucide="calendar-check" class="w-4 h-4 text-ocp-light"></i> Planning Hebdomadaire des Audits (Octobre 2026)
                             </h3>
@@ -1176,16 +1363,16 @@
                             </div>
                         </div>
 
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                             <h3 class="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider">KPIs Qualité Inventaire (Dernier Audit : 04/10/2026)</h3>
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="bg-gray-50 dark:bg-[#050D17] p-3 rounded-xl border border-gray-200 dark:border-gray-800">
                                     <p class="text-[10px] text-gray-500 dark:text-gray-400">Exactitude IRA</p>
-                                    <h4 class="text-xl font-bold text-ocp-light mt-1">99.1%</h4>
+                                    <h4 id="kpi-inventory-ira" class="text-xl font-bold text-ocp-light mt-1">99.1%</h4>
                                 </div>
                                 <div class="bg-gray-50 dark:bg-[#050D17] p-3 rounded-xl border border-gray-200 dark:border-gray-800">
                                     <p class="text-[10px] text-gray-500 dark:text-gray-400">Écart Financier</p>
-                                    <h4 class="text-xl font-bold text-green-600 dark:text-green-400 mt-1">0.02%</h4>
+                                    <h4 id="kpi-inventory-gap" class="text-xl font-bold text-green-600 dark:text-green-400 mt-1">0.02%</h4>
                                 </div>
                             </div>
                         </div>
@@ -1200,7 +1387,7 @@
                     </div>
 
                     <!-- MATRICE COMPLÈTE DES ACCÈS PAR PERSONNE -->
-                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4">
+                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
                         <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-3">
                             <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
                                 <i data-lucide="shield-check" class="w-4 h-4 text-ocp-light"></i> Matrice Détaillée des Droits d'Accès et Visibilité Web App
@@ -1211,7 +1398,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             
                             <!-- 1. SOUFIANE BOUHZAM -->
-                            <div class="bg-gray-50 dark:bg-[#050D17] p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3">
+                            <div class="bg-gray-50 dark:bg-[#050D17] p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3 card-interactive">
                                 <div class="flex items-center gap-3 border-b border-gray-200 dark:border-gray-800 pb-2">
                                     <div class="w-9 h-9 rounded-lg bg-blue-600 text-white font-bold flex items-center justify-center text-xs">SB</div>
                                     <div>
@@ -1231,7 +1418,7 @@
                             </div>
 
                             <!-- 2. OMAR BENALLA -->
-                            <div class="bg-gray-50 dark:bg-[#050D17] p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3">
+                            <div class="bg-gray-50 dark:bg-[#050D17] p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3 card-interactive">
                                 <div class="flex items-center gap-3 border-b border-gray-200 dark:border-gray-800 pb-2">
                                     <div class="w-9 h-9 rounded-lg bg-purple-600 text-white font-bold flex items-center justify-center text-xs">OB</div>
                                     <div>
@@ -1251,7 +1438,7 @@
                             </div>
 
                             <!-- 3. YASSINE AZIZI -->
-                            <div class="bg-gray-50 dark:bg-[#050D17] p-4 rounded-xl border border-ocp/50 space-y-3">
+                            <div class="bg-gray-50 dark:bg-[#050D17] p-4 rounded-xl border border-ocp/50 space-y-3 card-interactive">
                                 <div class="flex items-center gap-3 border-b border-gray-200 dark:border-gray-800 pb-2">
                                     <div class="w-9 h-9 rounded-lg bg-ocp text-white font-bold flex items-center justify-center text-xs">YA</div>
                                     <div>
@@ -1271,7 +1458,7 @@
                             </div>
 
                             <!-- 4. EL ATYQY MOHAMED RAID -->
-                            <div class="bg-gray-50 dark:bg-[#050D17] p-4 rounded-xl border border-ocp/50 space-y-3">
+                            <div class="bg-gray-50 dark:bg-[#050D17] p-4 rounded-xl border border-ocp/50 space-y-3 card-interactive">
                                 <div class="flex items-center gap-3 border-b border-gray-200 dark:border-gray-800 pb-2">
                                     <div class="w-9 h-9 rounded-lg bg-ocp text-white font-bold flex items-center justify-center text-xs">RA</div>
                                     <div>
@@ -1291,7 +1478,7 @@
                             </div>
 
                             <!-- 5. GHIZLAN -->
-                            <div class="bg-gray-50 dark:bg-[#050D17] p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3">
+                            <div class="bg-gray-50 dark:bg-[#050D17] p-4 rounded-xl border border-gray-200 dark:border-gray-800 space-y-3 card-interactive">
                                 <div class="flex items-center gap-3 border-b border-gray-200 dark:border-gray-800 pb-2">
                                     <div class="w-9 h-9 rounded-lg bg-amber-500 text-white font-bold flex items-center justify-center text-xs">GH</div>
                                     <div>
@@ -1623,26 +1810,44 @@
             }
         }
 
+        const VIEW_ANIMATIONS = {
+            'dashboard': 'anim-dashboard',
+            'charts': 'anim-charts',
+            'carto': 'anim-carto',
+            'shifts': 'anim-shifts',
+            'stock': 'anim-stock',
+            'reception': 'anim-reception',
+            'expedition': 'anim-expedition',
+            'inventory': 'anim-inventory',
+            'settings': 'anim-settings'
+        };
+
+        const ALL_ANIM_CLASSES = Object.values(VIEW_ANIMATIONS);
+
         function switchTab(viewId) {
-            const views = ['dashboard', 'charts', 'carto', 'shifts', 'stock', 'reception', 'expedition', 'inventory', 'settings'];
+            const views = Object.keys(VIEW_ANIMATIONS);
             views.forEach(v => {
                 const el = document.getElementById('view-' + v);
                 if(el) {
                     el.classList.add('hidden');
-                    el.classList.remove('view-animated');
+                    ALL_ANIM_CLASSES.forEach(cls => el.classList.remove(cls));
                 }
                 const btn = document.getElementById('nav-' + v);
                 if(btn) btn.classList.remove('sidebar-item-active');
             });
+
             const target = document.getElementById('view-' + viewId);
             if(target) {
                 target.classList.remove('hidden');
-                void target.offsetWidth; // Déclenche le reflow pour relancer l'animation fluide
-                target.classList.add('view-animated');
+                void target.offsetWidth; // Déclenche le reflow pour relancer l'animation spécifique
+                const animClass = VIEW_ANIMATIONS[viewId] || 'anim-dashboard';
+                target.classList.add(animClass);
             }
+
             const activeBtn = document.getElementById('nav-' + viewId);
             if(activeBtn) activeBtn.classList.add('sidebar-item-active');
 
+            // Exécution d'effets visuels contextuels à chaque fenêtre
             if (viewId === 'dashboard') {
                 runSmoothCounters();
                 animateProgressBars();
@@ -1653,8 +1858,46 @@
                     if (stockValueChartObj) stockValueChartObj.update();
                     if (rotationChartObj) rotationChartObj.update();
                     if (noMovementChartObj) noMovementChartObj.update();
-                }, 80);
+                }, 90);
+            } else if (viewId === 'carto') {
+                // Animation d'apparition séquentielle des rayonnages du plan
+                document.querySelectorAll('.rack-slot').forEach((rack, idx) => {
+                    rack.style.opacity = '0';
+                    rack.style.transform = 'scale(0.92) translateY(12px)';
+                    setTimeout(() => {
+                        rack.style.transition = 'all 0.5s cubic-bezier(0.16, 1, 0.3, 1)';
+                        rack.style.opacity = '1';
+                        rack.style.transform = 'scale(1) translateY(0)';
+                    }, 120 + idx * 55);
+                });
+            } else if (viewId === 'inventory') {
+                animateInventoryKpis();
             }
+        }
+
+        function animateInventoryKpis() {
+            const elIra = document.getElementById('kpi-inventory-ira');
+            const elGap = document.getElementById('kpi-inventory-gap');
+            if (elIra) animateDecimalCounter(elIra, 99.1, 1600, '%', 1);
+            if (elGap) animateDecimalCounter(elGap, 0.02, 1600, '%', 2);
+        }
+
+        function animateDecimalCounter(el, target, duration, suffix = '', decimals = 1) {
+            if (!el) return;
+            const startTime = performance.now();
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const ease = 1 - Math.pow(1 - progress, 4);
+                const val = (target * ease).toFixed(decimals);
+                el.innerText = val + suffix;
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                } else {
+                    el.innerText = target.toFixed(decimals) + suffix;
+                }
+            }
+            requestAnimationFrame(update);
         }
 
         function runSmoothCounters() {
