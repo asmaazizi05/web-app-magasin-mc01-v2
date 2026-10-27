@@ -2156,11 +2156,9 @@
         let pieSortiesChartObj, pieEntreesChartObj;
 
         window.addEventListener('DOMContentLoaded', () => {
-            if (window.Chart) {
-                Chart.defaults.animation = {
-                    duration: 2400,
-                    easing: 'easeOutQuart'
-                };
+            if (window.Chart && Chart.defaults && Chart.defaults.animation) {
+                Chart.defaults.animation.duration = 1500;
+                Chart.defaults.animation.easing = 'easeOutQuart';
             }
             initCharts();
             renderAccessControlView();
@@ -2169,10 +2167,27 @@
             animateProgressBars();
         });
 
+        window.addEventListener('resize', () => {
+            const list = [
+                window.evoChart || evoChart,
+                window.entriesExitsChartObj || entriesExitsChartObj,
+                window.stockValueChartObj || stockValueChartObj,
+                window.rotationChartObj || rotationChartObj,
+                window.noMovementChartObj || noMovementChartObj,
+                window.pieSortiesChartObj || pieSortiesChartObj,
+                window.pieEntreesChartObj || pieEntreesChartObj
+            ];
+            list.forEach(c => {
+                if (c) {
+                    try { c.resize(); } catch(e) {}
+                }
+            });
+        });
+
         function initCharts() {
             // CAMEMBERT 1 : SORTIES PAR CATÉGORIE
             const ctxPieSorties = document.getElementById('pieChartSorties').getContext('2d');
-            pieSortiesChartObj = new Chart(ctxPieSorties, {
+            window.pieSortiesChartObj = pieSortiesChartObj = new Chart(ctxPieSorties, {
                 type: 'pie',
                 data: {
                     labels: ['Mécanique (Vannes,SKF)', 'Tuyauterie & Acier', 'Outillage & Mesure', 'Électrique & Relais', 'Consommables'],
@@ -2186,7 +2201,7 @@
 
             // CAMEMBERT 2 : ENTRÉES PAR CATÉGORIE
             const ctxPieEntrees = document.getElementById('pieChartEntrees').getContext('2d');
-            pieEntreesChartObj = new Chart(ctxPieEntrees, {
+            window.pieEntreesChartObj = pieEntreesChartObj = new Chart(ctxPieEntrees, {
                 type: 'pie',
                 data: {
                     labels: ['Mécanique (Vannes,SKF)', 'Tuyauterie & Acier', 'Outillage & Mesure', 'Électrique & Relais', 'Consommables'],
@@ -2200,7 +2215,7 @@
 
             // CHART ÉVOLUTION DU STOCK GLOBAL
             const ctxEvo = document.getElementById('evolutionStockChart').getContext('2d');
-            evoChart = new Chart(ctxEvo, {
+            window.evoChart = evoChart = new Chart(ctxEvo, {
                 type: 'line',
                 data: {
                     labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct'],
@@ -2219,7 +2234,7 @@
 
             // CHART ENTRÉES VS SORTIES AVEC FILTRE TEMPOREL
             const ctxEE = document.getElementById('entriesExitsChart').getContext('2d');
-            entriesExitsChartObj = new Chart(ctxEE, {
+            window.entriesExitsChartObj = entriesExitsChartObj = new Chart(ctxEE, {
                 type: 'bar',
                 data: {
                     labels: ['Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct'],
@@ -2233,7 +2248,7 @@
 
             // CHART VALEUR DU STOCK
             const ctxVal = document.getElementById('stockValueChart').getContext('2d');
-            stockValueChartObj = new Chart(ctxVal, {
+            window.stockValueChartObj = stockValueChartObj = new Chart(ctxVal, {
                 type: 'line',
                 data: {
                     labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct'],
@@ -2251,7 +2266,7 @@
 
             // CHART ROTATION
             const ctxRot = document.getElementById('rotationChart').getContext('2d');
-            rotationChartObj = new Chart(ctxRot, {
+            window.rotationChartObj = rotationChartObj = new Chart(ctxRot, {
                 type: 'line',
                 data: {
                     labels: ['T1 2025', 'T2 2025', 'T3 2025', 'T4 2025', 'T1 2026', 'T2 2026', 'T3 2026'],
@@ -2268,7 +2283,7 @@
 
             // HISTOGRAMME ARTICLES SANS MOUVEMENT
             const ctxNM = document.getElementById('noMovementChart').getContext('2d');
-            noMovementChartObj = new Chart(ctxNM, {
+            window.noMovementChartObj = noMovementChartObj = new Chart(ctxNM, {
                 type: 'bar',
                 data: {
                     labels: ['3 Mois', '6 Mois', '12 Mois', '24 Mois+'],
@@ -2366,25 +2381,27 @@
                 }
             });
 
-            if (!entriesExitsChartObj) return;
+            const targetEE = entriesExitsChartObj || window.entriesExitsChartObj;
+            if (!targetEE) return;
 
             if (mode === 'day') {
                 // Flux réels calculés selon les créneaux horaires des shifts
-                entriesExitsChartObj.data.labels = ['00h-04h (Nuit)', '08h-11h (Matin)', '11h-15h (Relève)', '15h-19h (A-M)', '19h-23h (Soir)'];
-                entriesExitsChartObj.data.datasets[0].data = [5, 0, 840, 193, 1];     // Entrées réelles
-                entriesExitsChartObj.data.datasets[1].data = [208, 11, 23, 10, 229];   // Sorties réelles
+                targetEE.data.labels = ['00h-04h (Nuit)', '08h-11h (Matin)', '11h-15h (Relève)', '15h-19h (A-M)', '19h-23h (Soir)'];
+                targetEE.data.datasets[0].data = [5, 0, 840, 193, 1];     // Entrées réelles
+                targetEE.data.datasets[1].data = [208, 11, 23, 10, 229];   // Sorties réelles
             } else if (mode === 'week') {
                 // Flux réels par semaine d'Octobre 2026
-                entriesExitsChartObj.data.labels = ['Semaine 1 (01-07 Oct)', 'Semaine 2 (08-14 Oct)', 'Semaine 3 (15-21 Oct)', 'Semaine 4 (22-28 Oct)'];
-                entriesExitsChartObj.data.datasets[0].data = [1033, 5, 1, 0];          // Entrées réelles
-                entriesExitsChartObj.data.datasets[1].data = [143, 59, 217, 62];       // Sorties réelles
+                targetEE.data.labels = ['Semaine 1 (01-07 Oct)', 'Semaine 2 (08-14 Oct)', 'Semaine 3 (15-21 Oct)', 'Semaine 4 (22-28 Oct)'];
+                targetEE.data.datasets[0].data = [1033, 5, 1, 0];          // Entrées réelles
+                targetEE.data.datasets[1].data = [143, 59, 217, 62];       // Sorties réelles
             } else if (mode === 'month') {
                 // Comparatif mensuel avec le mois réel Octobre (1 039 Entrées / 481 Sorties)
-                entriesExitsChartObj.data.labels = ['Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Octobre (Live Sheet)'];
-                entriesExitsChartObj.data.datasets[0].data = [1250, 1400, 1100, 1600, 1350, 1039];
-                entriesExitsChartObj.data.datasets[1].data = [1100, 1200, 1300, 1250, 1400, 481];
+                targetEE.data.labels = ['Mai', 'Juin', 'Juil', 'Août', 'Sept', 'Octobre (Live Sheet)'];
+                targetEE.data.datasets[0].data = [1250, 1400, 1100, 1600, 1350, 1039];
+                targetEE.data.datasets[1].data = [1100, 1200, 1300, 1250, 1400, 481];
             }
-            entriesExitsChartObj.update();
+            try { targetEE.resize(); } catch(e) {}
+            targetEE.update();
         }
 
         function updateEvolutionChart(mode) {
@@ -2397,26 +2414,28 @@
                 }
             });
 
-            if (!evoChart) return;
+            const targetEvo = evoChart || window.evoChart;
+            if (!targetEvo) return;
             const records = (currentActiveRealRecords && currentActiveRealRecords.length) ? currentActiveRealRecords : FULL_17_REAL_RECORDS;
 
             if (mode === 'day') {
                 // Créneaux horaires réels des shifts OCP
-                evoChart.data.labels = ['00h-04h (Garde Nuit)', '08h-11h (1er Poste)', '11h-15h (Relève Quai)', '15h-19h (2ème Poste)', '19h-23h (Fin Shift)'];
-                evoChart.data.datasets[0].data = [148109, 148098, 148915, 149098, 148870];
+                targetEvo.data.labels = ['00h-04h (Garde Nuit)', '08h-11h (1er Poste)', '11h-15h (Relève Quai)', '15h-19h (2ème Poste)', '19h-23h (Fin Shift)'];
+                targetEvo.data.datasets[0].data = [148109, 148098, 148915, 149098, 148870];
             } else if (mode === 'week') {
                 // Progression réelle au fil des 4 semaines d'Octobre 2026
-                evoChart.data.labels = ['Semaine 1 (01-07 Oct)', 'Semaine 2 (08-14 Oct)', 'Semaine 3 (15-21 Oct)', 'Semaine 4 (22-28 Oct)'];
-                evoChart.data.datasets[0].data = [149202, 149148, 148932, 148870];
+                targetEvo.data.labels = ['Semaine 1 (01-07 Oct)', 'Semaine 2 (08-14 Oct)', 'Semaine 3 (15-21 Oct)', 'Semaine 4 (22-28 Oct)'];
+                targetEvo.data.datasets[0].data = [149202, 149148, 148932, 148870];
             } else if (mode === 'month') {
                 // Progression mensuelle historique convergeant vers le stock réel synchronisé (Octobre)
-                evoChart.data.labels = ['Mai', 'Juin', 'Juil', 'Août', 'Septembre', 'Octobre (Live Sheet)'];
-                evoChart.data.datasets[0].data = [135000, 142000, 139000, 145000, 148312, 148870];
+                targetEvo.data.labels = ['Mai', 'Juin', 'Juil', 'Août', 'Septembre', 'Octobre (Live Sheet)'];
+                targetEvo.data.datasets[0].data = [135000, 142000, 139000, 145000, 148312, 148870];
             } else if (mode === 'year') {
-                evoChart.data.labels = ['2022', '2023', '2024', '2025', '2026 (Live Sheet)'];
-                evoChart.data.datasets[0].data = [108000, 122000, 135000, 142000, 148870];
+                targetEvo.data.labels = ['2022', '2023', '2024', '2025', '2026 (Live Sheet)'];
+                targetEvo.data.datasets[0].data = [108000, 122000, 135000, 142000, 148870];
             }
-            evoChart.update();
+            try { targetEvo.resize(); } catch(e) {}
+            targetEvo.update();
         }
 
         function filterStock(category) {
@@ -2517,14 +2536,36 @@
             } else if (viewId === 'dashboard') {
                 runSmoothCounters();
                 animateProgressBars();
-            } else if (viewId === 'charts') {
                 setTimeout(() => {
-                    if (evoChart) evoChart.update();
-                    if (entriesExitsChartObj) entriesExitsChartObj.update();
-                    if (stockValueChartObj) stockValueChartObj.update();
-                    if (rotationChartObj) rotationChartObj.update();
-                    if (noMovementChartObj) noMovementChartObj.update();
-                }, 90);
+                    if (window.pieSortiesChartObj || pieSortiesChartObj) {
+                        try { (window.pieSortiesChartObj || pieSortiesChartObj).resize(); (window.pieSortiesChartObj || pieSortiesChartObj).update(); } catch(e) {}
+                    }
+                    if (window.pieEntreesChartObj || pieEntreesChartObj) {
+                        try { (window.pieEntreesChartObj || pieEntreesChartObj).resize(); (window.pieEntreesChartObj || pieEntreesChartObj).update(); } catch(e) {}
+                    }
+                }, 100);
+            } else if (viewId === 'charts') {
+                const resizeAndRenderCharts = () => {
+                    const list = [
+                        window.evoChart || evoChart,
+                        window.entriesExitsChartObj || entriesExitsChartObj,
+                        window.stockValueChartObj || stockValueChartObj,
+                        window.rotationChartObj || rotationChartObj,
+                        window.noMovementChartObj || noMovementChartObj
+                    ];
+                    list.forEach(c => {
+                        if (c) {
+                            try {
+                                c.resize();
+                                c.update();
+                            } catch (e) {}
+                        }
+                    });
+                };
+                requestAnimationFrame(resizeAndRenderCharts);
+                setTimeout(resizeAndRenderCharts, 80);
+                setTimeout(resizeAndRenderCharts, 250);
+                setTimeout(resizeAndRenderCharts, 600);
             } else if (viewId === 'carto') {
                 // Animation d'apparition séquentielle lente des rayonnages du plan
                 document.querySelectorAll('.rack-slot').forEach((rack, idx) => {
@@ -6103,32 +6144,38 @@
             });
 
             // 1. Mettre à jour stockValueChart (Activité des Magasiniers Référents)
-            if (stockValueChartObj) {
-                stockValueChartObj.data.labels = Object.keys(magCounts);
-                stockValueChartObj.data.datasets[0].data = Object.values(magCounts);
-                stockValueChartObj.data.datasets[0].backgroundColor = ['#008343', '#3B82F6', '#F59E0B', '#A855F7', '#64748B'];
-                stockValueChartObj.update();
+            const targetVal = stockValueChartObj || window.stockValueChartObj;
+            if (targetVal) {
+                targetVal.data.labels = Object.keys(magCounts);
+                targetVal.data.datasets[0].data = Object.values(magCounts);
+                targetVal.data.datasets[0].backgroundColor = ['#008343', '#3B82F6', '#F59E0B', '#A855F7', '#64748B'];
+                try { targetVal.resize(); } catch(e) {}
+                targetVal.update();
             }
 
             // 2. Mettre à jour rotationChart (Sorties par Zone d'Installation OCP)
-            if (rotationChartObj) {
-                rotationChartObj.data.labels = Object.keys(zoneCounts);
-                rotationChartObj.data.datasets[0].data = Object.values(zoneCounts);
-                rotationChartObj.data.datasets[0].backgroundColor = ['#00A859', '#3B82F6', '#F59E0B', '#A855F7', '#64748B'];
-                rotationChartObj.update();
+            const targetRot = rotationChartObj || window.rotationChartObj;
+            if (targetRot) {
+                targetRot.data.labels = Object.keys(zoneCounts);
+                targetRot.data.datasets[0].data = Object.values(zoneCounts);
+                targetRot.data.datasets[0].backgroundColor = ['#00A859', '#3B82F6', '#F59E0B', '#A855F7', '#64748B'];
+                try { targetRot.resize(); } catch(e) {}
+                targetRot.update();
             }
 
             // 3. Mettre à jour noMovementChart (Shifts & Analyse des Flux)
-            if (noMovementChartObj) {
-                noMovementChartObj.data.labels = [
+            const targetNM = noMovementChartObj || window.noMovementChartObj;
+            if (targetNM) {
+                targetNM.data.labels = [
                     '1er Poste (' + shift1Count + ' flux)',
                     '2ème Poste (' + shift2Count + ' flux)',
                     'Forte Rotation (< 7j)',
                     'Stock Dormant (> 90j)'
                 ];
-                noMovementChartObj.data.datasets[0].data = [shift1Count, shift2Count, 42, 5];
-                noMovementChartObj.data.datasets[0].backgroundColor = ['#3B82F6', '#F59E0B', '#00A859', '#EF4444'];
-                noMovementChartObj.update();
+                targetNM.data.datasets[0].data = [shift1Count, shift2Count, 42, 5];
+                targetNM.data.datasets[0].backgroundColor = ['#3B82F6', '#F59E0B', '#00A859', '#EF4444'];
+                try { targetNM.resize(); } catch(e) {}
+                targetNM.update();
             }
 
             // 4. Mettre à jour les deux courbes temporelles
@@ -8562,37 +8609,44 @@
             });
 
             // G1: pieChartSorties (Dashboard)
-            if (window.pieSortiesChartObj) {
-                pieSortiesChartObj.data.labels = Object.keys(catSorties);
-                pieSortiesChartObj.data.datasets[0].data = Object.values(catSorties);
-                pieSortiesChartObj.data.datasets[0].backgroundColor = [
+            const targetPieSorties = window.pieSortiesChartObj || pieSortiesChartObj;
+            if (targetPieSorties) {
+                targetPieSorties.data.labels = Object.keys(catSorties);
+                targetPieSorties.data.datasets[0].data = Object.values(catSorties);
+                targetPieSorties.data.datasets[0].backgroundColor = [
                     '#3B82F6', '#00A859', '#F59E0B', '#A855F7', '#EF4444', '#06B6D4', '#84CC16', '#64748B'
                 ];
-                pieSortiesChartObj.update();
+                try { targetPieSorties.resize(); } catch(e) {}
+                targetPieSorties.update();
             }
 
             // G2: pieChartEntrees (Dashboard)
-            if (window.pieEntreesChartObj) {
-                pieEntreesChartObj.data.labels = Object.keys(catEntrees);
-                pieEntreesChartObj.data.datasets[0].data = Object.values(catEntrees);
-                pieEntreesChartObj.data.datasets[0].backgroundColor = ['#00A859', '#3B82F6', '#F59E0B'];
-                pieEntreesChartObj.update();
+            const targetPieEntrees = window.pieEntreesChartObj || pieEntreesChartObj;
+            if (targetPieEntrees) {
+                targetPieEntrees.data.labels = Object.keys(catEntrees);
+                targetPieEntrees.data.datasets[0].data = Object.values(catEntrees);
+                targetPieEntrees.data.datasets[0].backgroundColor = ['#00A859', '#3B82F6', '#F59E0B'];
+                try { targetPieEntrees.resize(); } catch(e) {}
+                targetPieEntrees.update();
             }
 
             // G3: evolutionStockChart (Vue Graphiques : Évolution temporelle réelle)
-            if (window.evoChart) {
+            const targetEvo = window.evoChart || evoChart;
+            if (targetEvo) {
                 const days = Object.keys(dailyCounts);
-                evoChart.data.labels = days.length > 1 ? days : ['01/10 (Matin)', '01/10 (A-M)', '02/10 (Matin)', '02/10 (A-M)', '03/10', '04/10'];
-                evoChart.data.datasets[0].label = 'Mouvements Réels Cumulés (Unités & KG)';
-                evoChart.data.datasets[0].data = [180, 540, 960, 1020, 1045, 1083];
-                evoChart.update();
+                targetEvo.data.labels = days.length > 1 ? days : ['01/10 (Matin)', '01/10 (A-M)', '02/10 (Matin)', '02/10 (A-M)', '03/10', '04/10'];
+                targetEvo.data.datasets[0].label = 'Mouvements Réels Cumulés (Unités & KG)';
+                targetEvo.data.datasets[0].data = [180, 540, 960, 1020, 1045, 1083];
+                try { targetEvo.resize(); } catch(e) {}
+                targetEvo.update();
             }
 
             // G4: entriesExitsChart (Vue Graphiques : Entrées vs Sorties par Catégorie Réelle)
-            if (window.entriesExitsChartObj) {
+            const targetEE = window.entriesExitsChartObj || entriesExitsChartObj;
+            if (targetEE) {
                 const allCats = Array.from(new Set([...Object.keys(catSorties), ...Object.keys(catEntrees)]));
-                entriesExitsChartObj.data.labels = allCats.map(c => c.length > 16 ? c.substring(0, 16) + '...' : c);
-                entriesExitsChartObj.data.datasets = [
+                targetEE.data.labels = allCats.map(c => c.length > 16 ? c.substring(0, 16) + '...' : c);
+                targetEE.data.datasets = [
                     {
                         label: 'Entrées Quai (14)',
                         data: allCats.map(c => catEntrees[c] || 0),
@@ -8604,62 +8658,39 @@
                         backgroundColor: '#3B82F6'
                     }
                 ];
-                entriesExitsChartObj.update();
+                try { targetEE.resize(); } catch(e) {}
+                targetEE.update();
             }
 
             // G5: stockValueChart -> Magasiniers Activity
-            if (window.stockValueChartObj) {
-                stockValueChartObj.destroy();
-                const ctxVal = document.getElementById('stockValueChart').getContext('2d');
-                window.stockValueChartObj = new Chart(ctxVal, {
-                    type: 'bar',
-                    data: {
-                        labels: Object.keys(magCounts),
-                        datasets: [{
-                            label: 'Nombre de Mouvements Traités',
-                            data: Object.values(magCounts),
-                            backgroundColor: ['#A855F7', '#00A859', '#3B82F6', '#F59E0B', '#06B6D4']
-                        }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false }
-                });
+            const targetVal = window.stockValueChartObj || stockValueChartObj;
+            if (targetVal) {
+                targetVal.data.labels = Object.keys(magCounts);
+                targetVal.data.datasets[0].data = Object.values(magCounts);
+                targetVal.data.datasets[0].backgroundColor = ['#A855F7', '#00A859', '#3B82F6', '#F59E0B', '#06B6D4'];
+                try { targetVal.resize(); } catch(e) {}
+                targetVal.update();
             }
 
             // G6: rotationChart -> Zones d'Installation OCP
-            if (window.rotationChartObj) {
-                rotationChartObj.destroy();
-                const ctxRot = document.getElementById('rotationChart').getContext('2d');
-                // Top 6 zones
+            const targetRot = window.rotationChartObj || rotationChartObj;
+            if (targetRot) {
                 const topZones = Object.entries(zoneCounts).sort((a,b) => b[1] - a[1]).slice(0, 6);
-                window.rotationChartObj = new Chart(ctxRot, {
-                    type: 'doughnut',
-                    data: {
-                        labels: topZones.map(z => z[0]),
-                        datasets: [{
-                            data: topZones.map(z => z[1]),
-                            backgroundColor: ['#F59E0B', '#3B82F6', '#00A859', '#A855F7', '#EF4444', '#64748B']
-                        }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false }
-                });
+                targetRot.data.labels = topZones.map(z => z[0]);
+                targetRot.data.datasets[0].data = topZones.map(z => z[1]);
+                targetRot.data.datasets[0].backgroundColor = ['#F59E0B', '#3B82F6', '#00A859', '#A855F7', '#EF4444', '#64748B'];
+                try { targetRot.resize(); } catch(e) {}
+                targetRot.update();
             }
 
             // G7: noMovementChart -> Postes de Travail (1er vs 2ème Poste)
-            if (window.noMovementChartObj) {
-                noMovementChartObj.destroy();
-                const ctxNM = document.getElementById('noMovementChart').getContext('2d');
-                window.noMovementChartObj = new Chart(ctxNM, {
-                    type: 'bar',
-                    data: {
-                        labels: ['1er Poste (Matin)', '2ème Poste (Après-midi)'],
-                        datasets: [{
-                            label: 'Nombre d\'opérations mobiles',
-                            data: [posteCounts['1 poste'] || 45, posteCounts['2 poste'] || 38],
-                            backgroundColor: ['#00A859', '#3B82F6']
-                        }]
-                    },
-                    options: { responsive: true, maintainAspectRatio: false }
-                });
+            const targetNM = window.noMovementChartObj || noMovementChartObj;
+            if (targetNM) {
+                targetNM.data.labels = ['1er Poste (Matin)', '2ème Poste (Après-midi)'];
+                targetNM.data.datasets[0].data = [posteCounts['1 poste'] || 45, posteCounts['2 poste'] || 38];
+                targetNM.data.datasets[0].backgroundColor = ['#00A859', '#3B82F6'];
+                try { targetNM.resize(); } catch(e) {}
+                targetNM.update();
             }
         }
 
