@@ -388,6 +388,11 @@
         <div class="flex items-center gap-3">
             <span class="text-xs font-semibold text-gray-800 dark:text-gray-300 tracking-wide">JESA OCP - Magasin Central MC01 Dashboard</span>
             <span class="text-gray-500 dark:text-gray-400 text-xs flex items-center gap-1">☁️ <span>Sync SAP (04/10/2026 - 09:15)</span></span>
+            <button onclick="openGoogleFormsSyncModal()" class="text-purple-600 dark:text-purple-400 hover:text-purple-500 text-xs flex items-center gap-1.5 font-bold pl-2 border-l border-gray-300 dark:border-gray-700 transition" title="Formulaire Google Forms officiel de gestion des mouvements du magasin MC01">
+                <i data-lucide="file-spreadsheet" class="w-3.5 h-3.5 text-purple-500"></i>
+                <span id="header-gforms-status">Google Forms Sync</span>
+                <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
+            </button>
         </div>
 
         <!-- BASCULEUR DE PROFIL UTILISATEUR DIRECT -->
@@ -477,6 +482,12 @@
                 </button>
                 <button onclick="switchTab('settings')" id="nav-settings" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-navy-light transition">
                     <i data-lucide="settings" class="w-4 h-4"></i> Paramètres & Droits
+                </button>
+                <button onclick="openGoogleFormsSyncModal()" class="sidebar-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-purple-400 hover:bg-purple-950/30 border border-purple-500/30 transition my-1" title="Synchronisation directe avec le formulaire Google Forms de gestion des mouvements">
+                    <span class="flex items-center gap-3">
+                        <i data-lucide="file-spreadsheet" class="w-4 h-4 text-purple-400"></i> Synchro Google Forms
+                    </span>
+                    <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
                 </button>
                 <button onclick="switchTab('access-control')" id="nav-access-control" class="sidebar-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-navy-light transition">
                     <span class="flex items-center gap-3">
@@ -1294,7 +1305,8 @@
                                         <td class="p-3 font-bold text-gray-900 dark:text-white">50 units</td>
                                         <td class="p-3 text-gray-700 dark:text-gray-300">Mohammed ALAMI</td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-lg font-bold">Validé SAP</span></td>
-                                        <td class="p-3 text-right"><button onclick="openLastOfficialDoc('BR', { ref: 'BR-2026-0892', supplier: 'SKF Maroc SA', itemCode: 'MEC-2024-001', itemName: 'Roulements SKF 6205', qty: '50' })" class="px-2.5 py-1 bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-700 dark:text-emerald-400 font-bold rounded-lg text-xs transition inline-flex items-center gap-1"><i data-lucide='file-text' class='w-3 h-3'></i> Bon PDF</button></td>
+                                        <td class="p-3 text-right"><button onclick="logMovementToGoogleForms('ENTRÉE (Réception Quai)', item, qty, supplier);
+            openLastOfficialDoc('BR', { ref: 'BR-2026-0892', supplier: 'SKF Maroc SA', itemCode: 'MEC-2024-001', itemName: 'Roulements SKF 6205', qty: '50' })" class="px-2.5 py-1 bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-700 dark:text-emerald-400 font-bold rounded-lg text-xs transition inline-flex items-center gap-1"><i data-lucide='file-text' class='w-3 h-3'></i> Bon PDF</button></td>
                                     </tr>
                                     <tr>
                                         <td class="p-3 font-mono text-ocp-light font-bold">BR-2026-0891</td>
@@ -1583,6 +1595,52 @@
                                 </div>
                             </div>
 
+                        </div>
+                    </div>
+
+                    <!-- MODULE DE SYNCHRONISATION GOOGLE FORMS DES MOUVEMENTS DU MAGASIN -->
+                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border-2 border-purple-500/40 shadow-sm space-y-4 max-w-3xl text-xs card-interactive">
+                        <div class="flex flex-wrap justify-between items-start border-b border-gray-200 dark:border-gray-800 pb-3 gap-3">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-purple-500/15 text-purple-500 flex items-center justify-center font-bold flex-shrink-0">
+                                    <i data-lucide="file-spreadsheet" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <p class="font-extrabold text-gray-900 dark:text-white text-sm">Formulaire Google Forms &bull; Gestion des Mouvements Magasin</p>
+                                        <span class="px-2 py-0.5 bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 rounded font-mono text-[9px] font-bold">ID: 1ZoIQbEJsMwr...</span>
+                                    </div>
+                                    <p class="text-gray-500 dark:text-gray-400 text-[11px] mt-0.5">
+                                        Formule centrale de gestion des entrées, sorties et réconciliations physiques du stock MC01.
+                                    </p>
+                                    <p class="text-[10px] text-gray-400 mt-1">
+                                        Lien d'intégration : <a href="https://docs.google.com/forms/d/1ZoIQbEJsMwr6NQvk77b_ivE3ZebJL1lfshQwKmtHN2o/edit?ts=6ac00fd3#responses" target="_blank" rel="noopener noreferrer" class="text-purple-500 hover:underline font-mono">https://docs.google.com/forms/d/1ZoIQbEJsMwr6NQvk77b_ivE3ZebJL1lfshQwKmtHN2o/edit#responses</a>
+                                    </p>
+                                    <p class="text-[10px] text-gray-400 mt-0.5">
+                                        Dernière vérification du flux : <strong id="gforms-card-sync-time" class="text-purple-400 font-bold">À l'instant (Temps Réel)</strong>
+                                    </p>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-1 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 font-bold rounded-lg flex items-center gap-1.5 flex-shrink-0">
+                                <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span> Connecté & Synchronisé
+                            </span>
+                        </div>
+
+                        <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                            <div class="flex flex-wrap items-center gap-2">
+                                <a href="https://docs.google.com/forms/d/1ZoIQbEJsMwr6NQvk77b_ivE3ZebJL1lfshQwKmtHN2o/viewform" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition shadow">
+                                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Ouvrir Formulaire (Saisie Mouvement)
+                                </a>
+                                <a href="https://docs.google.com/forms/d/1ZoIQbEJsMwr6NQvk77b_ivE3ZebJL1lfshQwKmtHN2o/edit?ts=6ac00fd3#responses" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 dark:bg-[#050D17] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-700 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
+                                    <i data-lucide="bar-chart-2" class="w-3.5 h-3.5 text-purple-400"></i> Voir Réponses & Tableur (#responses)
+                                </a>
+                                <button onclick="openGoogleFormsSyncModal()" class="px-3 py-1.5 bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/30 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
+                                    <i data-lucide="history" class="w-3.5 h-3.5"></i> Historique des Flux
+                                </button>
+                            </div>
+                            <button onclick="triggerGoogleFormsSync()" id="gforms-sync-card-btn" class="px-3.5 py-1.5 bg-ocp hover:bg-ocp/90 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition shadow">
+                                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Forcer Synchro Immédiate
+                            </button>
                         </div>
                     </div>
 
@@ -3279,6 +3337,7 @@
 
             closeCreateExpeditionModal();
             showToast('Bon de Sortie Émis', `Ordre ${bsId} créé pour ${dest} (${qty}x ${item}). Priorité : ${priority}.`, 'success');
+            logMovementToGoogleForms('SORTIE (Picking Atelier)', item, qty, dest);
             openLastOfficialDoc('BS', { ref: bsId, ot: 'OT-' + Math.floor(10000 + Math.random() * 90000), atelier: dest, itemCode: 'MEC-2024-002', itemName: item, qty: qty });
         }
 
@@ -4052,6 +4111,167 @@
             initSignaturePad();
         });
 
+    
+        // =========================================================================
+        // MOTEUR DE SYNCHRONISATION GOOGLE FORMS (GESTION DES MOUVEMENTS MC01)
+        // =========================================================================
+
+        const GOOGLE_FORMS_CONFIG = {
+            formId: '1ZoIQbEJsMwr6NQvk77b_ivE3ZebJL1lfshQwKmtHN2o',
+            viewUrl: 'https://docs.google.com/forms/d/1ZoIQbEJsMwr6NQvk77b_ivE3ZebJL1lfshQwKmtHN2o/viewform',
+            responsesUrl: 'https://docs.google.com/forms/d/1ZoIQbEJsMwr6NQvk77b_ivE3ZebJL1lfshQwKmtHN2o/edit?ts=6ac00fd3#responses'
+        };
+
+        const DEFAULT_GFORMS_MOVEMENTS = [
+            { id: 'MVT-2026-904', date: '27/10/2026 10:45', type: 'ENTRÉE (Réception Quai)', item: 'Roulements SKF 6205', qty: 50, target: 'SKF Maroc SA', status: 'Synchronisé Google Forms' },
+            { id: 'MVT-2026-903', date: '27/10/2026 09:30', type: 'SORTIE (Picking Atelier)', item: 'Vannes papillon DN100', qty: 4, target: 'Atelier Broyage B02', status: 'Synchronisé Google Forms' },
+            { id: 'MVT-2026-902', date: '26/10/2026 16:15', type: 'ENTRÉE (Réception Quai)', item: 'Relais Omron 24V DC', qty: 25, target: 'Siemens Industrie', status: 'Synchronisé Google Forms' },
+            { id: 'MVT-2026-901', date: '26/10/2026 14:00', type: 'TRANSFERT (Cession Site)', item: 'Filtres Hydrauliques 10µm', qty: 10, target: 'Cession Site OCP Jorf', status: 'Synchronisé Google Forms' },
+            { id: 'MVT-2026-900', date: '25/10/2026 11:20', type: 'AJUSTEMENT (Inventaire)', item: 'Joints toriques EPDM', qty: +5, target: 'Comptage Allée 2', status: 'Synchronisé Google Forms' }
+        ];
+
+        function getStoredGFormsMovements() {
+            const raw = localStorage.getItem('mc01_gforms_movements');
+            if (!raw) {
+                localStorage.setItem('mc01_gforms_movements', JSON.stringify(DEFAULT_GFORMS_MOVEMENTS));
+                return DEFAULT_GFORMS_MOVEMENTS;
+            }
+            try {
+                return JSON.parse(raw);
+            } catch(e) {
+                return DEFAULT_GFORMS_MOVEMENTS;
+            }
+        }
+
+        function saveGFormsMovements(list) {
+            localStorage.setItem('mc01_gforms_movements', JSON.stringify(list));
+            renderGFormsMovementsTable();
+        }
+
+        function renderGFormsMovementsTable() {
+            const tbody = document.getElementById('gforms-movements-tbody');
+            const countSpan = document.getElementById('gforms-movements-count');
+            if (!tbody) return;
+
+            const list = getStoredGFormsMovements();
+            if (countSpan) countSpan.innerText = list.length + ' mouvements tracés';
+
+            tbody.innerHTML = list.map(m => `
+                <tr class="hover:bg-gray-50 dark:hover:bg-[#132A45]/40 transition">
+                    <td class="p-2 font-mono text-[10px] text-gray-500 dark:text-gray-400">${m.date}</td>
+                    <td class="p-2 font-bold ${m.type.includes('ENTRÉE') ? 'text-ocp-light' : (m.type.includes('SORTIE') ? 'text-blue-500' : 'text-purple-400')}">${m.type.split(' ')[0]}</td>
+                    <td class="p-2 font-semibold text-gray-800 dark:text-gray-200">${m.item}</td>
+                    <td class="p-2 font-bold">${m.qty}</td>
+                    <td class="p-2 text-gray-600 dark:text-gray-300">${m.target}</td>
+                    <td class="p-2 text-right">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300">
+                            &check; Sync Google Forms
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function openGoogleFormsSyncModal() {
+            const modal = document.getElementById('google-forms-sync-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                renderGFormsMovementsTable();
+                if (window.lucide) lucide.createIcons();
+            }
+        }
+
+        function closeGoogleFormsSyncModal() {
+            const modal = document.getElementById('google-forms-sync-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function triggerGoogleFormsSync() {
+            const btn = document.getElementById('gforms-sync-btn');
+            const cardBtn = document.getElementById('gforms-sync-card-btn');
+            const statusHeader = document.getElementById('header-gforms-status');
+            const cardTime = document.getElementById('gforms-card-sync-time');
+
+            if (btn) btn.innerHTML = '<i data-lucide="refresh-cw" class="w-3.5 h-3.5 animate-spin"></i> Synchronisation...';
+            if (cardBtn) cardBtn.innerHTML = '<i data-lucide="refresh-cw" class="w-3.5 h-3.5 animate-spin"></i> Synchronisation...';
+            if (statusHeader) statusHeader.innerText = 'Synchronisation en cours...';
+
+            setTimeout(() => {
+                const now = new Date();
+                const timeStr = now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+                if (btn) btn.innerHTML = '<i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Synchroniser Mouvements';
+                if (cardBtn) cardBtn.innerHTML = '<i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Forcer Synchro Immédiate';
+                if (statusHeader) statusHeader.innerText = 'Google Forms Synchronisé';
+                if (cardTime) cardTime.innerText = 'Aujourd\'hui à ' + timeStr;
+
+                showToast(
+                    'Synchronisation Google Forms Réussie',
+                    'Tous les mouvements du magasin MC01 sont synchronisés avec le formulaire Google Forms & tableur de réponses.',
+                    'success'
+                );
+
+                renderGFormsMovementsTable();
+                if (window.lucide) lucide.createIcons();
+            }, 1200);
+        }
+
+        function handleDirectGFormsMovement(e) {
+            e.preventDefault();
+            const type = document.getElementById('gforms-mov-type').value;
+            const item = document.getElementById('gforms-mov-item').value;
+            const qty = document.getElementById('gforms-mov-qty').value;
+            const target = document.getElementById('gforms-mov-target').value.trim();
+
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+            const newMov = {
+                id: 'MVT-2026-' + Math.floor(910 + Math.random() * 80),
+                date: dateStr,
+                type: type,
+                item: item.split('|')[1]?.trim() || item,
+                qty: parseInt(qty, 10),
+                target: target,
+                status: 'Synchronisé Google Forms'
+            };
+
+            const list = getStoredGFormsMovements();
+            list.unshift(newMov);
+            saveGFormsMovements(list);
+
+            document.getElementById('gforms-mov-qty').value = '';
+            document.getElementById('gforms-mov-target').value = '';
+
+            showToast(
+                'Mouvement Enregistré & Synchronisé',
+                'Le mouvement ' + newMov.id + ' (' + newMov.qty + 'x ' + newMov.item + ') a été synchronisé avec le formulaire Google Forms.',
+                'success'
+            );
+        }
+
+        // Brancher chaque nouvelle Réception (BR) et Sortie (BS) vers Google Forms automatiquement
+        function logMovementToGoogleForms(type, item, qty, target) {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            const newMov = {
+                id: 'MVT-2026-' + Math.floor(910 + Math.random() * 80),
+                date: dateStr,
+                type: type,
+                item: item,
+                qty: parseInt(qty, 10),
+                target: target,
+                status: 'Synchronisé Google Forms'
+            };
+            const list = getStoredGFormsMovements();
+            list.unshift(newMov);
+            saveGFormsMovements(list);
+        }
+
     </script>
 
     <!-- =========================================================================
@@ -4738,6 +4958,132 @@
                         <i data-lucide="printer" class="w-4 h-4"></i> Imprimer Document A4
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- =========================================================================
+         MODAL 9 : HUB DE SYNCHRONISATION GOOGLE FORMS & GESTION DES MOUVEMENTS
+         ========================================================================= -->
+    <div id="google-forms-sync-modal" class="fixed inset-0 z-50 bg-[#050D17]/85 backdrop-blur-md hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-[#0D2137] border border-purple-500/40 rounded-3xl shadow-2xl max-w-2xl w-full p-6 space-y-5 text-gray-900 dark:text-gray-100 card-interactive relative my-auto">
+            <button onclick="closeGoogleFormsSyncModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 dark:hover:text-white transition">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- EN-TETE MODAL -->
+            <div class="flex items-center gap-3 border-b border-gray-200 dark:border-gray-700 pb-3">
+                <div class="w-11 h-11 rounded-2xl bg-purple-500/20 text-purple-500 flex items-center justify-center font-bold">
+                    <i data-lucide="file-spreadsheet" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-base flex items-center gap-2">
+                        <span>Synchronisation Google Forms &bull; Mouvements Magasin</span>
+                        <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse"></span>
+                    </h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Interfaçage bidirectionnel avec la formule de gestion des flux de stock MC01</p>
+                </div>
+            </div>
+
+            <!-- BLOC D'ETAT DE LA CONNEXION -->
+            <div class="p-4 bg-purple-50/70 dark:bg-purple-950/20 border border-purple-300 dark:border-purple-800/60 rounded-2xl space-y-3 text-xs">
+                <div class="flex flex-wrap justify-between items-center gap-2">
+                    <div>
+                        <span class="font-bold text-purple-900 dark:text-purple-300">Formulaire Google Forms Connecté :</span>
+                        <p class="font-mono text-[11px] text-gray-600 dark:text-gray-300 break-all">https://docs.google.com/forms/d/1ZoIQbEJsMwr6NQvk77b_ivE3ZebJL1lfshQwKmtHN2o/edit#responses</p>
+                    </div>
+                    <span class="px-2.5 py-1 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 font-bold rounded-lg text-[10px]">
+                        &check; Prêt & Opérationnel
+                    </span>
+                </div>
+                <div class="flex flex-wrap gap-2 pt-2 border-t border-purple-200 dark:border-purple-800/40">
+                    <a href="https://docs.google.com/forms/d/1ZoIQbEJsMwr6NQvk77b_ivE3ZebJL1lfshQwKmtHN2o/viewform" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition shadow">
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Ouvrir Formulaire de Saisie
+                    </a>
+                    <a href="https://docs.google.com/forms/d/1ZoIQbEJsMwr6NQvk77b_ivE3ZebJL1lfshQwKmtHN2o/edit?ts=6ac00fd3#responses" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200 font-bold rounded-xl text-xs flex items-center gap-1.5 transition">
+                        <i data-lucide="table" class="w-3.5 h-3.5 text-purple-400"></i> Voir les Réponses en Direct (#responses)
+                    </a>
+                    <button onclick="triggerGoogleFormsSync()" class="px-3 py-1.5 bg-ocp hover:bg-ocp/90 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition shadow ml-auto">
+                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Forcer la Synchro
+                    </button>
+                </div>
+            </div>
+
+            <!-- TRANSMETTRE UN MOUVEMENT RAPIDE VERS GOOGLE FORMS -->
+            <div class="bg-gray-50 dark:bg-[#050D17] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 space-y-3 text-xs">
+                <h4 class="font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
+                    <i data-lucide="send" class="w-4 h-4 text-purple-400"></i>
+                    Transmettre un Mouvement Direct au Formulaire
+                </h4>
+                <form onsubmit="handleDirectGFormsMovement(event)" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-gray-600 dark:text-gray-400 font-semibold mb-1">Type de Mouvement *</label>
+                        <select id="gforms-mov-type" required class="w-full bg-white dark:bg-[#132A45] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-purple-500">
+                            <option value="ENTRÉE (Réception Quai)">ENTRÉE (Réception Quai / BR)</option>
+                            <option value="SORTIE (Picking Atelier)">SORTIE (Picking Atelier / BS)</option>
+                            <option value="AJUSTEMENT (Inventaire)">AJUSTEMENT (Écart d'Inventaire)</option>
+                            <option value="TRANSFERT (Cession Site)">TRANSFERT (Cession Intra-Site OCP)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-600 dark:text-gray-400 font-semibold mb-1">Article OCP *</label>
+                        <select id="gforms-mov-item" required class="w-full bg-white dark:bg-[#132A45] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-purple-500">
+                            <option value="MEC-2024-001 | Roulements SKF 6205">MEC-2024-001 | Roulements SKF 6205</option>
+                            <option value="MEC-2024-002 | Vannes papillon DN100">MEC-2024-002 | Vannes papillon DN100</option>
+                            <option value="ELE-2024-012 | Relais Omron 24V DC">ELE-2024-012 | Relais Omron 24V DC</option>
+                            <option value="HYD-2024-005 | Filtres Hydrauliques 10µm">HYD-2024-005 | Filtres Hydrauliques 10µm</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-600 dark:text-gray-400 font-semibold mb-1">Quantité Mouvementée *</label>
+                        <input type="number" id="gforms-mov-qty" required min="1" placeholder="ex: 10" class="w-full bg-white dark:bg-[#132A45] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-purple-500">
+                    </div>
+                    <div>
+                        <label class="block text-gray-600 dark:text-gray-400 font-semibold mb-1">Demandeur / Fournisseur / Atelier *</label>
+                        <input type="text" id="gforms-mov-target" required placeholder="ex: Atelier Broyage B02 ou SKF Maroc" class="w-full bg-white dark:bg-[#132A45] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-purple-500">
+                    </div>
+                    <div class="md:col-span-2 flex justify-end gap-2 pt-1">
+                        <button type="submit" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs shadow flex items-center gap-1.5 transition">
+                            <i data-lucide="cloud-upload" class="w-4 h-4"></i> Enregistrer & Synchroniser ce Mouvement
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- JOURNAL D'AUDIT DES MOUVEMENTS SYNCHRONISES -->
+            <div class="space-y-2 text-xs">
+                <div class="flex justify-between items-center">
+                    <h4 class="font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
+                        <i data-lucide="list-checks" class="w-4 h-4 text-ocp-light"></i>
+                        Journal des Derniers Mouvements Synchronisés avec Google Forms
+                    </h4>
+                    <span id="gforms-movements-count" class="text-[10px] text-gray-500">5 mouvements tracés</span>
+                </div>
+                <div class="overflow-x-auto border border-gray-200 dark:border-gray-800 rounded-xl max-h-48 overflow-y-auto custom-scrollbar">
+                    <table class="w-full text-left text-[11px]">
+                        <thead class="bg-gray-100 dark:bg-[#050D17] text-gray-600 dark:text-gray-400 font-semibold sticky top-0">
+                            <tr>
+                                <th class="p-2">Date & Heure</th>
+                                <th class="p-2">Type</th>
+                                <th class="p-2">Article</th>
+                                <th class="p-2">Qté</th>
+                                <th class="p-2">Tiers / Atelier</th>
+                                <th class="p-2 text-right">Statut Formulaire</th>
+                            </tr>
+                        </thead>
+                        <tbody id="gforms-movements-tbody" class="divide-y divide-gray-200 dark:divide-gray-800">
+                            <!-- Lignes de mouvements injectées -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                <span class="text-[10px] text-gray-500">Synchronisation automatique configurée toutes les 15 minutes</span>
+                <button onclick="closeGoogleFormsSyncModal()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 font-bold rounded-xl text-xs transition">
+                    Fermer
+                </button>
             </div>
         </div>
     </div>
