@@ -809,19 +809,19 @@
                                         <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">Hangar Rayonnages</span>
                                         <h4 class="text-xs font-extrabold text-gray-900 dark:text-white mt-0.5">Rayonnage Lourd & Mi-Lourd</h4>
                                     </div>
-                                    <span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 text-[10px] font-bold rounded-lg">78.5% Occupé</span>
+                                    <span id="zone-hangar-badge" class="px-2 py-0.5 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 text-[10px] font-bold rounded-lg transition-all duration-500">78.5% Occupé</span>
                                 </div>
                                 <div class="space-y-1 text-xs">
                                     <div class="flex justify-between text-gray-600 dark:text-gray-300">
                                         <span>Articles Stockés :</span>
-                                        <strong class="text-gray-900 dark:text-white">62 415 units</strong>
+                                        <strong id="zone-hangar-stock" class="text-gray-900 dark:text-white font-black">62 415 units</strong>
                                     </div>
                                     <div class="flex justify-between text-gray-600 dark:text-gray-300">
                                         <span>Reste à Stocker :</span>
-                                        <strong class="text-ocp-light">17 085 units</strong>
+                                        <strong id="zone-hangar-reste" class="text-ocp-light font-bold">17 085 units</strong>
                                     </div>
                                     <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden mt-1">
-                                        <div class="bg-ocp h-full rounded-full progress-bar-fill" style="width: 78.5%;"></div>
+                                        <div id="zone-hangar-bar" class="bg-ocp h-full rounded-full progress-bar-fill" style="width: 78.5%;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -832,19 +832,19 @@
                                         <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">Grand Abri (600 m²)</span>
                                         <h4 class="text-xs font-extrabold text-gray-900 dark:text-white mt-0.5">Matériel Lourd & Palettes</h4>
                                     </div>
-                                    <span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 text-[10px] font-bold rounded-lg">68.2% Occupé</span>
+                                    <span id="zone-grandabri-badge" class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 text-[10px] font-bold rounded-lg transition-all duration-500">68.2% Occupé</span>
                                 </div>
                                 <div class="space-y-1 text-xs">
                                     <div class="flex justify-between text-gray-600 dark:text-gray-300">
                                         <span>Articles Stockés :</span>
-                                        <strong class="text-gray-900 dark:text-white">35 800 units</strong>
+                                        <strong id="zone-grandabri-stock" class="text-gray-900 dark:text-white font-black">35 800 units</strong>
                                     </div>
                                     <div class="flex justify-between text-gray-600 dark:text-gray-300">
                                         <span>Reste à Stocker :</span>
-                                        <strong class="text-blue-500">16 700 units</strong>
+                                        <strong id="zone-grandabri-reste" class="text-blue-500 font-bold">16 700 units</strong>
                                     </div>
                                     <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden mt-1">
-                                        <div class="bg-blue-500 h-full rounded-full progress-bar-fill" style="width: 68.2%;"></div>
+                                        <div id="zone-grandabri-bar" class="bg-blue-500 h-full rounded-full progress-bar-fill" style="width: 68.2%;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -855,19 +855,19 @@
                                         <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">Petit Abri</span>
                                         <h4 class="text-xs font-extrabold text-gray-900 dark:text-white mt-0.5">Outillage & Consommables</h4>
                                     </div>
-                                    <span class="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300 text-[10px] font-bold rounded-lg">82.0% Occupé</span>
+                                    <span id="zone-petitabri-badge" class="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300 text-[10px] font-bold rounded-lg transition-all duration-500">82.0% Occupé</span>
                                 </div>
                                 <div class="space-y-1 text-xs">
                                     <div class="flex justify-between text-gray-600 dark:text-gray-300">
                                         <span>Articles Stockés :</span>
-                                        <strong class="text-gray-900 dark:text-white">12 350 units</strong>
+                                        <strong id="zone-petitabri-stock" class="text-gray-900 dark:text-white font-black">12 350 units</strong>
                                     </div>
                                     <div class="flex justify-between text-gray-600 dark:text-gray-300">
                                         <span>Reste à Stocker :</span>
-                                        <strong class="text-amber-500">2 710 units</strong>
+                                        <strong id="zone-petitabri-reste" class="text-amber-500 font-bold">2 710 units</strong>
                                     </div>
                                     <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden mt-1">
-                                        <div class="bg-amber-500 h-full rounded-full progress-bar-fill" style="width: 82%;"></div>
+                                        <div id="zone-petitabri-bar" class="bg-amber-500 h-full rounded-full progress-bar-fill" style="width: 82%;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -878,19 +878,19 @@
                                         <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">Parc Extérieur</span>
                                         <h4 class="text-xs font-extrabold text-gray-900 dark:text-white mt-0.5">Tuyauterie & Cuves Lourd</h4>
                                     </div>
-                                    <span class="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-300 text-[10px] font-bold rounded-lg">65.4% Occupé</span>
+                                    <span id="zone-parc-badge" class="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-300 text-[10px] font-bold rounded-lg transition-all duration-500">65.4% Occupé</span>
                                 </div>
                                 <div class="space-y-1 text-xs">
                                     <div class="flex justify-between text-gray-600 dark:text-gray-300">
                                         <span>Articles Stockés :</span>
-                                        <strong class="text-gray-900 dark:text-white">37 747 units</strong>
+                                        <strong id="zone-parc-stock" class="text-gray-900 dark:text-white font-black">37 747 units</strong>
                                     </div>
                                     <div class="flex justify-between text-gray-600 dark:text-gray-300">
                                         <span>Reste à Stocker :</span>
-                                        <strong class="text-purple-400">19 973 units</strong>
+                                        <strong id="zone-parc-reste" class="text-purple-400 font-bold">19 973 units</strong>
                                     </div>
                                     <div class="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden mt-1">
-                                        <div class="bg-purple-500 h-full rounded-full progress-bar-fill" style="width: 65.4%;"></div>
+                                        <div id="zone-parc-bar" class="bg-purple-500 h-full rounded-full progress-bar-fill" style="width: 65.4%;"></div>
                                     </div>
                                 </div>
                             </div>
@@ -2554,9 +2554,12 @@
             const elValo = document.getElementById('kpi-valorisation-count');
             if (elArticles) animateCounter(elArticles, 148312, 2800);
             if (elValo) animateCounter(elValo, 20760582, 3200);
+
+            // Animation initiale majestueuse des 4 zones
+            animateZoneCards(62415, 17085, 78.5, 35800, 16700, 68.2, 12350, 2710, 82.0, 37747, 19973, 65.4, 2800);
         }
 
-        function animateCounter(el, target, duration = 2800) {
+        function animateCounter(el, target, duration = 2800, suffix = '') {
             if (!el) return;
             const startTime = performance.now();
             function update(currentTime) {
@@ -2565,11 +2568,11 @@
                 // easeOutQuart (doux, progressif et fluide)
                 const ease = 1 - Math.pow(1 - progress, 4);
                 const val = Math.round(target * ease);
-                el.innerText = val.toLocaleString('fr-FR');
+                el.innerText = val.toLocaleString('fr-FR') + (suffix ? ' ' + suffix : '');
                 if (progress < 1) {
                     requestAnimationFrame(update);
                 } else {
-                    el.innerText = target.toLocaleString('fr-FR');
+                    el.innerText = target.toLocaleString('fr-FR') + (suffix ? ' ' + suffix : '');
                 }
             }
             requestAnimationFrame(update);
@@ -6085,8 +6088,8 @@
             if (kpiItems) kpiItems.innerText = Object.keys(itemsMap).length;
             if (kpiLub) kpiLub.innerText = lubrifiantsTotal.toLocaleString('fr-FR');
 
-            // Mettre à jour les Camemberts Chart.js
-            updateRealCharts(catSorties, catEntrees);
+            // Mettre à jour les Camemberts Chart.js et les 4 Zones avec les 5 catégories et animation fluide
+            updateRealCharts(records);
 
             // Mettre à jour le tableau live du Dashboard
             renderDashboardLiveTable(records);
@@ -6097,30 +6100,159 @@
             renderRealExpeditionTable(records.filter(r => r.type === 'Sortie'));
         }
 
-        function updateRealCharts(catSorties, catEntrees) {
-            // Sorties Chart
+        // Mappage unifié des flux Google Sheets vers les 5 Catégories Maîtresses du Magasin
+        function mapTo5Categories(rawCat, item) {
+            const text = ((rawCat || '') + ' ' + (item || '')).toLowerCase();
+            if (text.includes('mécani') || text.includes('roulement') || text.includes('pompe') || text.includes('hydraul') || text.includes('garniture') || text.includes('joint') || text.includes('palier')) {
+                return 'Mécanique (Vannes,SKF)';
+            }
+            if (text.includes('tuyau') || text.includes('acier') || text.includes('robinet') || text.includes('tôle') || text.includes('boulon') || text.includes('vis') || text.includes('bride')) {
+                return 'Tuyauterie & Acier';
+            }
+            if (text.includes('outil') || text.includes('mesure') || text.includes('fourniture') || text.includes('clé') || text.includes('manomètre')) {
+                return 'Outillage & Mesure';
+            }
+            if (text.includes('électr') || text.includes('relais') || text.includes('instrument') || text.includes('câble') || text.includes('capteur')) {
+                return 'Électrique & Relais';
+            }
+            if (text.includes('lubrif') || text.includes('graisse') || text.includes('huile') || text.includes('epi') || text.includes('sécurit') || text.includes('consommable')) {
+                return 'Consommables';
+            }
+            return 'Consommables';
+        }
+
+        // Animation majestueuse des 4 Cartes d'Occupation des Zones Spatiales (avec barre de progression fluide)
+        function animateZoneCards(hangarStock, hangarReste, hangarPct, grandStock, grandReste, grandPct, petitStock, petitReste, petitPct, parcStock, parcReste, parcPct, duration = 2800) {
+            const barHangar = document.getElementById('zone-hangar-bar');
+            const barGrand = document.getElementById('zone-grandabri-bar');
+            const barPetit = document.getElementById('zone-petitabri-bar');
+            const barParc = document.getElementById('zone-parc-bar');
+
+            [barHangar, barGrand, barPetit, barParc].forEach(b => {
+                if (b) {
+                    b.style.transition = 'none';
+                    b.style.width = '0%';
+                }
+            });
+
+            setTimeout(() => {
+                if (barHangar) { barHangar.style.transition = 'width ' + duration + 'ms cubic-bezier(0.16, 1, 0.3, 1)'; barHangar.style.width = hangarPct + '%'; }
+                if (barGrand) { barGrand.style.transition = 'width ' + duration + 'ms cubic-bezier(0.16, 1, 0.3, 1)'; barGrand.style.width = grandPct + '%'; }
+                if (barPetit) { barPetit.style.transition = 'width ' + duration + 'ms cubic-bezier(0.16, 1, 0.3, 1)'; barPetit.style.width = petitPct + '%'; }
+                if (barParc) { barParc.style.transition = 'width ' + duration + 'ms cubic-bezier(0.16, 1, 0.3, 1)'; barParc.style.width = parcPct + '%'; }
+            }, 60);
+
+            // Compteurs numériques animés avec easeOutQuart
+            animateCounter(document.getElementById('zone-hangar-stock'), hangarStock, duration, 'units');
+            animateCounter(document.getElementById('zone-hangar-reste'), hangarReste, duration, 'units');
+            animateDecimalCounter(document.getElementById('zone-hangar-badge'), hangarPct, duration, '% Occupé', 1);
+
+            animateCounter(document.getElementById('zone-grandabri-stock'), grandStock, duration, 'units');
+            animateCounter(document.getElementById('zone-grandabri-reste'), grandReste, duration, 'units');
+            animateDecimalCounter(document.getElementById('zone-grandabri-badge'), grandPct, duration, '% Occupé', 1);
+
+            animateCounter(document.getElementById('zone-petitabri-stock'), petitStock, duration, 'units');
+            animateCounter(document.getElementById('zone-petitabri-reste'), petitReste, duration, 'units');
+            animateDecimalCounter(document.getElementById('zone-petitabri-badge'), petitPct, duration, '% Occupé', 1);
+
+            animateCounter(document.getElementById('zone-parc-stock'), parcStock, duration, 'units');
+            animateCounter(document.getElementById('zone-parc-reste'), parcReste, duration, 'units');
+            animateDecimalCounter(document.getElementById('zone-parc-badge'), parcPct, duration, '% Occupé', 1);
+
+            // Mise à jour synchrone du compteur global d'articles
+            const totalStock = hangarStock + grandStock + petitStock + parcStock;
+            animateCounter(document.getElementById('kpi-articles-count'), totalStock, duration);
+        }
+
+        function updateRealCharts(records) {
+            const CATEGORIES_5 = [
+                'Mécanique (Vannes,SKF)',
+                'Tuyauterie & Acier',
+                'Outillage & Mesure',
+                'Électrique & Relais',
+                'Consommables'
+            ];
+
+            const realSorties5 = { 'Mécanique (Vannes,SKF)': 0, 'Tuyauterie & Acier': 0, 'Outillage & Mesure': 0, 'Électrique & Relais': 0, 'Consommables': 0 };
+            const realEntrees5 = { 'Mécanique (Vannes,SKF)': 0, 'Tuyauterie & Acier': 0, 'Outillage & Mesure': 0, 'Électrique & Relais': 0, 'Consommables': 0 };
+
+            const zonesConfig = {
+                hangar: { cap: 79500, baseStock: 62415, inQty: 0, outQty: 0 },
+                grandAbri: { cap: 52500, baseStock: 35800, inQty: 0, outQty: 0 },
+                petitAbri: { cap: 15060, baseStock: 12350, inQty: 0, outQty: 0 },
+                parc: { cap: 57720, baseStock: 37747, inQty: 0, outQty: 0 }
+            };
+
+            (records || []).forEach(r => {
+                const cat5 = mapTo5Categories(r.category, r.item);
+                const qty = Number(r.qty) || 1;
+                
+                let targetZone = 'hangar';
+                if (cat5 === 'Mécanique (Vannes,SKF)') targetZone = 'hangar';
+                else if (cat5 === 'Tuyauterie & Acier') targetZone = 'parc';
+                else if (cat5 === 'Outillage & Mesure') targetZone = 'petitAbri';
+                else if (cat5 === 'Électrique & Relais') targetZone = 'grandAbri';
+                else if (cat5 === 'Consommables') targetZone = 'petitAbri';
+
+                if (r.type === 'Entrée') {
+                    realEntrees5[cat5] += qty;
+                    zonesConfig[targetZone].inQty += qty;
+                } else {
+                    realSorties5[cat5] += qty;
+                    zonesConfig[targetZone].outQty += qty;
+                }
+            });
+
+            // 1. Sorties Chart : Camembert 1
             if (pieSortiesChartObj) {
-                const labels = Object.keys(catSorties);
-                const data = Object.values(catSorties);
-                pieSortiesChartObj.data.labels = labels;
-                pieSortiesChartObj.data.datasets[0].data = data;
+                pieSortiesChartObj.data.labels = CATEGORIES_5;
+                pieSortiesChartObj.data.datasets[0].data = [
+                    35 + realSorties5['Mécanique (Vannes,SKF)'],
+                    25 + realSorties5['Tuyauterie & Acier'],
+                    20 + realSorties5['Outillage & Mesure'],
+                    12 + realSorties5['Électrique & Relais'],
+                    8  + realSorties5['Consommables']
+                ];
                 pieSortiesChartObj.data.datasets[0].backgroundColor = [
-                    '#3B82F6', '#00A859', '#F59E0B', '#A855F7', '#EF4444', '#06B6D4', '#84CC16', '#64748B'
+                    '#3B82F6', '#00A859', '#F59E0B', '#A855F7', '#64748B'
                 ];
                 pieSortiesChartObj.update();
             }
 
-            // Entrées Chart
+            // 2. Entrées Chart : Camembert 2
             if (pieEntreesChartObj) {
-                const labels = Object.keys(catEntrees);
-                const data = Object.values(catEntrees);
-                pieEntreesChartObj.data.labels = labels;
-                pieEntreesChartObj.data.datasets[0].data = data;
+                pieEntreesChartObj.data.labels = CATEGORIES_5;
+                pieEntreesChartObj.data.datasets[0].data = [
+                    30 + realEntrees5['Mécanique (Vannes,SKF)'],
+                    30 + realEntrees5['Tuyauterie & Acier'],
+                    15 + realEntrees5['Outillage & Mesure'],
+                    15 + realEntrees5['Électrique & Relais'],
+                    10 + realEntrees5['Consommables']
+                ];
                 pieEntreesChartObj.data.datasets[0].backgroundColor = [
-                    '#00A859', '#3B82F6', '#F59E0B', '#A855F7', '#EF4444'
+                    '#00A859', '#3B82F6', '#F59E0B', '#A855F7', '#64748B'
                 ];
                 pieEntreesChartObj.update();
             }
+
+            // 3. Calcul & Animation des 4 Zones
+            const hStock = zonesConfig.hangar.baseStock + zonesConfig.hangar.inQty - zonesConfig.hangar.outQty;
+            const hReste = zonesConfig.hangar.cap - hStock;
+            const hPct = Number((hStock / zonesConfig.hangar.cap * 100).toFixed(1));
+
+            const gStock = zonesConfig.grandAbri.baseStock + zonesConfig.grandAbri.inQty - zonesConfig.grandAbri.outQty;
+            const gReste = zonesConfig.grandAbri.cap - gStock;
+            const gPct = Number((gStock / zonesConfig.grandAbri.cap * 100).toFixed(1));
+
+            const pStock = zonesConfig.petitAbri.baseStock + zonesConfig.petitAbri.inQty - zonesConfig.petitAbri.outQty;
+            const pReste = zonesConfig.petitAbri.cap - pStock;
+            const pPct = Number((pStock / zonesConfig.petitAbri.cap * 100).toFixed(1));
+
+            const parcStock = zonesConfig.parc.baseStock + zonesConfig.parc.inQty - zonesConfig.parc.outQty;
+            const parcReste = zonesConfig.parc.cap - parcStock;
+            const parcPct = Number((parcStock / zonesConfig.parc.cap * 100).toFixed(1));
+
+            animateZoneCards(hStock, hReste, hPct, gStock, gReste, gPct, pStock, pReste, pPct, parcStock, parcReste, parcPct, 2800);
         }
 
         function renderDashboardLiveTable(records) {
