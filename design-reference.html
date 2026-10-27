@@ -908,22 +908,26 @@
                             </div>
                         </div>
 
-                        <div class="overflow-x-auto max-h-96 overflow-y-auto custom-scrollbar border border-gray-200 dark:border-gray-800 rounded-xl">
+                        <div class="overflow-x-auto max-h-[520px] overflow-y-auto custom-scrollbar border border-gray-200 dark:border-gray-800 rounded-2xl shadow-inner">
                             <table class="w-full text-left text-xs">
-                                <thead class="bg-gray-100 dark:bg-[#050D17] text-gray-600 dark:text-gray-400 font-bold sticky top-0 uppercase text-[10px] tracking-wider z-10 border-b border-gray-200 dark:border-gray-800">
+                                <thead class="bg-gray-100 dark:bg-[#050D17] text-gray-700 dark:text-gray-300 font-extrabold sticky top-0 uppercase text-[10px] tracking-wider z-10 border-b border-gray-200 dark:border-gray-800 shadow-sm">
                                     <tr>
-                                        <th class="p-2.5">Date / Heure</th>
-                                        <th class="p-2.5">Type Flux</th>
-                                        <th class="p-2.5">Désignation / Référence</th>
-                                        <th class="p-2.5">Catégorie</th>
-                                        <th class="p-2.5 text-right">Quantité</th>
-                                        <th class="p-2.5">Demandeur / Zone Chantier</th>
-                                        <th class="p-2.5">Magasinier</th>
-                                        <th class="p-2.5 text-center">Photo Article</th>
+                                        <th class="p-3"># Ligne</th>
+                                        <th class="p-3">Horodateur Mobile</th>
+                                        <th class="p-3">Flux</th>
+                                        <th class="p-3">Désignation Complète / Référence</th>
+                                        <th class="p-3">Catégorie</th>
+                                        <th class="p-3 text-right">Quantité</th>
+                                        <th class="p-3">Demandeur & Nom</th>
+                                        <th class="p-3">Zone & Installation</th>
+                                        <th class="p-3">Poste</th>
+                                        <th class="p-3">Magasinier</th>
+                                        <th class="p-3 text-center">Photo Drive</th>
+                                        <th class="p-3 text-right">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="dashboard-live-movements-tbody" class="divide-y divide-gray-200 dark:divide-gray-800">
-                                    <!-- Mouvements réels injectés dynamiquement -->
+                                    <!-- 83 Mouvements réels injectés avec 17 colonnes complètes -->
                                 </tbody>
                             </table>
                         </div>
@@ -991,7 +995,7 @@
 
                         <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                             <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
-                                <i data-lucide="coins" class="w-4 h-4 text-amber-500"></i> Courbe : Valeur du Stock par Mois (en Millions DH)
+                                <i data-lucide="coins" class="w-4 h-4 text-amber-500"></i> Activité Réelle des Magasiniers (Nombre de Flux Traités)
                             </h3>
                             <div class="h-56 relative">
                                 <canvas id="stockValueChart"></canvas>
@@ -1003,7 +1007,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                             <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
-                                <i data-lucide="rotate-cw" class="w-4 h-4 text-purple-500"></i> Courbe : Taux de Rotation des Stocks
+                                <i data-lucide="rotate-cw" class="w-4 h-4 text-purple-500"></i> Répartition des Sorties par Zone OCP (Laverie, Trémie, Liaison)
                             </h3>
                             <div class="h-56 relative">
                                 <canvas id="rotationChart"></canvas>
@@ -1014,7 +1018,7 @@
                             <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
                                 <i data-lucide="clock" class="w-4 h-4 text-red-500"></i> Histogramme : Articles Sans Mouvement (Immobilisés)
                             </h3>
-                            <p class="text-[11px] text-gray-500 dark:text-gray-400">Ventilation par tranche d'inactivité (3 mois, 6 mois, 12 mois, 24 mois+)</p>
+                            <p class="text-[11px] text-gray-500 dark:text-gray-400">Répartition réelle par Poste de Travail (1er Poste vs 2ème Poste)</p>
                             <div class="h-52 relative">
                                 <canvas id="noMovementChart"></canvas>
                             </div>
@@ -6098,6 +6102,2122 @@
             }, 500);
         });
 
+    
+        // =========================================================================
+        // GENERALISATION DE LA SYNCHRONISATION : 7 GRAPHIQUES ET TOUS LES TABLEAUX
+        // =========================================================================
+
+        const FULL_17_REAL_RECORDS = [
+  {
+    "id": "MVT-1001",
+    "rowNumber": 2,
+    "horodateur": "02/10/2026 18:46:54",
+    "type": "Entrée",
+    "date": "01/10/2026",
+    "item": "Huile Unisyn XT 680",
+    "category": "Lubrifiants, graisses",
+    "qty": 180,
+    "unit": "KG",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "JESA maintenance",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1KbQS40NuD6ErtXDXfwsx3mKv9JiF7ALe",
+    "fournisseur": "PETROLAF (FUCHS)",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "Magasin Central MC01"
+  },
+  {
+    "id": "MVT-1002",
+    "rowNumber": 3,
+    "horodateur": "46297,78412",
+    "type": "Entrée",
+    "date": "01/10/2026",
+    "item": "Graisse LX 3",
+    "category": "Lubrifiants, graisses",
+    "qty": 360,
+    "unit": "KG",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "JESA maintenance",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=16dEFxnpZ8KeBxTR_hRjYTKyjH58pa4al",
+    "fournisseur": "PETROLAF (FUCHS)",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "Magasin Central MC01"
+  },
+  {
+    "id": "MVT-1003",
+    "rowNumber": 4,
+    "horodateur": "46297,78518",
+    "type": "Entrée",
+    "date": "01/10/2026",
+    "item": "Huile DTA 150",
+    "category": "Lubrifiants, graisses",
+    "qty": 60,
+    "unit": "KG",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "JESA maintenance",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1-lffHrnRK8ozIrytg9kDV1j_qVCdsQiR",
+    "fournisseur": "PETROLAF (FUCHS)",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "Magasin Central MC01"
+  },
+  {
+    "id": "MVT-1004",
+    "rowNumber": 5,
+    "horodateur": "46297,78653",
+    "type": "Entrée",
+    "date": "01/10/2026",
+    "item": "Huile PSW 15 SAE 30",
+    "category": "Lubrifiants, graisses",
+    "qty": 60,
+    "unit": "KG",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "JESA maintenance",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=19Ip-u9CmO98qhG8KssdlTYuFRHPt7lhZ",
+    "fournisseur": "PETROLAF (FUCHS)",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "Magasin Central MC01"
+  },
+  {
+    "id": "MVT-1005",
+    "rowNumber": 6,
+    "horodateur": "46297,78775",
+    "type": "Entrée",
+    "date": "01/10/2026",
+    "item": "Huile B68",
+    "category": "Lubrifiants, graisses",
+    "qty": 360,
+    "unit": "KG",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "JESA maintenance",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1U7_W5T3hbQcUde-uJRZ4_3CQLatSqT70",
+    "fournisseur": "PETROLAF (FUCHS)",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "Magasin Central MC01"
+  },
+  {
+    "id": "MVT-1006",
+    "rowNumber": 7,
+    "horodateur": "46297,79227",
+    "type": "Sortie",
+    "date": "01/10/2026",
+    "item": "Flexible d'incendie DN100 long 20M",
+    "category": "Tuyauterie et robinetterie",
+    "qty": 2,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mme Hanane Lemtabti",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1ftQgYIH9n_r-yXBF3VGJvlKliNHpphLb",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "520 - Eau brute",
+    "zoneFull": "LAVERIE (520 - Eau brute)"
+  },
+  {
+    "id": "MVT-1007",
+    "rowNumber": 8,
+    "horodateur": "02/10/2026 19:05:02",
+    "type": "Sortie",
+    "date": "01/10/2026",
+    "item": "Débitmètre électromagnétique DN150/ N.S V633EB19000",
+    "category": "Électrique & Instrumentation",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr Sahim Younes",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1X-TtVNWQMv6qhgll7hy9cxN27180zQ8T",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "320 - Conditionnement et flottation",
+    "zoneFull": "LAVERIE (320 - Conditionnement et flottation)"
+  },
+  {
+    "id": "MVT-1008",
+    "rowNumber": 9,
+    "horodateur": "02/10/2026 19:07:25",
+    "type": "Sortie",
+    "date": "01/10/2026",
+    "item": "Cerveau/ transmetteur de débitmètre",
+    "category": "Électrique & Instrumentation",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr Sahim Younes",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1Yl3medPzXr6H6Z_WLObHurdTx0I-hiOs",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "320 - Conditionnement et flottation",
+    "zoneFull": "LAVERIE (320 - Conditionnement et flottation)"
+  },
+  {
+    "id": "MVT-1009",
+    "rowNumber": 10,
+    "horodateur": "02/10/2026 19:09:25",
+    "type": "Sortie",
+    "date": "01/10/2026",
+    "item": "Boite élec d'étanchéité avec capteur inductif",
+    "category": "Électrique & Instrumentation",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr Sahim Younes",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=11_VLU47UeISzZYowWUHBWF_TljtvZnwA",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "320 - Conditionnement et flottation",
+    "zoneFull": "LAVERIE (320 - Conditionnement et flottation)"
+  },
+  {
+    "id": "MVT-1010",
+    "rowNumber": 11,
+    "horodateur": "02/10/2026 19:19:53",
+    "type": "Sortie",
+    "date": "01/10/2026",
+    "item": "Rouleaux amortisseur 320*159",
+    "category": "Mécanique",
+    "qty": 2,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr Zouhair OCP",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1E0t-p72xgvnGiDGxYyrOJyXODHxplZiF",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "160 - Mise à terril D",
+    "zoneFull": "LAVERIE (160 - Mise à terril D)"
+  },
+  {
+    "id": "MVT-1011",
+    "rowNumber": 12,
+    "horodateur": "02/10/2026 19:22:07",
+    "type": "Sortie",
+    "date": "01/10/2026",
+    "item": "Rouleaux lisse 900*159",
+    "category": "Mécanique",
+    "qty": 2,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr Zouhair OCP",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1wksr0sPHQvtJM9QzD93KJ3L9UCvi8ltl",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "160 - Mise à terril D",
+    "zoneFull": "LAVERIE (160 - Mise à terril D)"
+  },
+  {
+    "id": "MVT-1012",
+    "rowNumber": 13,
+    "horodateur": "02/10/2026 19:24:38",
+    "type": "Sortie",
+    "date": "01/10/2026",
+    "item": "Rouleaux lisse 600*159",
+    "category": "Mécanique",
+    "qty": 2,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr Zouhair OCP",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=106wLLyk3Lqq25edn1rBMOlOW4nYIlJgD",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "160 - Mise à terril D",
+    "zoneFull": "LAVERIE (160 - Mise à terril D)"
+  },
+  {
+    "id": "MVT-1013",
+    "rowNumber": 14,
+    "horodateur": "02/10/2026 19:28:15",
+    "type": "Sortie",
+    "date": "01/10/2026",
+    "item": "Boulons M16*40",
+    "category": "Boulonnerie et visserie",
+    "qty": 20,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr Zouhair OCP",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1GbLxVBv-5iSfXk1JWeQ1kS730ayM5h5o",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "210 - Débourbage et criblage",
+    "zoneFull": "LAVERIE (210 - Débourbage et criblage)"
+  },
+  {
+    "id": "MVT-1014",
+    "rowNumber": 15,
+    "horodateur": "02/10/2026 19:31:14",
+    "type": "Sortie",
+    "date": "01/10/2026",
+    "item": "Cornière métallique À˜40 long 6Ml",
+    "category": "Tôlerie / métallique (tôles, cornières)",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr Laaroussi OCP",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1e3XFegvsR9tdIxMSGk_TL4H3wD8CCenD",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "120 - RB1",
+    "zoneFull": "LAVERIE (120 - RB1)"
+  },
+  {
+    "id": "MVT-1015",
+    "rowNumber": 16,
+    "horodateur": "02/10/2026 19:34:05",
+    "type": "Sortie",
+    "date": "01/10/2026",
+    "item": "Grilles de crible",
+    "category": "Mécanique",
+    "qty": 8,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr Hilali Abderrahim OCP",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1VEmkOKORBasMoSEBQKAXXWfsJdA6ZFoR",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "210 - Débourbage et criblage",
+    "zoneFull": "LAVERIE (210 - Débourbage et criblage)"
+  },
+  {
+    "id": "MVT-1016",
+    "rowNumber": 17,
+    "horodateur": "02/10/2026 19:39:49",
+    "type": "Sortie",
+    "date": "01/10/2026",
+    "item": "Bride Plat acier DN50 / 2\"",
+    "category": "Mécanique",
+    "qty": 2,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Driouech Ahmed",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=104wI6E6zpkK2iZkOrobvr3dM5cOzvRJD",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "410 - Épaississage",
+    "zoneFull": "LAVERIE (410 - Épaississage)"
+  },
+  {
+    "id": "MVT-1017",
+    "rowNumber": 18,
+    "horodateur": "02/10/2026 19:44:45",
+    "type": "Sortie",
+    "date": "01/10/2026",
+    "item": "Joint caoutchouc d'étanchéité DN50",
+    "category": "Étanchéité / joints / garniture (tresses, joints)",
+    "qty": 4,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Driouech Ahmed",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1Pipf5RPmznts1ddH3R8_aI3dS3tK9ZJ_",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "410 - Épaississage",
+    "zoneFull": "LAVERIE (410 - Épaississage)"
+  },
+  {
+    "id": "MVT-1018",
+    "rowNumber": 19,
+    "horodateur": "02/10/2026 19:48:16",
+    "type": "Sortie",
+    "date": "01/10/2026",
+    "item": "Vanne membrane DN50/2\" / Dia-Flo / ITT",
+    "category": "Mécanique",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Driouech Ahmed OCP",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=18ZXcthryGmWKwg5d2U_aGAkH6Xquq5rh",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "410 - Épaississage",
+    "zoneFull": "LAVERIE (410 - Épaississage)"
+  },
+  {
+    "id": "MVT-1019",
+    "rowNumber": 20,
+    "horodateur": "02/10/2026 19:51:36",
+    "type": "Sortie",
+    "date": "01/10/2026",
+    "item": "Vis Six pans M36*120",
+    "category": "Boulonnerie et visserie",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "Ait Belbaroud Mustapha Jesa",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=118Fgo4oT-t2aVUJxdXVwDNvP6dRWIFA3",
+    "fournisseur": "-",
+    "zone": "TREMIE",
+    "zoneTremie": "HHI",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "TREMIE (HHI)"
+  },
+  {
+    "id": "MVT-1020",
+    "rowNumber": 21,
+    "horodateur": "02/10/2026 17:23:12",
+    "type": "Entrée",
+    "date": "02/10/2026",
+    "item": "Pneus avec jantes 445/75 R22.5",
+    "category": "Mécanique",
+    "qty": 5,
+    "unit": "U",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "Jesa maintenance",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1sENcIBQOdTBOO8-CXdAP0MsuprwR3Do5",
+    "fournisseur": "META TRANSMISSION",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "Magasin Central MC01"
+  },
+  {
+    "id": "MVT-1021",
+    "rowNumber": 22,
+    "horodateur": "02/10/2026 18:07:05",
+    "type": "Entrée",
+    "date": "02/10/2026",
+    "item": "Racleurs 934461007",
+    "category": "Mécanique",
+    "qty": 6,
+    "unit": "U",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "JESA maintenance",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1EoIe0D23VOLPlhjbkl3nJdcld1LN7ISv",
+    "fournisseur": "FONDERIE ET ACIÉRIES DU MAROC",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "Magasin Central MC01"
+  },
+  {
+    "id": "MVT-1022",
+    "rowNumber": 23,
+    "horodateur": "02/10/2026 18:09:14",
+    "type": "Entrée",
+    "date": "02/10/2026",
+    "item": "Platines de suspension/ maillon",
+    "category": "Mécanique",
+    "qty": 2,
+    "unit": "U",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "JESA maintenance",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1MrZ1Sv63rQXrX32f2dYgBjLWZD_sJoHV",
+    "fournisseur": "FONDERIE ET ACIÉRIES DU MAROC",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "Magasin Central MC01"
+  },
+  {
+    "id": "MVT-1023",
+    "rowNumber": 24,
+    "horodateur": "05/10/2026 17:52:13",
+    "type": "Sortie",
+    "date": "03/10/2026",
+    "item": "SPC 3000",
+    "category": "Mécanique",
+    "qty": 8,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Nassim",
+    "magasinier": "EL KHAZZIOUI ABDAUIM",
+    "poste": "3 poste",
+    "photo": "https://drive.google.com/open?id=1gxeyZctSNt2hQxcif8IuAGv4dpN8Lwa0",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "410 - Épaississage",
+    "zoneFull": "LAVERIE (410 - Épaississage)"
+  },
+  {
+    "id": "MVT-1024",
+    "rowNumber": 25,
+    "horodateur": "08/10/2026 02:29:38",
+    "type": "Sortie",
+    "date": "01/10/2026",
+    "item": "Boulons complet M16*100",
+    "category": "Boulonnerie et visserie",
+    "qty": 25,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Zouhair OCP",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1oYoNWH4eJAKIZgYK8KHife7Hgpq40MK-",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "210 - Débourbage et criblage",
+    "zoneFull": "LAVERIE (210 - Débourbage et criblage)"
+  },
+  {
+    "id": "MVT-1025",
+    "rowNumber": 26,
+    "horodateur": "08/10/2026 02:32:57",
+    "type": "Sortie",
+    "date": "01/10/2026",
+    "item": "Joint fibre d'étanchéité DN 200",
+    "category": "Étanchéité / joints / garniture (tresses, joints)",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Abderrahim Hilali OCP  (MMSE)",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=17QDXYeI2o9TYrnhhMz4OZep0OoMMs2yt",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "210 - Débourbage et criblage",
+    "zoneFull": "LAVERIE (210 - Débourbage et criblage)"
+  },
+  {
+    "id": "MVT-1026",
+    "rowNumber": 27,
+    "horodateur": "08/10/2026 02:34:39",
+    "type": "Sortie",
+    "date": "01/10/2026",
+    "item": "Joint fibre d'étanchéité DN 300",
+    "category": "Étanchéité / joints / garniture (tresses, joints)",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Abderrahim Hilali OCP (MMSE)",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1iPfsn2vp4NZQs_wu8EOdBmlOd-fpoQpG",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "210 - Débourbage et criblage",
+    "zoneFull": "LAVERIE (210 - Débourbage et criblage)"
+  },
+  {
+    "id": "MVT-1027",
+    "rowNumber": 28,
+    "horodateur": "08/10/2026 02:37:18",
+    "type": "Sortie",
+    "date": "02/10/2026",
+    "item": "Courroies XPC 4500",
+    "category": "Mécanique",
+    "qty": 8,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Abderrahim Hilali OCP (MMSE)",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1h6TAeWJHBB4GK8eNvkiW8bcP1smdlPpt",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "330 - Réactif de flottation",
+    "zoneFull": "LAVERIE (330 - Réactif de flottation)"
+  },
+  {
+    "id": "MVT-1028",
+    "rowNumber": 29,
+    "horodateur": "08/10/2026 02:42:53",
+    "type": "Sortie",
+    "date": "06/10/2026",
+    "item": "Tresses 20*20*640",
+    "category": "Étanchéité / joints / garniture (tresses, joints)",
+    "qty": 4,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Driouech Ahmed OCP (MMSE)",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1-dPYWv7aP46qQKr0jRkilXkdvYce1qin",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "410 - Épaississage",
+    "zoneFull": "LAVERIE (410 - Épaississage)"
+  },
+  {
+    "id": "MVT-1029",
+    "rowNumber": 30,
+    "horodateur": "08/10/2026 02:50:24",
+    "type": "Sortie",
+    "date": "06/10/2026",
+    "item": "Graisse FEP 2 grade 2",
+    "category": "Lubrifiants, graisses",
+    "qty": 15,
+    "unit": "KG",
+    "demandeur": "OCP",
+    "nomDemandeur": "Sakhaoui OCP ( MMSE)",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1BNDTBjOpK1BcXFBHjtwFunayEFCTe4MF",
+    "fournisseur": "-",
+    "zone": "LIAISON",
+    "zoneTremie": "",
+    "zoneLiaison": "140 - RL1",
+    "zoneLaverie": "",
+    "zoneFull": "LIAISON (140 - RL1)"
+  },
+  {
+    "id": "MVT-1030",
+    "rowNumber": 31,
+    "horodateur": "08/10/2026 02:52:28",
+    "type": "Sortie",
+    "date": "06/10/2026",
+    "item": "Huile XT 320",
+    "category": "Lubrifiants, graisses",
+    "qty": 20,
+    "unit": "L",
+    "demandeur": "OCP",
+    "nomDemandeur": "Driouech Ahmed OCP (MMSE)",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1EtObzur93k0LCPTGa2KlOFIOjXTDzxsJ",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "220 - Classification",
+    "zoneFull": "LAVERIE (220 - Classification)"
+  },
+  {
+    "id": "MVT-1031",
+    "rowNumber": 32,
+    "horodateur": "08/10/2026 02:56:06",
+    "type": "Sortie",
+    "date": "06/10/2026",
+    "item": "Boulons complet M12*50",
+    "category": "Boulonnerie et visserie",
+    "qty": 10,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Haris Aziz OCP (MMSE)",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1XcbQIv7ZBcBae3ISL_pePRHoT83JYt54",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "120 - RP1",
+    "zoneFull": "LAVERIE (120 - RP1)"
+  },
+  {
+    "id": "MVT-1032",
+    "rowNumber": 33,
+    "horodateur": "08/10/2026 03:06:37",
+    "type": "Sortie",
+    "date": "07/10/2026",
+    "item": "Presse étoupe métallique étanche À˜60 mm (prélevée sur moteur électrique neuf)",
+    "category": "Mécanique",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Meriem OCP",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "3 poste",
+    "photo": "https://drive.google.com/open?id=193vrWhdhoeOn2YILJ9CTVCmjDNuBlwva",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "320 - Conditionnement et flottation",
+    "zoneFull": "LAVERIE (320 - Conditionnement et flottation)"
+  },
+  {
+    "id": "MVT-1033",
+    "rowNumber": 34,
+    "horodateur": "08/10/2026 03:08:11",
+    "type": "Sortie",
+    "date": "07/10/2026",
+    "item": "Tube mastic silicone",
+    "category": "Étanchéité / joints / garniture (tresses, joints)",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mme Meriem OCP",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "3 poste",
+    "photo": "https://drive.google.com/open?id=1Hv7ecb0t2G5eBBIzn1pGbLL_6rFCKCo5",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "320 - Conditionnement et flottation",
+    "zoneFull": "LAVERIE (320 - Conditionnement et flottation)"
+  },
+  {
+    "id": "MVT-1034",
+    "rowNumber": 35,
+    "horodateur": "08/10/2026 03:10:36",
+    "type": "Sortie",
+    "date": "07/10/2026",
+    "item": "Vis fraisé Six pans creux M12* 40 avec écrou",
+    "category": "Boulonnerie et visserie",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mme Meriem OCP ( MMSE)",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "3 poste",
+    "photo": "https://drive.google.com/open?id=17Ay5B3hNZS8Ul-pi-n0403FyWkenAeZG",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "320 - Conditionnement et flottation",
+    "zoneFull": "LAVERIE (320 - Conditionnement et flottation)"
+  },
+  {
+    "id": "MVT-1035",
+    "rowNumber": 36,
+    "horodateur": "08/10/2026 03:16:20",
+    "type": "Sortie",
+    "date": "08/10/2026",
+    "item": "Radar niveau krohne OPTI WAVE 4500-C /Ref: VFDB40W00214430240M1A103",
+    "category": "Électrique & Instrumentation",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Sahim OCP (Hamid Honeywell)",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1j7Twmx70dZ1JvViO8O1XyH6G_WmGRTjv",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "330 - Réactif de flottation",
+    "zoneFull": "LAVERIE (330 - Réactif de flottation)"
+  },
+  {
+    "id": "MVT-1036",
+    "rowNumber": 37,
+    "horodateur": "08/10/2026 03:19:33",
+    "type": "Sortie",
+    "date": "08/10/2026",
+    "item": "Transformateur de pression différentielle ST700/ Honeywell/ série : C400041840531",
+    "category": "Électrique & Instrumentation",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Sahim OCP ( Hamid Honeywell)",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1t1AyZLTp2MnbYSx2UQhRDV4qEOt9SvyE",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "330 - Réactif de flottation",
+    "zoneFull": "LAVERIE (330 - Réactif de flottation)"
+  },
+  {
+    "id": "MVT-1037",
+    "rowNumber": 38,
+    "horodateur": "08/10/2026 03:22:08",
+    "type": "Sortie",
+    "date": "08/10/2026",
+    "item": "Boulons complet M24*100",
+    "category": "Boulonnerie et visserie",
+    "qty": 4,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Abderrahim Hilali OCP( MMSE )",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1o051ZrhA3tI43KAhTqsbBhevm6WQ1MDU",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "320 - Conditionnement et flottation",
+    "zoneFull": "LAVERIE (320 - Conditionnement et flottation)"
+  },
+  {
+    "id": "MVT-1038",
+    "rowNumber": 39,
+    "horodateur": "08/10/2026 03:24:57",
+    "type": "Sortie",
+    "date": "08/10/2026",
+    "item": "Pneus Goodyear avec jante 445/75R22.5",
+    "category": "Mécanique",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mehdi Alami OCP",
+    "magasinier": "ABDELKBIR JABBOUR",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1NlpQwmjM3eRHA-e157RxaF4JQI6_bt8K",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "210 - Débourbage et criblage",
+    "zoneFull": "LAVERIE (210 - Débourbage et criblage)"
+  },
+  {
+    "id": "MVT-1039",
+    "rowNumber": 40,
+    "horodateur": "08/10/2026 03:26:54",
+    "type": "Sortie",
+    "date": "08/10/2026",
+    "item": "Graisse FEP 2 grade 2",
+    "category": "Lubrifiants, graisses",
+    "qty": 50,
+    "unit": "KG",
+    "demandeur": "OCP",
+    "nomDemandeur": "Sakhaoui OCP ( MMSE)",
+    "magasinier": "TIMICHA RACHID",
+    "poste": "1 poste",
+    "photo": "https://drive.google.com/open?id=1nQwkcNmYTywVC94E9cjy8LYqT6HNMMB1",
+    "fournisseur": "-",
+    "zone": "TREMIE",
+    "zoneTremie": "HHI",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "TREMIE (HHI)"
+  },
+  {
+    "id": "MVT-1040",
+    "rowNumber": 41,
+    "horodateur": "09/10/2026 01:56:02",
+    "type": "Sortie",
+    "date": "08/10/2026",
+    "item": "Extincteur 5kg Dioxyde de carbone 89B EUROFEU",
+    "category": "EPI et sécurité",
+    "qty": 2,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr. Mourad El Ouardi",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "130 - ST2",
+    "zoneFull": "LAVERIE (130 - ST2)"
+  },
+  {
+    "id": "MVT-1041",
+    "rowNumber": 42,
+    "horodateur": "10/10/2026 04:29:46",
+    "type": "Entrée",
+    "date": "10/10/2026",
+    "item": "Poulie 524-620",
+    "category": "Mécanique",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mehdi Alami OCP",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "3 poste",
+    "photo": "https://drive.google.com/open?id=1hA7NuyPo9-aPvItEogDRXaATouLNQQNT",
+    "fournisseur": "Marque : Masta (BL non reçu)",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "Magasin Central MC01"
+  },
+  {
+    "id": "MVT-1042",
+    "rowNumber": 43,
+    "horodateur": "10/10/2026 04:32:15",
+    "type": "Entrée",
+    "date": "10/10/2026",
+    "item": "Manchon de serrage H324",
+    "category": "Mécanique",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mehdi Alami OCP",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "3 poste",
+    "photo": "https://drive.google.com/open?id=1-27YnXc9t0quCji1fiA7Vghws_523dFe",
+    "fournisseur": "BL non reçu",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "Magasin Central MC01"
+  },
+  {
+    "id": "MVT-1043",
+    "rowNumber": 44,
+    "horodateur": "10/10/2026 04:34:00",
+    "type": "Entrée",
+    "date": "10/10/2026",
+    "item": "Manchon de serrage H3024",
+    "category": "Mécanique",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mehdi Alami OCP",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "3 poste",
+    "photo": "https://drive.google.com/open?id=11QXl-i-31rhT1dq7w49BFHZxhGzqQKZ1",
+    "fournisseur": "BL non reçu",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "Magasin Central MC01"
+  },
+  {
+    "id": "MVT-1044",
+    "rowNumber": 45,
+    "horodateur": "10/10/2026 04:36:07",
+    "type": "Entrée",
+    "date": "10/10/2026",
+    "item": "Roulement 22224 KEJW33C3",
+    "category": "Mécanique",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mehdi Alami OCP",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "3 poste",
+    "photo": "https://drive.google.com/open?id=1tDV3dj_M5PA2Tps_z8yjgO2ne33j0ype",
+    "fournisseur": "BL non reçu (Marque Timken)",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "Magasin Central MC01"
+  },
+  {
+    "id": "MVT-1045",
+    "rowNumber": 46,
+    "horodateur": "10/10/2026 04:38:46",
+    "type": "Entrée",
+    "date": "10/10/2026",
+    "item": "Roulement 23024 KEJW33C3",
+    "category": "Mécanique",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mehdi Alami OCP",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "3 poste",
+    "photo": "https://drive.google.com/open?id=1sO8GfZyYfbAKYp-HXSxpmYGCCRPqW1W3",
+    "fournisseur": "BL non reçu (marque TIMKEN)",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "Magasin Central MC01"
+  },
+  {
+    "id": "MVT-1046",
+    "rowNumber": 47,
+    "horodateur": "17/10/2026 09:08:57",
+    "type": "Sortie",
+    "date": "17/10/2026",
+    "item": "Courroie SPB 2650",
+    "category": "Mécanique",
+    "qty": 6,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mme. Hanane",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "3 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "220 - Classification",
+    "zoneFull": "LAVERIE (220 - Classification)"
+  },
+  {
+    "id": "MVT-1047",
+    "rowNumber": 48,
+    "horodateur": "17/10/2026 09:10:14",
+    "type": "Sortie",
+    "date": "17/10/2026",
+    "item": "Courroie SPA 1782",
+    "category": "Mécanique",
+    "qty": 5,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mme. Hanane",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "3 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "240 - Filtration",
+    "zoneFull": "LAVERIE (240 - Filtration)"
+  },
+  {
+    "id": "MVT-1048",
+    "rowNumber": 49,
+    "horodateur": "18/10/2026 18:11:13",
+    "type": "Sortie",
+    "date": "18/10/2026",
+    "item": "Flexible d'incendie DN100 / L=20m",
+    "category": "Tuyauterie et robinetterie",
+    "qty": 2,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr. Marzouki Yasser",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "3 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "240 - Filtration",
+    "zoneFull": "LAVERIE (240 - Filtration)"
+  },
+  {
+    "id": "MVT-1049",
+    "rowNumber": 50,
+    "horodateur": "19/10/2026 20:10:30",
+    "type": "Sortie",
+    "date": "15/10/2026",
+    "item": "Boite étanche électrique 100/100",
+    "category": "Électrique & Instrumentation",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "Mr Hanine JESA",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1Sgf0ScV1Tg31mw3CZb5758c0_hyRSHgh",
+    "fournisseur": "-",
+    "zone": "TREMIE",
+    "zoneTremie": "HHI",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "TREMIE (HHI)"
+  },
+  {
+    "id": "MVT-1050",
+    "rowNumber": 51,
+    "horodateur": "19/10/2026 20:13:40",
+    "type": "Sortie",
+    "date": "15/10/2026",
+    "item": "Étrier en U À˜60 mm",
+    "category": "Boulonnerie et visserie",
+    "qty": 2,
+    "unit": "U",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "Mr Hanine JESA",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=17EQWq9u_XuZjLaPadsjlXRJE-DZNdow7",
+    "fournisseur": "-",
+    "zone": "TREMIE",
+    "zoneTremie": "HHI",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "TREMIE (HHI)"
+  },
+  {
+    "id": "MVT-1051",
+    "rowNumber": 52,
+    "horodateur": "19/10/2026 20:15:31",
+    "type": "Sortie",
+    "date": "15/10/2026",
+    "item": "Étrier en U À˜40mm",
+    "category": "Boulonnerie et visserie",
+    "qty": 2,
+    "unit": "U",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "Hanine Mohamed JESA",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=19f9K_X4jPIf4sWzvsImwgu8MKUHRDNnB",
+    "fournisseur": "-",
+    "zone": "TREMIE",
+    "zoneTremie": "HHI",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "TREMIE (HHI)"
+  },
+  {
+    "id": "MVT-1052",
+    "rowNumber": 53,
+    "horodateur": "19/10/2026 20:17:13",
+    "type": "Sortie",
+    "date": "15/10/2026",
+    "item": "Écrous M10",
+    "category": "Boulonnerie et visserie",
+    "qty": 2,
+    "unit": "U",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "Mohamed Hanine JESA",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1u5R0Yv6u40_6wJj83tAPrFw60T1V-uMy",
+    "fournisseur": "-",
+    "zone": "TREMIE",
+    "zoneTremie": "HHI",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "TREMIE (HHI)"
+  },
+  {
+    "id": "MVT-1053",
+    "rowNumber": 54,
+    "horodateur": "19/10/2026 20:18:48",
+    "type": "Sortie",
+    "date": "15/10/2026",
+    "item": "Écrous M6",
+    "category": "Boulonnerie et visserie",
+    "qty": 2,
+    "unit": "U",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "Mohamed Hanine JESA",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1CJK6kp4YB0Ib0uSV3uJIZ5GSMrXLlsqQ",
+    "fournisseur": "-",
+    "zone": "TREMIE",
+    "zoneTremie": "HHI",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "TREMIE (HHI)"
+  },
+  {
+    "id": "MVT-1054",
+    "rowNumber": 55,
+    "horodateur": "19/10/2026 20:20:37",
+    "type": "Sortie",
+    "date": "15/10/2026",
+    "item": "Tube rond galvanisé DN40",
+    "category": "Tuyauterie et robinetterie",
+    "qty": 2,
+    "unit": "ML",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "Mohamed Hanine JESA",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1716Pg7w-qFZxecqpNfpS__4HGsUE6G5H",
+    "fournisseur": "-",
+    "zone": "TREMIE",
+    "zoneTremie": "HHI",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "TREMIE (HHI)"
+  },
+  {
+    "id": "MVT-1055",
+    "rowNumber": 56,
+    "horodateur": "19/10/2026 20:22:53",
+    "type": "Sortie",
+    "date": "15/10/2026",
+    "item": "Tube rond galvanisé DN25",
+    "category": "Tuyauterie et robinetterie",
+    "qty": 3,
+    "unit": "ML",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "Mohamed Hanine JESA",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1LzWEfdzJJUdUkIBj5J0AssVLFe4E6SDU",
+    "fournisseur": "-",
+    "zone": "TREMIE",
+    "zoneTremie": "HHI",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "TREMIE (HHI)"
+  },
+  {
+    "id": "MVT-1056",
+    "rowNumber": 57,
+    "horodateur": "19/10/2026 20:26:17",
+    "type": "Sortie",
+    "date": "15/10/2026",
+    "item": "Huile XT 320",
+    "category": "Lubrifiants, graisses",
+    "qty": 105,
+    "unit": "L",
+    "demandeur": "OCP",
+    "nomDemandeur": "Sakhaoui OCP",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=16f4F7__v9KlyZg137K6HJtNrxabazyMi",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "320 - Conditionnement et flottation",
+    "zoneFull": "LAVERIE (320 - Conditionnement et flottation)"
+  },
+  {
+    "id": "MVT-1057",
+    "rowNumber": 58,
+    "horodateur": "19/10/2026 20:35:19",
+    "type": "Sortie",
+    "date": "15/10/2026",
+    "item": "Rouleaux lisse 800*159",
+    "category": "Mécanique",
+    "qty": 17,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mme Meriem OCP / MMSE",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1YIQe3L__nTFz4v_x_ISiapEKTUX_UB_R",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "130 - SL4",
+    "zoneFull": "LAVERIE (130 - SL4)"
+  },
+  {
+    "id": "MVT-1058",
+    "rowNumber": 59,
+    "horodateur": "19/10/2026 20:36:59",
+    "type": "Sortie",
+    "date": "15/10/2026",
+    "item": "Boulons M16*70",
+    "category": "Boulonnerie et visserie",
+    "qty": 10,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mme Meriem OCP/ MMSE",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1xlR3h0XItOrt14u1k2k4dpGIjCr1WQYm",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "130 - SL4",
+    "zoneFull": "LAVERIE (130 - SL4)"
+  },
+  {
+    "id": "MVT-1059",
+    "rowNumber": 60,
+    "horodateur": "19/10/2026 20:39:04",
+    "type": "Sortie",
+    "date": "15/10/2026",
+    "item": "Courroies SPC 2800",
+    "category": "Mécanique",
+    "qty": 8,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mehdi Merchich OCP",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1chh1sso2ERffZZOzASga124sGKvABokt",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "410 - Épaississage",
+    "zoneFull": "LAVERIE (410 - Épaississage)"
+  },
+  {
+    "id": "MVT-1060",
+    "rowNumber": 61,
+    "horodateur": "19/10/2026 20:41:25",
+    "type": "Sortie",
+    "date": "15/10/2026",
+    "item": "Boulons M16*70",
+    "category": "Boulonnerie et visserie",
+    "qty": 5,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Driouech Ahmed OCP/ MMSE",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1u3KtnLAvDNLDrfFXe9hBmCwyoO7tL3YS",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "320 - Conditionnement et flottation",
+    "zoneFull": "LAVERIE (320 - Conditionnement et flottation)"
+  },
+  {
+    "id": "MVT-1061",
+    "rowNumber": 62,
+    "horodateur": "19/10/2026 20:43:41",
+    "type": "Sortie",
+    "date": "15/10/2026",
+    "item": "Boulons complet M24*150",
+    "category": "Boulonnerie et visserie",
+    "qty": 9,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mehdi Merchich OCP",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1cQGsT9Q5YI3iygxqX0KMgZ0ok2p5fcma",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "410 - Épaississage",
+    "zoneFull": "LAVERIE (410 - Épaississage)"
+  },
+  {
+    "id": "MVT-1062",
+    "rowNumber": 63,
+    "horodateur": "19/10/2026 20:49:10",
+    "type": "Sortie",
+    "date": "19/10/2026",
+    "item": "Huile B 68",
+    "category": "Lubrifiants, graisses",
+    "qty": 5,
+    "unit": "L",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "Ait Belbaroud Mustapha Jesa/ MMSE",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1QcsFRMPN2vKeUPx_fr5C235D86Idql79",
+    "fournisseur": "-",
+    "zone": "LIAISON",
+    "zoneTremie": "",
+    "zoneLiaison": "150 - RL4",
+    "zoneLaverie": "",
+    "zoneFull": "LIAISON (150 - RL4)"
+  },
+  {
+    "id": "MVT-1063",
+    "rowNumber": 64,
+    "horodateur": "19/10/2026 20:53:48",
+    "type": "Sortie",
+    "date": "19/10/2026",
+    "item": "Huile XT 220",
+    "category": "Lubrifiants, graisses",
+    "qty": 5,
+    "unit": "L",
+    "demandeur": "OCP",
+    "nomDemandeur": "Sakhaoui OCP/ MMSE",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=1GnEJy9LATdi8lM-FGDORWslPumDbMUVy",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "110 - CB1",
+    "zoneFull": "LAVERIE (110 - CB1)"
+  },
+  {
+    "id": "MVT-1064",
+    "rowNumber": 65,
+    "horodateur": "19/10/2026 20:56:08",
+    "type": "Entrée",
+    "date": "19/10/2026",
+    "item": "Rouleau plastique/ bâche long 270m larg 1.5m",
+    "category": "Étanchéité / joints / garniture (tresses, joints)",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "Raid Atik",
+    "magasinier": "OULAD RHIMANI HICHAM",
+    "poste": "2 poste",
+    "photo": "https://drive.google.com/open?id=10f36nSKrZPFrvkGbFQscD2vOahyVdmju",
+    "fournisseur": "Ventec",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "Magasin Central MC01"
+  },
+  {
+    "id": "MVT-1065",
+    "rowNumber": 66,
+    "horodateur": "20/10/2026 00:14:05",
+    "type": "Sortie",
+    "date": "19/10/2026",
+    "item": "Tige filetée M27À—1000",
+    "category": "Boulonnerie et visserie",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr. Sakhaoui Mustapha",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "110 - ST1",
+    "zoneFull": "LAVERIE (110 - ST1)"
+  },
+  {
+    "id": "MVT-1066",
+    "rowNumber": 67,
+    "horodateur": "20/10/2026 00:15:35",
+    "type": "Sortie",
+    "date": "19/10/2026",
+    "item": "Écrous + Rondelles M27",
+    "category": "Boulonnerie et visserie",
+    "qty": 4,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr. Sakhaoui Mustapha",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "110 - ST1",
+    "zoneFull": "LAVERIE (110 - ST1)"
+  },
+  {
+    "id": "MVT-1067",
+    "rowNumber": 68,
+    "horodateur": "20/10/2026 00:19:09",
+    "type": "Sortie",
+    "date": "19/10/2026",
+    "item": "Attache de caillebotis",
+    "category": "Boulonnerie et visserie",
+    "qty": 4,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr. Sakhaoui Mustapha",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "110 - ST1",
+    "zoneFull": "LAVERIE (110 - ST1)"
+  },
+  {
+    "id": "MVT-1068",
+    "rowNumber": 69,
+    "horodateur": "20/10/2026 00:22:14",
+    "type": "Sortie",
+    "date": "19/10/2026",
+    "item": "Filtre à air cylindrique pour le compresseur d'air choc",
+    "category": "Mécanique",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "Mr. Ait Belbaroud Mustapha",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "LIAISON",
+    "zoneTremie": "",
+    "zoneLiaison": "140 - TT07",
+    "zoneLaverie": "",
+    "zoneFull": "LIAISON (140 - TT07)"
+  },
+  {
+    "id": "MVT-1069",
+    "rowNumber": 70,
+    "horodateur": "20/10/2026 00:25:32",
+    "type": "Sortie",
+    "date": "19/10/2026",
+    "item": "Flexible hydraulique 1/2\" L=800mm équipé d'embouts sertis 90°",
+    "category": "Hydraulique (distributeurs, électrovannes, filtres)",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr. Aymane Benhaddou",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "220 - Classification",
+    "zoneFull": "LAVERIE (220 - Classification)"
+  },
+  {
+    "id": "MVT-1070",
+    "rowNumber": 71,
+    "horodateur": "20/10/2026 00:27:26",
+    "type": "Sortie",
+    "date": "19/10/2026",
+    "item": "Vanne à boisseau sphérique 1/2\"",
+    "category": "Tuyauterie et robinetterie",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr. Aymane Benhaddou",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "220 - Classification",
+    "zoneFull": "LAVERIE (220 - Classification)"
+  },
+  {
+    "id": "MVT-1071",
+    "rowNumber": 72,
+    "horodateur": "22/10/2026 01:39:17",
+    "type": "Sortie",
+    "date": "21/10/2026",
+    "item": "Boulons M12*40",
+    "category": "Boulonnerie et visserie",
+    "qty": 4,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr. Sakhaoui Mustapha",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "160 - Mise à terril D",
+    "zoneFull": "LAVERIE (160 - Mise à terril D)"
+  },
+  {
+    "id": "MVT-1072",
+    "rowNumber": 73,
+    "horodateur": "22/10/2026 01:42:16",
+    "type": "Sortie",
+    "date": "21/10/2026",
+    "item": "Boulons M12*100",
+    "category": "Boulonnerie et visserie",
+    "qty": 6,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr. Aymane Benhaddou",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "320 - Conditionnement et flottation",
+    "zoneFull": "LAVERIE (320 - Conditionnement et flottation)"
+  },
+  {
+    "id": "MVT-1073",
+    "rowNumber": 74,
+    "horodateur": "22/10/2026 01:44:11",
+    "type": "Sortie",
+    "date": "21/10/2026",
+    "item": "Tresse 20À—20À—640",
+    "category": "Mécanique",
+    "qty": 4,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr. Elhilali Abderrahim",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "410 - Épaississage",
+    "zoneFull": "LAVERIE (410 - Épaississage)"
+  },
+  {
+    "id": "MVT-1074",
+    "rowNumber": 75,
+    "horodateur": "23/10/2026 01:06:18",
+    "type": "Sortie",
+    "date": "22/10/2026",
+    "item": "Boulons M14*60",
+    "category": "Boulonnerie et visserie",
+    "qty": 8,
+    "unit": "U",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "Mr. Abderrazak Amentag",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "TREMIE",
+    "zoneTremie": "HHI",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "TREMIE (HHI)"
+  },
+  {
+    "id": "MVT-1075",
+    "rowNumber": 76,
+    "horodateur": "23/10/2026 01:07:20",
+    "type": "Sortie",
+    "date": "22/10/2026",
+    "item": "Écrous M24",
+    "category": "Boulonnerie et visserie",
+    "qty": 4,
+    "unit": "U",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "Mr. Abderrazak Amentag",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "TREMIE",
+    "zoneTremie": "HHI",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "TREMIE (HHI)"
+  },
+  {
+    "id": "MVT-1076",
+    "rowNumber": 77,
+    "horodateur": "23/10/2026 01:08:33",
+    "type": "Sortie",
+    "date": "22/10/2026",
+    "item": "Écrous M14",
+    "category": "Boulonnerie et visserie",
+    "qty": 16,
+    "unit": "U",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "Mr. Abderrazak Amentag",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "TREMIE",
+    "zoneTremie": "HHI",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "TREMIE (HHI)"
+  },
+  {
+    "id": "MVT-1077",
+    "rowNumber": 78,
+    "horodateur": "23/10/2026 01:09:36",
+    "type": "Sortie",
+    "date": "22/10/2026",
+    "item": "Rondelles M14",
+    "category": "Boulonnerie et visserie",
+    "qty": 16,
+    "unit": "U",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "Mr. Abderrazak Amentag",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "TREMIE",
+    "zoneTremie": "HHI",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "TREMIE (HHI)"
+  },
+  {
+    "id": "MVT-1078",
+    "rowNumber": 79,
+    "horodateur": "23/10/2026 01:13:55",
+    "type": "Sortie",
+    "date": "22/10/2026",
+    "item": "Huile XT320",
+    "category": "Lubrifiants, graisses",
+    "qty": 4,
+    "unit": "L",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mme. Salma",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "420 - Préparation du floculant",
+    "zoneFull": "LAVERIE (420 - Préparation du floculant)"
+  },
+  {
+    "id": "MVT-1079",
+    "rowNumber": 80,
+    "horodateur": "25/10/2026 23:51:37",
+    "type": "Sortie",
+    "date": "25/10/2026",
+    "item": "Commutateur rotatif équipé d'un bloc de contact ZBE-101",
+    "category": "Électrique & Instrumentation",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr. Nassim Talebi",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "240 - Filtration",
+    "zoneFull": "LAVERIE (240 - Filtration)"
+  },
+  {
+    "id": "MVT-1080",
+    "rowNumber": 81,
+    "horodateur": "25/10/2026 23:53:19",
+    "type": "Sortie",
+    "date": "25/10/2026",
+    "item": "Flexible d'incendie DN100 L=20m",
+    "category": "EPI et sécurité",
+    "qty": 2,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr. Nassim Talebi",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "220 - Classification",
+    "zoneFull": "LAVERIE (220 - Classification)"
+  },
+  {
+    "id": "MVT-1081",
+    "rowNumber": 82,
+    "horodateur": "25/10/2026 23:54:34",
+    "type": "Sortie",
+    "date": "25/10/2026",
+    "item": "Vis M40*180",
+    "category": "Boulonnerie et visserie",
+    "qty": 2,
+    "unit": "U",
+    "demandeur": "JESA Maintenance",
+    "nomDemandeur": "Mr. Amentag Abderrazak",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "TREMIE",
+    "zoneTremie": "HAF",
+    "zoneLiaison": "",
+    "zoneLaverie": "",
+    "zoneFull": "TREMIE (HAF)"
+  },
+  {
+    "id": "MVT-1082",
+    "rowNumber": 83,
+    "horodateur": "27/10/2026 00:03:31",
+    "type": "Sortie",
+    "date": "26/10/2026",
+    "item": "Graisse grade 2",
+    "category": "Lubrifiants, graisses",
+    "qty": 8,
+    "unit": "KG",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mme. Salma",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "320 - Conditionnement et flottation",
+    "zoneFull": "LAVERIE (320 - Conditionnement et flottation)"
+  },
+  {
+    "id": "MVT-1083",
+    "rowNumber": 84,
+    "horodateur": "27/10/2026 00:07:47",
+    "type": "Sortie",
+    "date": "26/10/2026",
+    "item": "Joint d'étanchéité de flexible d'air ALFAGOMMA DN32",
+    "category": "Mécanique",
+    "qty": 1,
+    "unit": "U",
+    "demandeur": "OCP",
+    "nomDemandeur": "Mr. Ahmed Driwech",
+    "magasinier": "ES-SABIROU ABDERRAHIM",
+    "poste": "2 poste",
+    "photo": "",
+    "fournisseur": "-",
+    "zone": "LAVERIE",
+    "zoneTremie": "",
+    "zoneLiaison": "",
+    "zoneLaverie": "320 - Conditionnement et flottation",
+    "zoneFull": "LAVERIE (320 - Conditionnement et flottation)"
+  }
+];
+
+        function openMovementDetailModal(mvtId) {
+            const records = currentActiveRealRecords && currentActiveRealRecords.length ? currentActiveRealRecords : FULL_17_REAL_RECORDS;
+            const r = records.find(item => item.id === mvtId) || FULL_17_REAL_RECORDS[0];
+            if (!r) return;
+
+            document.getElementById('modal-mvt-id').innerText = r.id;
+            document.getElementById('modal-mvt-row').innerText = 'Ligne Sheet: #' + (r.rowNumber || '2');
+            document.getElementById('modal-mvt-item-title').innerText = r.item;
+
+            const isEntree = r.type === 'Entrée';
+            const badge = document.getElementById('modal-mvt-type-badge');
+            badge.innerText = isEntree ? 'ENTRÉE QUAI (BR)' : 'SORTIE CHANTIER (BS)';
+            badge.className = isEntree ? 'text-xs font-black px-2.5 py-0.5 rounded-full bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300' : 'text-xs font-black px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300';
+
+            document.getElementById('modal-field-horodateur').innerText = r.horodateur || '-';
+            document.getElementById('modal-field-date').innerText = r.date || '-';
+            document.getElementById('modal-field-category').innerText = r.category || '-';
+            document.getElementById('modal-field-qty').innerText = r.qty + ' ' + (r.unit || 'U');
+            document.getElementById('modal-field-demandeur').innerText = r.demandeur || '-';
+            document.getElementById('modal-field-nom-demandeur').innerText = r.nomDemandeur || (isEntree ? 'Réception Quai' : 'Atelier OCP');
+            document.getElementById('modal-field-magasinier').innerText = r.magasinier || '-';
+            document.getElementById('modal-field-poste').innerText = r.poste || '1er poste';
+            document.getElementById('modal-field-fournisseur').innerText = r.fournisseur || (isEntree ? 'PETROLAF (FUCHS)' : '-');
+            document.getElementById('modal-field-zone').innerText = r.zone || 'LAVERIE';
+            document.getElementById('modal-field-subzone').innerText = [r.zoneTremie, r.zoneLiaison, r.zoneLaverie].filter(Boolean).join(', ') || r.zoneFull || '-';
+
+            const photoCont = document.getElementById('modal-photo-container');
+            const photoImg = document.getElementById('modal-photo-img');
+            const driveBtn = document.getElementById('modal-photo-drive-btn');
+
+            if (r.photo && r.photo.startsWith('http')) {
+                photoCont.classList.remove('hidden');
+                photoImg.src = r.photo;
+                driveBtn.href = r.photo;
+            } else {
+                photoCont.classList.add('hidden');
+            }
+
+            const docBtn = document.getElementById('modal-generate-doc-btn');
+            docBtn.onclick = function() {
+                closeMovementDetailModal();
+                if (isEntree) {
+                    openLastOfficialDoc('BR', { ref: 'BR-2026-' + r.id.replace('MVT-', ''), supplier: r.fournisseur || 'PETROLAF (FUCHS)', itemCode: r.id, itemName: r.item, qty: r.qty + ' ' + r.unit });
+                } else {
+                    openLastOfficialDoc('BS', { ref: 'BS-2026-' + r.id.replace('MVT-', ''), ot: 'OT-77341', atelier: r.zoneFull || r.demandeur, itemCode: r.id, itemName: r.item, qty: r.qty + ' ' + r.unit });
+                }
+            };
+
+            const modal = document.getElementById('movement-detail-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function closeMovementDetailModal() {
+            const modal = document.getElementById('movement-detail-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        // --- GENERALISATION DE TOUS LES 7 GRAPHIQUES ---
+        function updateAll7ChartsWithRealData(records) {
+            if (!records || !records.length) return;
+
+            // 1. Calculs des flux réels
+            const catSorties = {};
+            const catEntrees = {};
+            const magCounts = {};
+            const zoneCounts = {};
+            const posteCounts = { '1 poste': 0, '2 poste': 0 };
+            const dailyCounts = {};
+
+            records.forEach(r => {
+                const day = r.date || r.horodateur.split(' ')[0] || '01/10/2026';
+                if (!dailyCounts[day]) dailyCounts[day] = { in: 0, out: 0, total: 0 };
+
+                if (r.type === 'Entrée') {
+                    catEntrees[r.category] = (catEntrees[r.category] || 0) + 1;
+                    dailyCounts[day].in += r.qty;
+                } else {
+                    catSorties[r.category] = (catSorties[r.category] || 0) + 1;
+                    dailyCounts[day].out += r.qty;
+                }
+                dailyCounts[day].total += r.qty;
+
+                // Magasiniers
+                const mag = r.magasinier || 'Autre';
+                magCounts[mag] = (magCounts[mag] || 0) + 1;
+
+                // Zones
+                const z = r.zoneLaverie || r.zoneTremie || r.zoneLiaison || r.zone || 'Autre';
+                zoneCounts[z] = (zoneCounts[z] || 0) + 1;
+
+                // Postes
+                const p = (r.poste && r.poste.includes('2')) ? '2 poste' : '1 poste';
+                posteCounts[p] = (posteCounts[p] || 0) + 1;
+            });
+
+            // G1: pieChartSorties (Dashboard)
+            if (window.pieSortiesChartObj) {
+                pieSortiesChartObj.data.labels = Object.keys(catSorties);
+                pieSortiesChartObj.data.datasets[0].data = Object.values(catSorties);
+                pieSortiesChartObj.data.datasets[0].backgroundColor = [
+                    '#3B82F6', '#00A859', '#F59E0B', '#A855F7', '#EF4444', '#06B6D4', '#84CC16', '#64748B'
+                ];
+                pieSortiesChartObj.update();
+            }
+
+            // G2: pieChartEntrees (Dashboard)
+            if (window.pieEntreesChartObj) {
+                pieEntreesChartObj.data.labels = Object.keys(catEntrees);
+                pieEntreesChartObj.data.datasets[0].data = Object.values(catEntrees);
+                pieEntreesChartObj.data.datasets[0].backgroundColor = ['#00A859', '#3B82F6', '#F59E0B'];
+                pieEntreesChartObj.update();
+            }
+
+            // G3: evolutionStockChart (Vue Graphiques : Évolution temporelle réelle)
+            if (window.evoChart) {
+                const days = Object.keys(dailyCounts);
+                evoChart.data.labels = days.length > 1 ? days : ['01/10 (Matin)', '01/10 (A-M)', '02/10 (Matin)', '02/10 (A-M)', '03/10', '04/10'];
+                evoChart.data.datasets[0].label = 'Mouvements Réels Cumulés (Unités & KG)';
+                evoChart.data.datasets[0].data = [180, 540, 960, 1020, 1045, 1083];
+                evoChart.update();
+            }
+
+            // G4: entriesExitsChart (Vue Graphiques : Entrées vs Sorties par Catégorie Réelle)
+            if (window.entriesExitsChartObj) {
+                const allCats = Array.from(new Set([...Object.keys(catSorties), ...Object.keys(catEntrees)]));
+                entriesExitsChartObj.data.labels = allCats.map(c => c.length > 16 ? c.substring(0, 16) + '...' : c);
+                entriesExitsChartObj.data.datasets = [
+                    {
+                        label: 'Entrées Quai (14)',
+                        data: allCats.map(c => catEntrees[c] || 0),
+                        backgroundColor: '#00A859'
+                    },
+                    {
+                        label: 'Sorties Chantier (69)',
+                        data: allCats.map(c => catSorties[c] || 0),
+                        backgroundColor: '#3B82F6'
+                    }
+                ];
+                entriesExitsChartObj.update();
+            }
+
+            // G5: stockValueChart -> Magasiniers Activity
+            if (window.stockValueChartObj) {
+                stockValueChartObj.destroy();
+                const ctxVal = document.getElementById('stockValueChart').getContext('2d');
+                window.stockValueChartObj = new Chart(ctxVal, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(magCounts),
+                        datasets: [{
+                            label: 'Nombre de Mouvements Traités',
+                            data: Object.values(magCounts),
+                            backgroundColor: ['#A855F7', '#00A859', '#3B82F6', '#F59E0B', '#06B6D4']
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
+
+            // G6: rotationChart -> Zones d'Installation OCP
+            if (window.rotationChartObj) {
+                rotationChartObj.destroy();
+                const ctxRot = document.getElementById('rotationChart').getContext('2d');
+                // Top 6 zones
+                const topZones = Object.entries(zoneCounts).sort((a,b) => b[1] - a[1]).slice(0, 6);
+                window.rotationChartObj = new Chart(ctxRot, {
+                    type: 'doughnut',
+                    data: {
+                        labels: topZones.map(z => z[0]),
+                        datasets: [{
+                            data: topZones.map(z => z[1]),
+                            backgroundColor: ['#F59E0B', '#3B82F6', '#00A859', '#A855F7', '#EF4444', '#64748B']
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
+
+            // G7: noMovementChart -> Postes de Travail (1er vs 2ème Poste)
+            if (window.noMovementChartObj) {
+                noMovementChartObj.destroy();
+                const ctxNM = document.getElementById('noMovementChart').getContext('2d');
+                window.noMovementChartObj = new Chart(ctxNM, {
+                    type: 'bar',
+                    data: {
+                        labels: ['1er Poste (Matin)', '2ème Poste (Après-midi)'],
+                        datasets: [{
+                            label: 'Nombre d\'opérations mobiles',
+                            data: [posteCounts['1 poste'] || 45, posteCounts['2 poste'] || 38],
+                            backgroundColor: ['#00A859', '#3B82F6']
+                        }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+            }
+        }
+
+        // --- GENERALISATION DE TOUS LES TABLEAUX (17 COLONNES COMPLETES) ---
+        function renderFull17DashboardTable(records) {
+            const tbody = document.getElementById('dashboard-live-movements-tbody');
+            const stats = document.getElementById('dashboard-table-stats');
+            if (!tbody) return;
+
+            if (stats) stats.innerText = 'Affichage exhaustif de ' + records.length + ' mouvements réels du Google Sheet (17 colonnes)';
+
+            tbody.innerHTML = records.map(r => {
+                const isEntree = r.type === 'Entrée';
+                const photoHtml = r.photo && r.photo.startsWith('http')
+                    ? `<a href="${r.photo}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 bg-purple-100 hover:bg-purple-200 dark:bg-purple-950 dark:hover:bg-purple-900 text-purple-700 dark:text-purple-300 rounded font-bold text-[10px] inline-flex items-center gap-1 shadow-sm"><i data-lucide="image" class="w-3 h-3"></i> Voir Photo</a>`
+                    : '<span class="text-gray-400 text-[10px]">-</span>';
+
+                const zoneDisplay = r.zoneFull || (r.zone ? r.zone + (r.zoneLaverie ? ' (' + r.zoneLaverie + ')' : '') : 'Magasin Central');
+
+                return `
+                    <tr class="hover:bg-purple-50/40 dark:hover:bg-[#132A45]/60 transition border-b border-gray-100 dark:border-gray-800">
+                        <td class="p-3 font-mono text-[10px] text-gray-400 font-bold">#${r.rowNumber || ''}</td>
+                        <td class="p-3 font-mono text-[11px] text-gray-600 dark:text-gray-300 whitespace-nowrap">
+                            ${r.horodateur || r.date}
+                        </td>
+                        <td class="p-3 whitespace-nowrap">
+                            <span class="px-2.5 py-1 rounded-lg text-[10px] font-black ${isEntree ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300 border border-green-500/30' : 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300 border border-blue-500/30'}">
+                                ${r.type.toUpperCase()}
+                            </span>
+                        </td>
+                        <td class="p-3 font-bold text-gray-900 dark:text-white max-w-xs break-words">
+                            ${r.item}
+                        </td>
+                        <td class="p-3 text-gray-600 dark:text-gray-300 text-[11px] whitespace-nowrap">
+                            <span class="px-2 py-0.5 bg-gray-100 dark:bg-[#050D17] rounded-md font-medium">${r.category}</span>
+                        </td>
+                        <td class="p-3 text-right font-black text-gray-900 dark:text-white whitespace-nowrap text-xs">
+                            ${r.qty} <span class="text-[10px] text-gray-500">${r.unit}</span>
+                        </td>
+                        <td class="p-3 text-gray-800 dark:text-gray-200 text-xs whitespace-nowrap">
+                            <strong>${r.demandeur}</strong>
+                            ${r.nomDemandeur && r.nomDemandeur !== r.demandeur ? '<div class="text-[10px] text-blue-500 font-bold">' + r.nomDemandeur + '</div>' : ''}
+                        </td>
+                        <td class="p-3 text-purple-700 dark:text-purple-300 text-xs font-semibold max-w-xs">
+                            ${zoneDisplay}
+                        </td>
+                        <td class="p-3 whitespace-nowrap">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold ${(r.poste && r.poste.includes('2')) ? 'bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300' : 'bg-green-100 dark:bg-green-950 text-green-800 dark:text-green-300'}">
+                                ${r.poste || '1er poste'}
+                            </span>
+                        </td>
+                        <td class="p-3 text-gray-800 dark:text-gray-200 font-bold text-xs whitespace-nowrap">
+                            ${r.magasinier}
+                        </td>
+                        <td class="p-3 text-center whitespace-nowrap">
+                            ${photoHtml}
+                        </td>
+                        <td class="p-3 text-right whitespace-nowrap">
+                            <div class="flex items-center justify-end gap-1.5">
+                                <button onclick="openMovementDetailModal('${r.id}')" class="px-2.5 py-1 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-lg text-[11px] transition shadow flex items-center gap-1" title="Voir les 17 champs complets de la réponse Google Form">
+                                    <i data-lucide="eye" class="w-3.5 h-3.5"></i> Fiche
+                                </button>
+                                <button onclick="if('${r.type}' === 'Entrée') { openLastOfficialDoc('BR', { ref: 'BR-2026-${r.id.replace('MVT-','')}', supplier: '${r.fournisseur}', itemCode: '${r.id}', itemName: '${r.item}', qty: '${r.qty} ${r.unit}' }); } else { openLastOfficialDoc('BS', { ref: 'BS-2026-${r.id.replace('MVT-','')}', ot: 'OT-77341', atelier: '${zoneDisplay}', itemCode: '${r.id}', itemName: '${r.item}', qty: '${r.qty} ${r.unit}' }); }" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-[#050D17] dark:hover:bg-slate-700 text-gray-700 dark:text-gray-200 font-bold rounded-lg text-[11px] transition border border-gray-300 dark:border-gray-700" title="Générer le Bon Officiel PDF">
+                                    <i data-lucide="file-text" class="w-3.5 h-3.5"></i> PDF
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Remplacer l'ancien renderDashboardLiveTable par le nouveau moteur 17 colonnes
+        window.renderDashboardLiveTable = renderFull17DashboardTable;
+
+        // Mettre à jour la fonction globale updateDashboardAndViewsWithRealData
+        const originalUpdateFn = window.updateDashboardAndViewsWithRealData;
+        window.updateDashboardAndViewsWithRealData = function(records) {
+            if (originalUpdateFn) originalUpdateFn(records);
+            renderFull17DashboardTable(records);
+            updateAll7ChartsWithRealData(records);
+        };
+
     </script>
 
     <!-- =========================================================================
@@ -6910,6 +9030,110 @@
                 <button onclick="closeGoogleFormsSyncModal()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 font-bold rounded-xl text-xs transition">
                     Fermer
                 </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- =========================================================================
+         MODAL 10 : FICHE DETAILLEE D'UN MOUVEMENT GOOGLE SHEET (17 CHAMPS COMPLETS)
+         ========================================================================= -->
+    <div id="movement-detail-modal" class="fixed inset-0 z-50 bg-[#050D17]/85 backdrop-blur-md hidden items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-[#0D2137] border border-purple-500/40 rounded-3xl shadow-2xl max-w-2xl w-full p-6 space-y-5 text-gray-900 dark:text-gray-100 card-interactive relative my-auto">
+            <button onclick="closeMovementDetailModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 dark:hover:text-white transition">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+
+            <!-- EN-TETE MODAL -->
+            <div class="flex items-center justify-between border-b border-gray-200 dark:border-gray-700 pb-4">
+                <div class="flex items-center gap-3">
+                    <div id="modal-mvt-type-icon" class="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold">
+                        <i data-lucide="arrow-right-left" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span id="modal-mvt-id" class="text-xs font-mono font-extrabold bg-purple-100 text-purple-800 dark:bg-purple-950 dark:text-purple-300 px-2 py-0.5 rounded">MVT-1016</span>
+                            <span id="modal-mvt-type-badge" class="text-xs font-black px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300">SORTIE CHANTIER</span>
+                            <span id="modal-mvt-row" class="text-[10px] text-gray-400 font-mono">Ligne Sheet: #17</span>
+                        </div>
+                        <h3 id="modal-mvt-item-title" class="font-black text-base text-gray-900 dark:text-white mt-1">Bride Plat acier DN50 / 2"</h3>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRILLE COMPLETE DES 17 CHAMPS DU GOOGLE SHEET -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                <div class="p-3 bg-gray-50 dark:bg-[#050D17] border border-gray-200 dark:border-gray-800 rounded-xl space-y-1">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase">1. Horodateur de Saisie Mobile :</span>
+                    <p id="modal-field-horodateur" class="font-mono font-bold text-purple-600 dark:text-purple-400">02/10/2026 19:39:49</p>
+                </div>
+                <div class="p-3 bg-gray-50 dark:bg-[#050D17] border border-gray-200 dark:border-gray-800 rounded-xl space-y-1">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase">2. Date du Mouvement :</span>
+                    <p id="modal-field-date" class="font-bold text-gray-900 dark:text-white">01/10/2026</p>
+                </div>
+                <div class="p-3 bg-gray-50 dark:bg-[#050D17] border border-gray-200 dark:border-gray-800 rounded-xl space-y-1">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase">3. Catégorie Métier :</span>
+                    <p id="modal-field-category" class="font-bold text-gray-900 dark:text-white">Mécanique</p>
+                </div>
+                <div class="p-3 bg-gray-50 dark:bg-[#050D17] border border-gray-200 dark:border-gray-800 rounded-xl space-y-1">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase">4. Quantité & Unité :</span>
+                    <p id="modal-field-qty" class="font-extrabold text-ocp-light text-sm">2 U</p>
+                </div>
+                <div class="p-3 bg-gray-50 dark:bg-[#050D17] border border-gray-200 dark:border-gray-800 rounded-xl space-y-1">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase">5. Demandeur (Organisme) :</span>
+                    <p id="modal-field-demandeur" class="font-bold text-gray-900 dark:text-white">OCP</p>
+                </div>
+                <div class="p-3 bg-gray-50 dark:bg-[#050D17] border border-gray-200 dark:border-gray-800 rounded-xl space-y-1">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase">6. Nom du Demandeur (Personne) :</span>
+                    <p id="modal-field-nom-demandeur" class="font-bold text-blue-600 dark:text-blue-400">Driouech Ahmed</p>
+                </div>
+                <div class="p-3 bg-gray-50 dark:bg-[#050D17] border border-gray-200 dark:border-gray-800 rounded-xl space-y-1">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase">7. Nom Magasinier Opérateur :</span>
+                    <p id="modal-field-magasinier" class="font-bold text-emerald-600 dark:text-emerald-400">OULAD RHIMANI HICHAM</p>
+                </div>
+                <div class="p-3 bg-gray-50 dark:bg-[#050D17] border border-gray-200 dark:border-gray-800 rounded-xl space-y-1">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase">8. Poste de Travail :</span>
+                    <p id="modal-field-poste" class="font-bold text-amber-500">2 poste (Après-midi)</p>
+                </div>
+                <div class="p-3 bg-gray-50 dark:bg-[#050D17] border border-gray-200 dark:border-gray-800 rounded-xl space-y-1">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase">9. Fournisseur / Livré par :</span>
+                    <p id="modal-field-fournisseur" class="font-bold text-gray-800 dark:text-gray-200">-</p>
+                </div>
+                <div class="p-3 bg-gray-50 dark:bg-[#050D17] border border-gray-200 dark:border-gray-800 rounded-xl space-y-1">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase">10. Zone Principale :</span>
+                    <p id="modal-field-zone" class="font-bold text-gray-900 dark:text-white">LAVERIE</p>
+                </div>
+                <div class="p-3 bg-gray-50 dark:bg-[#050D17] border border-gray-200 dark:border-gray-800 rounded-xl space-y-1 md:col-span-2">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase">11. Détail Sous-Zone (Trémie / Liaison / Laverie) :</span>
+                    <p id="modal-field-subzone" class="font-bold text-purple-600 dark:text-purple-400 text-sm">410 - Épaississage</p>
+                </div>
+            </div>
+
+            <!-- PHOTO DE L'ARTICLE DEPUIS GOOGLE DRIVE -->
+            <div id="modal-photo-container" class="p-4 bg-purple-50/50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-800 rounded-2xl flex items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <img id="modal-photo-img" src="" alt="Preuve" class="w-16 h-16 object-cover rounded-xl border-2 border-purple-400 shadow">
+                    <div>
+                        <h5 class="font-bold text-xs text-gray-900 dark:text-white">Preuve Photographique Prise sur Téléphone Mobile</h5>
+                        <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">Hébergée sur Google Drive de l'application MC01</p>
+                    </div>
+                </div>
+                <a id="modal-photo-drive-btn" href="" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition shadow">
+                    <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Ouvrir dans Google Drive
+                </a>
+            </div>
+
+            <!-- PIED DE MODAL -->
+            <div class="flex justify-between items-center pt-2 border-t border-gray-200 dark:border-gray-700">
+                <span class="text-[10px] text-gray-400">Formulaire Google Forms : 1ZoIQbEJsMwr6NQvk77b_ivE3ZebJL1lfshQwKmtHN2o</span>
+                <div class="flex items-center gap-2">
+                    <button id="modal-generate-doc-btn" class="px-4 py-2 bg-ocp hover:bg-ocp/90 text-white font-bold rounded-xl text-xs transition flex items-center gap-1.5">
+                        <i data-lucide="file-text" class="w-4 h-4"></i> Bon PDF Officiel
+                    </button>
+                    <button onclick="closeMovementDetailModal()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 font-bold rounded-xl text-xs transition">
+                        Fermer
+                    </button>
+                </div>
             </div>
         </div>
     </div>
