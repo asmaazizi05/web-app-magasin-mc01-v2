@@ -219,6 +219,22 @@
                 filter: blur(0);
             }
         }
+        .anim-gforms-sync {
+            animation: animGFormsSync 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: opacity, transform, filter;
+        }
+
+        @keyframes animGFormsSync {
+            0% {
+                opacity: 0;
+                transform: translateY(24px) scale(0.985);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
         .anim-access {
             animation: animAccess 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             will-change: opacity, transform, filter;
@@ -483,7 +499,7 @@
                 <button onclick="switchTab('settings')" id="nav-settings" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-navy-light transition">
                     <i data-lucide="settings" class="w-4 h-4"></i> Paramètres & Droits
                 </button>
-                <button onclick="openGoogleFormsSyncModal()" class="sidebar-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-purple-400 hover:bg-purple-950/30 border border-purple-500/30 transition my-1" title="Synchronisation directe avec le formulaire Google Forms de gestion des mouvements">
+                <button onclick="switchTab('gforms-sync')" id="nav-gforms-sync" class="sidebar-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-purple-400 hover:bg-purple-950/30 border border-purple-500/30 transition my-1" title="Synchronisation directe avec le formulaire Google Forms de gestion des mouvements">
                     <span class="flex items-center gap-3">
                         <i data-lucide="file-spreadsheet" class="w-4 h-4 text-purple-400"></i> Synchro Google Forms
                     </span>
@@ -879,10 +895,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                
                     <!-- 6. TABLEAU COMPLET DES 83 MOUVEMENTS RÉELS DU GOOGLE SHEET EN DIRECT -->
                     <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive stagger-item">
                         <div class="flex flex-wrap justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-3 gap-3">
@@ -940,7 +953,9 @@
                             </span>
                         </div>
                     </div>
+                </div>
 
+                </div>
 
                 <!-- 2. SECTION GRAPHIQUES & ANALYTICS COMPLÈTE -->
                 <div id="view-charts" class="hidden space-y-6">
@@ -1786,6 +1801,144 @@
                     </div>
                 </div>
 
+                <!-- 10. SECTION SYNCHRONISATION GOOGLE FORMS & GOOGLE SHEETS EN DIRECT -->
+                <div id="view-gforms-sync" class="hidden space-y-6">
+                    <!-- EN-TÊTE DE SYNCHRONISATION DIRECTE -->
+                    <div class="flex flex-wrap justify-between items-center gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-purple-100 text-purple-800 dark:bg-purple-950/80 dark:text-purple-300 border border-purple-500/30 flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
+                                    Synchronisation Temps Réel Active
+                                </span>
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-green-100 text-green-800 dark:bg-green-950/80 dark:text-green-300 border border-green-500/30 flex items-center gap-1">
+                                    <i data-lucide="check-circle" class="w-3 h-3 text-green-500"></i> Google Sheets Connecté
+                                </span>
+                            </div>
+                            <h2 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white flex items-center gap-2">
+                                <i data-lucide="file-spreadsheet" class="w-6 h-6 text-purple-500"></i>
+                                Centre de Synchronisation Google Forms & Sheets MC01
+                            </h2>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                Passerelle directe entre les saisies terrain mobiles des magasiniers et le stock centralisé du magasin MC01 JESA OCP.
+                            </p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <a href="https://docs.google.com/forms/d/1ZoIQbEJsMwr6NQvk77b_ivE3ZebJL1lfshQwKmtHN2o/edit?ts=6ac00fd3#responses" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-purple-600/20">
+                                <i data-lucide="external-link" class="w-3.5 h-3.5"></i> Formulaire Google Forms
+                            </a>
+                            <a href="https://docs.google.com/spreadsheets/d/1uuox6SaBa_gb-sOY04QFUj0tzinKI1XmYU80FkXN_u0/edit?resourcekey=&gid=713155884#gid=713155884" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-emerald-600/20">
+                                <i data-lucide="table" class="w-3.5 h-3.5"></i> Feuille Google Sheets
+                            </a>
+                            <button onclick="syncLiveGoogleSheetData(true)" class="px-3.5 py-2 bg-gray-100 dark:bg-[#0A1625] hover:bg-gray-200 dark:hover:bg-[#132A45] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Actualiser Flux
+                            </button>
+                            <button onclick="exportRealMovementsCSV()" class="px-3.5 py-2 bg-gray-100 dark:bg-[#0A1625] hover:bg-gray-200 dark:hover:bg-[#132A45] text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-gray-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                                <i data-lucide="download" class="w-3.5 h-3.5"></i> Exporter CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 4 CARTES KPI DE SYNCHRONISATION -->
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm card-interactive">
+                            <div class="flex items-center justify-between text-gray-500 text-xs mb-1">
+                                <span>Mouvements Réels Tracés</span>
+                                <i data-lucide="database" class="w-4 h-4 text-purple-400"></i>
+                            </div>
+                            <div class="text-2xl font-black text-gray-900 dark:text-white" id="gforms-kpi-total">83</div>
+                            <p class="text-[10px] text-green-500 font-semibold mt-1 flex items-center gap-1">
+                                <i data-lucide="check" class="w-3 h-3"></i> 100% synchronisé avec Google Sheets
+                            </p>
+                        </div>
+                        <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm card-interactive">
+                            <div class="flex items-center justify-between text-gray-500 text-xs mb-1">
+                                <span>Sorties Chantier & Maintenance</span>
+                                <i data-lucide="arrow-up-right" class="w-4 h-4 text-blue-400"></i>
+                            </div>
+                            <div class="text-2xl font-black text-blue-500" id="gforms-kpi-sorties">81</div>
+                            <p class="text-[10px] text-gray-400 mt-1">97.6% des mouvements mobiles</p>
+                        </div>
+                        <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm card-interactive">
+                            <div class="flex items-center justify-between text-gray-500 text-xs mb-1">
+                                <span>Entrées Quai & Réception</span>
+                                <i data-lucide="arrow-down-left" class="w-4 h-4 text-green-400"></i>
+                            </div>
+                            <div class="text-2xl font-black text-green-500" id="gforms-kpi-entrees">2</div>
+                            <p class="text-[10px] text-gray-400 mt-1">2.4% réceptions fournisseurs</p>
+                        </div>
+                        <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm card-interactive">
+                            <div class="flex items-center justify-between text-gray-500 text-xs mb-1">
+                                <span>Magasiniers Déclarants</span>
+                                <i data-lucide="users" class="w-4 h-4 text-amber-400"></i>
+                            </div>
+                            <div class="text-2xl font-black text-amber-400">5</div>
+                            <p class="text-[10px] text-gray-400 mt-1">Hicham, Abdelkbir, Abderrahim, etc.</p>
+                        </div>
+                    </div>
+
+                    <!-- TABLEAU INTERACTIF DÉDIÉ DES 83 MOUVEMENTS RÉELS -->
+                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
+                        <div class="flex flex-wrap justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-3 gap-3">
+                            <div>
+                                <h3 class="font-extrabold text-sm text-gray-900 dark:text-white flex items-center gap-2">
+                                    <i data-lucide="list-ordered" class="w-4 h-4 text-purple-500"></i>
+                                    Journal Exhaustif des Mouvements Réels (17 Colonnes Google Sheets)
+                                </h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                    Cliquez sur une ligne pour afficher l'ensemble des 17 champs détaillés, photos Drive et fiche mouvement imprimable.
+                                </p>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-2">
+                                <input type="text" id="gforms-sync-search-input" onkeyup="filterGFormsSyncViewTable()" placeholder="Rechercher pièce, zone, demandeur..." class="bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-1.5 text-xs text-gray-900 dark:text-white outline-none focus:border-purple-500">
+                                <select id="gforms-sync-filter-type" onchange="filterGFormsSyncViewTable()" class="bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-1.5 text-xs text-gray-900 dark:text-white outline-none focus:border-purple-500">
+                                    <option value="all">Tous les types (83)</option>
+                                    <option value="Entrée">Entrées Quai (2)</option>
+                                    <option value="Sortie">Sorties Maintenance (81)</option>
+                                </select>
+                                <select id="gforms-sync-filter-zone" onchange="filterGFormsSyncViewTable()" class="bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-1.5 text-xs text-gray-900 dark:text-white outline-none focus:border-purple-500">
+                                    <option value="all">Toutes les installations OCP</option>
+                                    <option value="Laverie">Laverie (320 / 410 / 210 / 220)</option>
+                                    <option value="Trémie">Trémies (HHI / HAF)</option>
+                                    <option value="Liaison">Liaison (RL1 / RL4)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="overflow-x-auto max-h-[560px] overflow-y-auto custom-scrollbar border border-gray-200 dark:border-gray-800 rounded-2xl shadow-inner">
+                            <table class="w-full text-left text-xs">
+                                <thead class="bg-gray-100 dark:bg-[#050D17] text-gray-700 dark:text-gray-300 font-extrabold sticky top-0 uppercase text-[10px] tracking-wider z-10 border-b border-gray-200 dark:border-gray-800 shadow-sm">
+                                    <tr>
+                                        <th class="p-3"># Ligne</th>
+                                        <th class="p-3">Horodateur Mobile</th>
+                                        <th class="p-3">Flux</th>
+                                        <th class="p-3">Désignation Complète / Référence</th>
+                                        <th class="p-3">Catégorie</th>
+                                        <th class="p-3 text-right">Quantité</th>
+                                        <th class="p-3">Demandeur</th>
+                                        <th class="p-3">Zone & Installation</th>
+                                        <th class="p-3">Poste</th>
+                                        <th class="p-3">Magasinier</th>
+                                        <th class="p-3 text-center">Photo Drive</th>
+                                        <th class="p-3 text-right">Détails (17 Col)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="gforms-sync-live-tbody" class="divide-y divide-gray-200 dark:divide-gray-800">
+                                    <!-- Injected dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="flex justify-between items-center text-[11px] text-gray-500 dark:text-gray-400 pt-2">
+                            <span id="gforms-sync-table-stats">Affichage de 83 mouvements réels</span>
+                            <span class="flex items-center gap-1.5 font-medium">
+                                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                Synchronisé avec Google Sheets (gid: 713155884) & Forms (ts: 6ac00fd3)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- 10. SECTION GESTION DES ACCÈS & VALIDATION PAR EMAIL (WMS GRADE) -->
                 <div id="view-access-control" class="hidden space-y-6">
                     <!-- BANNIÈRE D'ACCORD PAR EMAIL DÉCLENCHÉE PAR DEEP-LINK -->
@@ -2308,6 +2461,7 @@
             'expedition': 'anim-expedition',
             'inventory': 'anim-inventory',
             'settings': 'anim-settings',
+            'gforms-sync': 'anim-gforms-sync',
             'access-control': 'anim-access'
         };
 
@@ -2331,6 +2485,10 @@
                 void target.offsetWidth; // Déclenche le reflow pour relancer l'animation spécifique
                 const animClass = VIEW_ANIMATIONS[viewId] || 'anim-dashboard';
                 target.classList.add(animClass);
+
+                if (viewId === 'gforms-sync') {
+                    renderDashboardLiveTable(currentActiveRealRecords || FULL_17_REAL_RECORDS);
+                }
             }
 
             const activeBtn = document.getElementById('nav-' + viewId);
@@ -5966,13 +6124,15 @@
         }
 
         function renderDashboardLiveTable(records) {
-            const tbody = document.getElementById('dashboard-live-movements-tbody');
-            const stats = document.getElementById('dashboard-table-stats');
-            if (!tbody) return;
+            const tbody1 = document.getElementById('dashboard-live-movements-tbody');
+            const tbody2 = document.getElementById('gforms-sync-live-tbody');
+            const stats1 = document.getElementById('dashboard-table-stats');
+            const stats2 = document.getElementById('gforms-sync-table-stats');
 
-            if (stats) stats.innerText = 'Affichage de ' + records.length + ' mouvements réels';
+            if (stats1) stats1.innerText = 'Affichage de ' + records.length + ' mouvements réels';
+            if (stats2) stats2.innerText = 'Affichage de ' + records.length + ' mouvements réels';
 
-            tbody.innerHTML = records.map(r => {
+            const rowsHtml = records.map(r => {
                 const isEntree = r.type === 'Entrée';
                 const photoBtn = r.photo && r.photo.startsWith('http')
                     ? `<a href="${r.photo}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 bg-purple-100 hover:bg-purple-200 dark:bg-purple-950 dark:hover:bg-purple-900 text-purple-700 dark:text-purple-300 rounded font-bold text-[10px] inline-flex items-center gap-1"><i data-lucide="image" class="w-3 h-3"></i> Voir</a>`
@@ -5997,6 +6157,103 @@
                     </tr>
                 `;
             }).join('');
+
+            if (tbody1) tbody1.innerHTML = rowsHtml;
+            if (tbody2) tbody2.innerHTML = rowsHtml;
+        }
+
+        function filterGFormsSyncViewTable() {
+            const search = (document.getElementById('gforms-sync-search-input')?.value || '').toLowerCase();
+            const filterType = document.getElementById('gforms-sync-filter-type')?.value || 'all';
+            const filterZone = document.getElementById('gforms-sync-filter-zone')?.value || 'all';
+
+            const filtered = (currentActiveRealRecords || []).filter(r => {
+                const matchType = filterType === 'all' || r.type === filterType;
+                const matchZone = filterZone === 'all' || (r.affectationZone || '').toLowerCase().includes(filterZone.toLowerCase());
+                const matchSearch = !search ||
+                    (r.item || '').toLowerCase().includes(search) ||
+                    (r.magasinier || '').toLowerCase().includes(search) ||
+                    (r.demandeur || '').toLowerCase().includes(search) ||
+                    (r.affectationZone || '').toLowerCase().includes(search) ||
+                    (r.category || '').toLowerCase().includes(search);
+                return matchType && matchZone && matchSearch;
+            });
+
+            const tbody2 = document.getElementById('gforms-sync-live-tbody');
+            const stats2 = document.getElementById('gforms-sync-table-stats');
+            if (stats2) stats2.innerText = 'Affichage de ' + filtered.length + ' mouvements réels';
+            if (tbody2) {
+                tbody2.innerHTML = filtered.map(r => {
+                    const isEntree = r.type === 'Entrée';
+                    const photoBtn = r.photo && r.photo.startsWith('http')
+                        ? `<a href="${r.photo}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 bg-purple-100 hover:bg-purple-200 dark:bg-purple-950 dark:hover:bg-purple-900 text-purple-700 dark:text-purple-300 rounded font-bold text-[10px] inline-flex items-center gap-1"><i data-lucide="image" class="w-3 h-3"></i> Voir</a>`
+                        : '<span class="text-gray-400 text-[10px]">-</span>';
+
+                    return `
+                        <tr class="hover:bg-gray-50 dark:hover:bg-[#132A45]/40 transition cursor-pointer" onclick="openMovementDetailModal('${r.id}')">
+                            <td class="p-2.5 font-bold text-gray-500 dark:text-gray-400">#${r.rowNumber || '2'}</td>
+                            <td class="p-2.5 font-mono text-[10px] text-gray-500 dark:text-gray-400 whitespace-nowrap">${r.date || (r.horodateur || '').split(' ')[0]} <span class="text-gray-400">${(r.horodateur || '').split(' ')[1] || ''}</span></td>
+                            <td class="p-2.5">
+                                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold ${isEntree ? 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300' : 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'}">
+                                    ${r.type}
+                                </span>
+                            </td>
+                            <td class="p-2.5 font-bold text-gray-900 dark:text-white max-w-xs truncate" title="${r.item}">${r.item}</td>
+                            <td class="p-2.5 text-gray-600 dark:text-gray-300 text-[11px] truncate max-w-[120px]">${r.category}</td>
+                            <td class="p-2.5 text-right font-bold text-gray-900 dark:text-white whitespace-nowrap">${r.qty} ${r.unit}</td>
+                            <td class="p-2.5 text-gray-700 dark:text-gray-300 text-[11px] truncate max-w-xs" title="${r.demandeur}">
+                                <strong class="text-gray-900 dark:text-white">${r.demandeur}</strong>
+                            </td>
+                            <td class="p-2.5 text-gray-600 dark:text-gray-400 text-[11px] truncate max-w-xs">${r.affectationZone}</td>
+                            <td class="p-2.5 text-gray-600 dark:text-gray-400 text-[11px] whitespace-nowrap">${r.poste}</td>
+                            <td class="p-2.5 text-gray-800 dark:text-gray-200 font-semibold text-[11px] whitespace-nowrap">${r.magasinier}</td>
+                            <td class="p-2.5 text-center" onclick="event.stopPropagation()">${photoBtn}</td>
+                            <td class="p-2.5 text-right">
+                                <button onclick="event.stopPropagation(); openMovementDetailModal('${r.id}')" class="px-2.5 py-1 bg-purple-600 hover:bg-purple-500 text-white rounded-lg font-bold text-[10px] inline-flex items-center gap-1 transition">
+                                    <i data-lucide="eye" class="w-3 h-3"></i> 17 Col
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function exportRealMovementsCSV() {
+            const list = currentActiveRealRecords && currentActiveRealRecords.length ? currentActiveRealRecords : FULL_17_REAL_RECORDS;
+            if (!list || !list.length) {
+                showToast('Aucun enregistrement disponible à exporter', 'info');
+                return;
+            }
+            const headers = ['ID', 'Ligne Sheet', 'Horodateur', 'Type', 'Date', 'Désignation', 'Catégorie', 'Quantité', 'Unité', 'Demandeur', 'Nom Demandeur', 'Nom Magasinier', 'Poste de travail', 'Zone Affectée', 'Photos Drive'];
+            const rows = list.map(r => [
+                r.id,
+                r.rowNumber || '',
+                r.horodateur || '',
+                r.type || '',
+                r.date || '',
+                '"' + (r.item || '').replace(/"/g, '""') + '"',
+                '"' + (r.category || '').replace(/"/g, '""') + '"',
+                r.qty || '',
+                r.unit || '',
+                '"' + (r.demandeur || '').replace(/"/g, '""') + '"',
+                '"' + (r.nomDemandeur || '').replace(/"/g, '""') + '"',
+                '"' + (r.magasinier || '').replace(/"/g, '""') + '"',
+                '"' + (r.poste || '').replace(/"/g, '""') + '"',
+                '"' + (r.affectationZone || '').replace(/"/g, '""') + '"',
+                '"' + (r.photo || '').replace(/"/g, '""') + '"'
+            ]);
+
+            const csvContent = "data:text/csv;charset=utf-8,﻿" + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "Mouvements_Reels_Magasin_MC01_" + new Date().toISOString().slice(0, 10) + ".csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            showToast('Export CSV de ' + list.length + ' mouvements réels téléchargé avec succès !', 'success');
         }
 
         function filterDashboardLiveTable() {
