@@ -204,6 +204,24 @@
             will-change: opacity, transform;
         }
 
+        /* 10. GESTION DES ACCÈS & INSCRIPTIONS : Déploiement Sécurité Bouclier */
+        @keyframes animAccess {
+            0% {
+                opacity: 0;
+                transform: scale(0.96) translateY(24px);
+                filter: blur(4px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+                filter: blur(0);
+            }
+        }
+        .anim-access {
+            animation: animAccess 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            will-change: opacity, transform, filter;
+        }
+
         /* Cascade échelonnée (Stagger) lente et majestueuse pour tous les blocs enfants */
         .anim-dashboard > *,
         .anim-charts > *,
@@ -213,34 +231,40 @@
         .anim-reception > *,
         .anim-expedition > *,
         .anim-inventory > *,
-        .anim-settings > * {
+        .anim-settings > *,
+        .anim-access > * {
             animation: inherit;
             animation-duration: 1.4s;
             animation-fill-mode: both;
         }
         .anim-dashboard > *:nth-child(1), .anim-charts > *:nth-child(1), .anim-carto > *:nth-child(1),
         .anim-shifts > *:nth-child(1), .anim-stock > *:nth-child(1), .anim-reception > *:nth-child(1),
-        .anim-expedition > *:nth-child(1), .anim-inventory > *:nth-child(1), .anim-settings > *:nth-child(1) {
+        .anim-expedition > *:nth-child(1), .anim-inventory > *:nth-child(1), .anim-settings > *:nth-child(1),
+        .anim-access > *:nth-child(1) {
             animation-delay: 0.10s;
         }
         .anim-dashboard > *:nth-child(2), .anim-charts > *:nth-child(2), .anim-carto > *:nth-child(2),
         .anim-shifts > *:nth-child(2), .anim-stock > *:nth-child(2), .anim-reception > *:nth-child(2),
-        .anim-expedition > *:nth-child(2), .anim-inventory > *:nth-child(2), .anim-settings > *:nth-child(2) {
+        .anim-expedition > *:nth-child(2), .anim-inventory > *:nth-child(2), .anim-settings > *:nth-child(2),
+        .anim-access > *:nth-child(2) {
             animation-delay: 0.22s;
         }
         .anim-dashboard > *:nth-child(3), .anim-charts > *:nth-child(3), .anim-carto > *:nth-child(3),
         .anim-shifts > *:nth-child(3), .anim-stock > *:nth-child(3), .anim-reception > *:nth-child(3),
-        .anim-expedition > *:nth-child(3), .anim-inventory > *:nth-child(3), .anim-settings > *:nth-child(3) {
+        .anim-expedition > *:nth-child(3), .anim-inventory > *:nth-child(3), .anim-settings > *:nth-child(3),
+        .anim-access > *:nth-child(3) {
             animation-delay: 0.36s;
         }
         .anim-dashboard > *:nth-child(4), .anim-charts > *:nth-child(4), .anim-carto > *:nth-child(4),
         .anim-shifts > *:nth-child(4), .anim-stock > *:nth-child(4), .anim-reception > *:nth-child(4),
-        .anim-expedition > *:nth-child(4), .anim-inventory > *:nth-child(4), .anim-settings > *:nth-child(4) {
+        .anim-expedition > *:nth-child(4), .anim-inventory > *:nth-child(4), .anim-settings > *:nth-child(4),
+        .anim-access > *:nth-child(4) {
             animation-delay: 0.50s;
         }
         .anim-dashboard > *:nth-child(5), .anim-charts > *:nth-child(5), .anim-carto > *:nth-child(5),
         .anim-shifts > *:nth-child(5), .anim-stock > *:nth-child(5), .anim-reception > *:nth-child(5),
-        .anim-expedition > *:nth-child(5), .anim-inventory > *:nth-child(5), .anim-settings > *:nth-child(5) {
+        .anim-expedition > *:nth-child(5), .anim-inventory > *:nth-child(5), .anim-settings > *:nth-child(5),
+        .anim-access > *:nth-child(5) {
             animation-delay: 0.64s;
         }
 
@@ -366,6 +390,13 @@
 
         <!-- BASCULEUR DE PROFIL UTILISATEUR DIRECT -->
         <div class="flex items-center gap-3">
+            <!-- BADGE DEMANDES D'ACCÈS EN ATTENTE (PROPRIÉTAIRE) -->
+            <button onclick="switchTab('access-control')" id="header-pending-requests-btn" class="px-2.5 py-1 bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                <i data-lucide="shield-alert" class="w-3.5 h-3.5"></i>
+                <span id="header-pending-badge-text">2 Demandes d'accès</span>
+            </button>
+
             <div class="flex items-center gap-2 bg-gray-100 dark:bg-[#050D17] px-3 py-1 rounded-xl border border-gray-300 dark:border-gray-700">
                 <i data-lucide="user-cog" class="w-4 h-4 text-ocp-light"></i>
                 <span class="text-[11px] font-bold text-gray-700 dark:text-gray-300">Profil Actif :</span>
@@ -383,6 +414,11 @@
                 <i data-lucide="sun" id="theme-icon-sun" class="w-3.5 h-3.5 text-amber-500 hidden"></i>
                 <i data-lucide="moon" id="theme-icon-moon" class="w-3.5 h-3.5 text-blue-400"></i>
                 <span id="theme-toggle-text">Mode Sombre</span>
+            </button>
+
+            <!-- BOUTON DÉCONNEXION ET GESTION DES SESSIONS -->
+            <button onclick="logoutSession()" class="px-2.5 py-1 bg-red-500/10 hover:bg-red-500/20 text-xs text-red-600 dark:text-red-400 font-semibold rounded-xl flex items-center gap-1.5 border border-red-500/30 transition" title="Verrouiller et se déconnecter de l'application">
+                <i data-lucide="log-out" class="w-3.5 h-3.5"></i> Déconnexion
             </button>
 
             <button onclick="window.print()" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-[#132A45] dark:hover:bg-slate-700 text-xs text-gray-800 dark:text-gray-200 font-medium rounded-xl flex items-center gap-1.5 border border-gray-300 dark:border-gray-700/50 transition">
@@ -433,6 +469,12 @@
                 </button>
                 <button onclick="switchTab('settings')" id="nav-settings" class="sidebar-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-navy-light transition">
                     <i data-lucide="settings" class="w-4 h-4"></i> Paramètres & Droits
+                </button>
+                <button onclick="switchTab('access-control')" id="nav-access-control" class="sidebar-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-medium text-gray-300 hover:bg-navy-light transition">
+                    <span class="flex items-center gap-3">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-emerald-400"></i> Gestion des Accès
+                    </span>
+                    <span id="sidebar-pending-badge" class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-500 text-slate-900 shadow-sm">2</span>
                 </button>
             </nav>
 
@@ -1514,6 +1556,211 @@
                     </div>
                 </div>
 
+                <!-- 10. SECTION GESTION DES ACCÈS & VALIDATION PAR EMAIL (WMS GRADE) -->
+                <div id="view-access-control" class="hidden space-y-6">
+                    <!-- BANNIÈRE D'ACCORD PAR EMAIL DÉCLENCHÉE PAR DEEP-LINK -->
+                    <div id="email-approval-success-banner" class="hidden p-4 rounded-2xl bg-emerald-500/15 border-2 border-emerald-500 text-emerald-600 dark:text-emerald-300 flex items-start gap-3 shadow-lg">
+                        <i data-lucide="check-check" class="w-6 h-6 flex-shrink-0 mt-0.5 text-emerald-500"></i>
+                        <div class="space-y-1">
+                            <h4 class="font-extrabold text-sm" id="banner-approval-title">Accord Validé Directement par Email !</h4>
+                            <p class="text-xs" id="banner-approval-desc">
+                                L'accord formel du Responsable Magasin Propriétaire a été validé avec succès. L'employé a été activé et l'email officiel d'accès lui a été expédié.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- EN-TÊTE DE LA SECTION -->
+                    <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-3 border-b border-gray-200 dark:border-gray-800 pb-4">
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-xl font-bold text-gray-900 dark:text-white">Gestion des Accès & Accord par Email (WMS OCP)</h2>
+                                <span class="text-[10px] bg-ocp/20 text-ocp-light px-2.5 py-0.5 rounded-full font-bold flex items-center gap-1">
+                                    <i data-lucide="crown" class="w-3 h-3"></i> Responsable Magasin Propriétaire
+                                </span>
+                            </div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                                Protocole Enterprise WMS : Tout accès est obligatoirement validé par email par le Responsable Magasin Propriétaire (EL ATYQY mohamed raid & yassine AZIZI).
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button onclick="document.getElementById('direct-add-user-card').scrollIntoView({behavior: 'smooth'})" class="px-3.5 py-2 bg-ocp hover:bg-ocp/90 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-md shadow-ocp/20 transition">
+                                <i data-lucide="user-plus" class="w-4 h-4"></i> + Ajouter directement quelqu'un
+                            </button>
+                            <button onclick="openAuthModal('register')" class="px-3.5 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-[#132A45] dark:hover:bg-slate-700 text-xs text-gray-800 dark:text-gray-200 font-medium rounded-xl flex items-center gap-1.5 border border-gray-300 dark:border-gray-700 transition">
+                                <i data-lucide="send" class="w-4 h-4 text-ocp-light"></i> Tester Formulaire Inscription
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- CARTES STATISTIQUES D'ACCÈS -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-amber-500/30 shadow-sm flex items-center gap-3 card-interactive">
+                            <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold">
+                                <i data-lucide="clock" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] text-gray-500 dark:text-gray-400 font-medium">Demandes en attente</p>
+                                <p class="text-xl font-extrabold text-amber-500" id="stat-pending-count">2</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center gap-3 card-interactive">
+                            <div class="w-10 h-10 rounded-xl bg-ocp/10 text-ocp-light flex items-center justify-center font-bold">
+                                <i data-lucide="shield-check" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] text-gray-500 dark:text-gray-400 font-medium">Comptes Actifs Validés</p>
+                                <p class="text-xl font-extrabold text-gray-900 dark:text-white" id="stat-active-count">5</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center gap-3 card-interactive">
+                            <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold">
+                                <i data-lucide="mail-check" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] text-gray-500 dark:text-gray-400 font-medium">Notifications Email</p>
+                                <p class="text-xs font-bold text-gray-800 dark:text-gray-200 mt-1">Actives & Vérifiées</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center gap-3 card-interactive">
+                            <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold">
+                                <i data-lucide="crown" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <p class="text-[11px] text-gray-500 dark:text-gray-400 font-medium">Responsables Habilités</p>
+                                <p class="text-xs font-bold text-gray-800 dark:text-gray-200 mt-1">RAID & AZIZI</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BLOC 1 : DEMANDES D'INSCRIPTION PAR EMAIL EN ATTENTE D'ACCORD DU RESPONSABLE -->
+                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
+                        <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-3">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="inbox" class="w-4 h-4 text-amber-500"></i>
+                                <h3 class="font-bold text-sm text-gray-900 dark:text-white">Demandes d'accès par email en attente d'accord du Responsable</h3>
+                                <span class="text-[10px] font-bold bg-amber-500/20 text-amber-500 px-2 py-0.5 rounded-full" id="pending-table-badge">2 à traiter</span>
+                            </div>
+                            <span class="text-[11px] text-gray-500 dark:text-gray-400">Accord avec notification par email automatique</span>
+                        </div>
+
+                        <!-- LISTE DYNAMIQUE DES DEMANDES -->
+                        <div id="pending-requests-list" class="space-y-3">
+                            <!-- Les demandes en attente seront injectées ici par JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- BLOC 2 : AJOUT DIRECT D'UN COLLABORATEUR ("ainsi ajouter quelqu'un") -->
+                    <div id="direct-add-user-card" class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
+                        <div class="border-b border-gray-200 dark:border-gray-800 pb-3">
+                            <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
+                                <i data-lucide="user-plus" class="w-4 h-4 text-ocp-light"></i>
+                                Ajouter directement un collaborateur (Accès Immédiat par le Propriétaire)
+                            </h3>
+                            <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+                                Permet au Responsable d'accorder directement un accès sans passage par la file d'attente d'inscription. Un email de notification avec identifiants est automatiquement expédié.
+                            </p>
+                        </div>
+
+                        <form onsubmit="handleDirectAddUser(event)" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                            <div>
+                                <label class="block text-gray-600 dark:text-gray-300 font-semibold mb-1">Nom et Prénom *</label>
+                                <input type="text" id="add-name" required placeholder="ex: Hassan EL FASSI" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                            </div>
+                            <div>
+                                <label class="block text-gray-600 dark:text-gray-300 font-semibold mb-1">Email Professionnel *</label>
+                                <input type="email" id="add-email" required placeholder="ex: h.elfassi@ocpgroup.ma" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                            </div>
+                            <div>
+                                <label class="block text-gray-600 dark:text-gray-300 font-semibold mb-1">Rôle & Droits Attribués *</label>
+                                <select id="add-role" required class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                                    <option value="Magasinier">Magasinier (Stock & Réception)</option>
+                                    <option value="Approvisionneur Mécanique">Approvisionneur Mécanique</option>
+                                    <option value="Approvisionneur Électrique">Approvisionneur Électrique</option>
+                                    <option value="Préparateur">Préparateur (Picking & Expédition)</option>
+                                    <option value="Contrôleur Inventaire">Contrôleur Inventaire / Audit</option>
+                                    <option value="Responsable / Propriétaire">Responsable Magasin / Propriétaire</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-600 dark:text-gray-300 font-semibold mb-1">Matricule / Équipe</label>
+                                <input type="text" id="add-matricule" placeholder="ex: OCP-76120 / Équipe A" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                            </div>
+                            <div class="md:col-span-2 lg:col-span-4 flex justify-end">
+                                <button type="submit" class="px-5 py-2.5 bg-ocp hover:bg-ocp/90 text-white font-bold rounded-xl shadow-lg shadow-ocp/20 flex items-center gap-2 transition">
+                                    <i data-lucide="check-circle" class="w-4 h-4"></i> Valider, Accorder l'Accès et Notifier par Email
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- BLOC 3 : JOURNAL D'AUDIT DES NOTIFICATIONS EMAIL & ENVOIS SMTP (WMS ENTERPRISE) -->
+                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
+                        <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 border-b border-gray-200 dark:border-gray-800 pb-3">
+                            <div>
+                                <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
+                                    <i data-lucide="mail" class="w-4 h-4 text-ocp-light"></i>
+                                    Journal d'Audit des Notifications Email & Envois SMTP
+                                </h3>
+                                <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+                                    Traçabilité complète des emails d'approbation, accusés de réception et accords envoyés.
+                                </p>
+                            </div>
+                            <span class="text-[10px] font-bold bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 px-2.5 py-1 rounded-lg flex items-center gap-1 w-fit">
+                                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Service Relais SMTP Actif
+                            </span>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs text-gray-600 dark:text-gray-300">
+                                <thead class="bg-gray-50 dark:bg-[#050D17] text-gray-500 dark:text-gray-400 font-semibold uppercase text-[10px] tracking-wider border-b border-gray-200 dark:border-gray-800">
+                                    <tr>
+                                        <th class="py-3 px-3">Date & Heure</th>
+                                        <th class="py-3 px-3">Type d'Email</th>
+                                        <th class="py-3 px-3">Destinataire</th>
+                                        <th class="py-3 px-3">Objet du Courriel</th>
+                                        <th class="py-3 px-3">Statut SMTP</th>
+                                        <th class="py-3 px-3 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="email-logs-tbody" class="divide-y divide-gray-200 dark:divide-gray-800">
+                                    <!-- Logs d'emails injectés dynamiquement -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- BLOC 4 : ANNUAIRE DES COLLABORATEURS ET COMPTES AUTORISÉS -->
+                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
+                        <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-3">
+                            <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
+                                <i data-lucide="users" class="w-4 h-4 text-ocp-light"></i>
+                                Répertoire des Utilisateurs Autorisés sur l'Application
+                            </h3>
+                            <span class="text-[11px] text-gray-500 dark:text-gray-400" id="authorized-table-count">5 utilisateurs actifs</span>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs text-gray-600 dark:text-gray-300">
+                                <thead class="bg-gray-50 dark:bg-[#050D17] text-gray-500 dark:text-gray-400 font-semibold uppercase text-[10px] tracking-wider border-b border-gray-200 dark:border-gray-800">
+                                    <tr>
+                                        <th class="py-3 px-3">Collaborateur</th>
+                                        <th class="py-3 px-3">Email Professionnel</th>
+                                        <th class="py-3 px-3">Rôle Accordé</th>
+                                        <th class="py-3 px-3">Statut de l'Accès</th>
+                                        <th class="py-3 px-3">Dernière Connexion</th>
+                                        <th class="py-3 px-3 text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="authorized-users-tbody" class="divide-y divide-gray-200 dark:divide-gray-800">
+                                    <!-- Utilisateurs injectés dynamiquement -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -1533,7 +1780,8 @@
                 };
             }
             initCharts();
-            changeActiveUser('raid'); // Profil par défaut au démarrage
+            renderAccessControlView();
+            checkSessionOnLoad();
             runSmoothCounters();
             animateProgressBars();
         });
@@ -1659,7 +1907,7 @@
             const notifyRole = document.getElementById('notify-user-role');
             const notifyLevel = document.getElementById('notify-access-level');
 
-            const navs = ['dashboard', 'charts', 'carto', 'shifts', 'stock', 'reception', 'expedition', 'inventory', 'settings'];
+            const navs = ['dashboard', 'charts', 'carto', 'shifts', 'stock', 'reception', 'expedition', 'inventory', 'settings', 'access-control'];
             
             // Re-afficher tous les boutons par défaut
             navs.forEach(n => {
@@ -1678,6 +1926,10 @@
                 // Masquer les sections réservées/non-pertinentes
                 document.getElementById('nav-settings').style.display = 'none';
                 document.getElementById('nav-shifts').style.display = 'none';
+                const navAcO = document.getElementById('nav-access-control'); if(navAcO) navAcO.style.display = 'none';
+                const hBtnO = document.getElementById('header-pending-requests-btn'); if(hBtnO) hBtnO.style.display = 'none';
+                const navAcS = document.getElementById('nav-access-control'); if(navAcS) navAcS.style.display = 'none';
+                const hBtnS = document.getElementById('header-pending-requests-btn'); if(hBtnS) hBtnS.style.display = 'none';
             } else if (userKey === 'omar') {
                 avatar.innerText = 'OB';
                 avatar.className = 'w-8 h-8 rounded-lg bg-purple-600 text-white flex items-center justify-center font-bold text-xs shadow-md';
@@ -1692,15 +1944,19 @@
                 avatar.innerText = 'YA';
                 avatar.className = 'w-8 h-8 rounded-lg bg-ocp text-white flex items-center justify-center font-bold text-xs shadow-md';
                 nameEl.innerText = 'yassine AZIZI';
-                roleEl.innerText = 'Responsable / Propriétaire';
+                roleEl.innerText = 'Responsable Magasin / Propriétaire';
                 notifyRole.innerText = 'yassine AZIZI (Responsable Magasin / Propriétaire)';
+                const navAcA = document.getElementById('nav-access-control'); if(navAcA) navAcA.style.display = 'flex';
+                const hBtnA = document.getElementById('header-pending-requests-btn'); if(hBtnA) hBtnA.style.display = 'flex';
                 notifyLevel.innerText = 'Accès Admin Complet';
             } else if (userKey === 'raid') {
                 avatar.innerText = 'RA';
                 avatar.className = 'w-8 h-8 rounded-lg bg-ocp text-white flex items-center justify-center font-bold text-xs shadow-md';
                 nameEl.innerText = 'EL ATYQY mohamed raid';
-                roleEl.innerText = 'Responsable / Propriétaire';
+                roleEl.innerText = 'Responsable Magasin / Propriétaire';
                 notifyRole.innerText = 'EL ATYQY mohamed raid (Responsable Magasin / Propriétaire)';
+                const navAcR = document.getElementById('nav-access-control'); if(navAcR) navAcR.style.display = 'flex';
+                const hBtnR = document.getElementById('header-pending-requests-btn'); if(hBtnR) hBtnR.style.display = 'flex';
                 notifyLevel.innerText = 'Accès Admin Complet';
             } else if (userKey === 'ghizlan') {
                 avatar.innerText = 'GH';
@@ -1712,6 +1968,8 @@
 
                 document.getElementById('nav-settings').style.display = 'none';
                 document.getElementById('nav-reception').style.display = 'none';
+                const navAcG = document.getElementById('nav-access-control'); if(navAcG) navAcG.style.display = 'none';
+                const hBtnG = document.getElementById('header-pending-requests-btn'); if(hBtnG) hBtnG.style.display = 'none';
             }
         }
 
@@ -1819,7 +2077,8 @@
             'reception': 'anim-reception',
             'expedition': 'anim-expedition',
             'inventory': 'anim-inventory',
-            'settings': 'anim-settings'
+            'settings': 'anim-settings',
+            'access-control': 'anim-access'
         };
 
         const ALL_ANIM_CLASSES = Object.values(VIEW_ANIMATIONS);
@@ -1848,7 +2107,9 @@
             if(activeBtn) activeBtn.classList.add('sidebar-item-active');
 
             // Exécution d'effets visuels contextuels à chaque fenêtre
-            if (viewId === 'dashboard') {
+            if (viewId === 'access-control') {
+                renderAccessControlView();
+            } else if (viewId === 'dashboard') {
                 runSmoothCounters();
                 animateProgressBars();
             } else if (viewId === 'charts') {
@@ -1977,6 +2238,952 @@
             else if(zoneKey === 'grand-modulaire') title.innerText = 'Grand Modulaire (Bureaux Magasiniers & Tool Crib Outillage)';
             else title.innerText = 'Aménagement Hangar Rayonnages (Dimension: 13 085mm x 6 485mm)';
         }
+    
+        // =========================================================================
+        // GESTION DES ACCÈS OBLIGATOIRES, VALIDATION PAR EMAIL ET NOTIFICATIONS (WMS)
+        // =========================================================================
+
+        const DEFAULT_PENDING_REQUESTS = [
+            {
+                id: 'REQ-101',
+                name: 'Karim EL IDRISSI',
+                email: 'k.elidrissi@ocpgroup.ma',
+                phone: '+212 6 61 23 45 67',
+                matricule: 'OCP-88421',
+                role: 'Magasinier',
+                date: '26/10/2026 à 14:30',
+                reason: 'Affectation récente à l\'équipe de nuit - Hangar Central MC01',
+                status: 'En attente'
+            },
+            {
+                id: 'REQ-102',
+                name: 'Fatima Zohra NACIRI',
+                email: 'fz.naciri@ocpgroup.ma',
+                phone: '+212 6 62 98 76 54',
+                matricule: 'OCP-91204',
+                role: 'Contrôleur Inventaire',
+                date: '27/10/2026 à 08:15',
+                reason: 'Mission d\'audit trimestriel des stocks dormants et pièces critiques',
+                status: 'En attente'
+            }
+        ];
+
+        const DEFAULT_USERS = [
+            { key: 'raid', name: 'EL ATYQY mohamed raid', email: 'm.elatyqy@ocpgroup.ma', role: 'Responsable Magasin / Propriétaire', badge: 'RA', color: 'bg-ocp', isOwner: true, status: 'Actif', lastLogin: 'En ligne' },
+            { key: 'azizi', name: 'yassine AZIZI', email: 'y.azizi@ocpgroup.ma', role: 'Responsable Magasin / Propriétaire', badge: 'YA', color: 'bg-ocp', isOwner: true, status: 'Actif', lastLogin: '04/10/2026 09:15' },
+            { key: 'soufiane', name: 'soufiane BOUHZAM', email: 's.bouhzam@ocpgroup.ma', role: 'Approvisionneur Mécanique', badge: 'SB', color: 'bg-blue-600', isOwner: false, status: 'Actif', lastLogin: '04/10/2026 08:30' },
+            { key: 'omar', name: 'Omar BENALLA', email: 'o.benalla@ocpgroup.ma', role: 'Approvisionneur Électrique', badge: 'OB', color: 'bg-purple-600', isOwner: false, status: 'Actif', lastLogin: '03/10/2026 17:45' },
+            { key: 'ghizlan', name: 'Ghizlan', email: 'ghizlan@ocpgroup.ma', role: 'Préparatrice', badge: 'GH', color: 'bg-amber-500', isOwner: false, status: 'Actif', lastLogin: '04/10/2026 07:15' }
+        ];
+
+        const DEFAULT_EMAIL_LOGS = [
+            {
+                id: 'EML-901',
+                timestamp: '26/10/2026 14:31',
+                type: 'Notification Responsable',
+                to: 'm.elatyqy@ocpgroup.ma, y.azizi@ocpgroup.ma',
+                subject: '[URGENT MC01] Nouvelle demande d\'accès par email - Karim EL IDRISSI (Magasinier)',
+                status: 'Délivré',
+                applicantName: 'Karim EL IDRISSI',
+                applicantEmail: 'k.elidrissi@ocpgroup.ma',
+                role: 'Magasinier',
+                reqId: 'REQ-101'
+            },
+            {
+                id: 'EML-902',
+                timestamp: '27/10/2026 08:16',
+                type: 'Notification Responsable',
+                to: 'm.elatyqy@ocpgroup.ma, y.azizi@ocpgroup.ma',
+                subject: '[URGENT MC01] Nouvelle demande d\'accès par email - Fatima Zohra NACIRI (Contrôleur Inventaire)',
+                status: 'Délivré',
+                applicantName: 'Fatima Zohra NACIRI',
+                applicantEmail: 'fz.naciri@ocpgroup.ma',
+                role: 'Contrôleur Inventaire',
+                reqId: 'REQ-102'
+            }
+        ];
+
+        function getStoredRequests() {
+            try {
+                const data = localStorage.getItem('mc01_access_requests');
+                return data ? JSON.parse(data) : DEFAULT_PENDING_REQUESTS;
+            } catch (e) {
+                return DEFAULT_PENDING_REQUESTS;
+            }
+        }
+
+        function saveStoredRequests(reqs) {
+            try {
+                localStorage.setItem('mc01_access_requests', JSON.stringify(reqs));
+            } catch (e) {}
+        }
+
+        function getStoredUsers() {
+            try {
+                const data = localStorage.getItem('mc01_authorized_users');
+                return data ? JSON.parse(data) : DEFAULT_USERS;
+            } catch (e) {
+                return DEFAULT_USERS;
+            }
+        }
+
+        function saveStoredUsers(users) {
+            try {
+                localStorage.setItem('mc01_authorized_users', JSON.stringify(users));
+            } catch (e) {}
+        }
+
+        function getStoredEmailLogs() {
+            try {
+                const data = localStorage.getItem('mc01_email_logs');
+                return data ? JSON.parse(data) : DEFAULT_EMAIL_LOGS;
+            } catch (e) {
+                return DEFAULT_EMAIL_LOGS;
+            }
+        }
+
+        function saveStoredEmailLogs(logs) {
+            try {
+                localStorage.setItem('mc01_email_logs', JSON.stringify(logs));
+            } catch (e) {}
+        }
+
+        // =========================================================================
+        // GESTION DES NOTIFICATIONS TOAST ÉLÉGANTES ET LENTES
+        // =========================================================================
+
+        function showToast(title, message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            const bgClass = type === 'success' 
+                ? 'bg-emerald-600 text-white' 
+                : type === 'error' ? 'bg-red-600 text-white' : 'bg-amber-600 text-white';
+
+            toast.className = bgClass + ' p-3.5 rounded-2xl shadow-xl flex items-start gap-3 pointer-events-auto transform translate-y-4 opacity-0 transition-all duration-700 max-w-sm text-xs border border-white/20';
+            toast.innerHTML = `
+                <div class="mt-0.5"><i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" class="w-4 h-4"></i></div>
+                <div>
+                    <h5 class="font-bold">${title}</h5>
+                    <p class="text-[11px] opacity-90 mt-0.5">${message}</p>
+                </div>
+            `;
+            container.appendChild(toast);
+            lucide.createIcons();
+
+            requestAnimationFrame(() => {
+                toast.classList.remove('translate-y-4', 'opacity-0');
+            });
+
+            setTimeout(() => {
+                toast.classList.add('translate-y-4', 'opacity-0');
+                setTimeout(() => toast.remove(), 700);
+            }, 5000);
+        }
+
+        // =========================================================================
+        // CONTRÔLE DE SESSION & VERROUILLAGE OBLIGATOIRE STRICT
+        // =========================================================================
+
+        function checkSessionOnLoad() {
+            // 1. Vérifier si un lien d'accord par email a été cliqué dans l'URL (?action=approve&id=...)
+            const urlParams = new URLSearchParams(window.location.search);
+            const action = urlParams.get('action');
+            const reqId = urlParams.get('id');
+
+            if (action === 'approve' && reqId) {
+                // Déclencher l'accord par email en un clic
+                executeEmailApproval(reqId);
+                return;
+            }
+
+            // 2. Vérification normale de session
+            const activeUserKey = sessionStorage.getItem('mc01_active_session');
+            if (!activeUserKey) {
+                // VERROUILLAGE STRICT OBLIGATOIRE : Aucun accès au dashboard sans authentification
+                openAuthModal('login');
+                const closeBtn = document.getElementById('auth-modal-close-btn');
+                if (closeBtn) closeBtn.classList.add('hidden'); // Empêcher la fermeture sans connexion
+            } else {
+                changeActiveUser(activeUserKey);
+                const switcher = document.getElementById('profile-switcher');
+                if (switcher) switcher.value = activeUserKey;
+                const closeBtn = document.getElementById('auth-modal-close-btn');
+                if (closeBtn) closeBtn.classList.remove('hidden');
+            }
+        }
+
+        function logoutSession() {
+            sessionStorage.removeItem('mc01_active_session');
+            showToast('Déconnexion Sécurisée', 'Votre session a été fermée. L\'application est verrouillée.', 'warning');
+            openAuthModal('login');
+            const closeBtn = document.getElementById('auth-modal-close-btn');
+            if (closeBtn) closeBtn.classList.add('hidden');
+        }
+
+        function executeEmailApproval(reqId) {
+            let reqs = getStoredRequests();
+            let users = getStoredUsers();
+
+            const req = reqs.find(r => r.id === reqId);
+            if (!req) {
+                showToast('Lien Expiré', 'Cette demande a déjà été traitée ou validée.', 'warning');
+                return;
+            }
+
+            // Connecter le Responsable d'office
+            sessionStorage.setItem('mc01_active_session', 'raid');
+            changeActiveUser('raid');
+            closeAuthModal();
+
+            // Valider la demande
+            acceptAccessRequest(reqId, true);
+
+            // Afficher la bannière de succès
+            const banner = document.getElementById('email-approval-success-banner');
+            if (banner) {
+                banner.classList.remove('hidden');
+                document.getElementById('banner-approval-title').innerText = `Accord Validé par Email pour ${req.name} !`;
+                document.getElementById('banner-approval-desc').innerText = `La demande d'accès pour ${req.name} (${req.role}) a été approuvée avec succès. L'email officiel d'accès avec identifiants lui a été expédié.`;
+            }
+
+            // Basculer vers l'onglet gestion des accès
+            switchTab('access-control');
+
+            // Nettoyer l'URL sans recharger
+            window.history.replaceState({}, document.title, window.location.pathname);
+        }
+
+        // =========================================================================
+        // RENDU DE LA VUE GESTION DES ACCÈS & LOGS D'EMAILS
+        // =========================================================================
+
+        function renderAccessControlView() {
+            const reqs = getStoredRequests();
+            const users = getStoredUsers();
+            const emailLogs = getStoredEmailLogs();
+
+            // Mettre à jour les badges
+            const count = reqs.length;
+            const badgeHeader = document.getElementById('header-pending-badge-text');
+            if (badgeHeader) badgeHeader.innerText = count + " Demande" + (count > 1 ? "s" : "") + " d'accès";
+
+            const badgeSidebar = document.getElementById('sidebar-pending-badge');
+            if (badgeSidebar) {
+                badgeSidebar.innerText = count;
+                badgeSidebar.style.display = count > 0 ? 'inline-block' : 'none';
+            }
+
+            const statPending = document.getElementById('stat-pending-count');
+            if (statPending) statPending.innerText = count;
+
+            const statActive = document.getElementById('stat-active-count');
+            if (statActive) statActive.innerText = users.length;
+
+            const tableBadge = document.getElementById('pending-table-badge');
+            if (tableBadge) tableBadge.innerText = count + " à traiter";
+
+            const tableCount = document.getElementById('authorized-table-count');
+            if (tableCount) tableCount.innerText = users.length + " utilisateurs actifs";
+
+            // 1. Rendu des demandes en attente
+            const reqListEl = document.getElementById('pending-requests-list');
+            if (reqListEl) {
+                if (reqs.length === 0) {
+                    reqListEl.innerHTML = `
+                        <div class="text-center py-8 text-gray-400 dark:text-gray-500 space-y-2">
+                            <i data-lucide="check-check" class="w-8 h-8 mx-auto text-ocp-light"></i>
+                            <p class="font-semibold text-xs">Toutes les demandes d'accès ont été traitées !</p>
+                            <p class="text-[11px]">Aucune inscription par email en attente d'accord pour le moment.</p>
+                        </div>
+                    `;
+                } else {
+                    reqListEl.innerHTML = reqs.map(r => {
+                        const approvalLink = window.location.origin + window.location.pathname + '?action=approve&id=' + r.id;
+                        const mailtoOwner = `mailto:m.elatyqy@ocpgroup.ma,y.azizi@ocpgroup.ma?subject=${encodeURIComponent("[ACCORD ACCORDÉ] Validation accès Magasin MC01 - " + r.name)}&body=${encodeURIComponent("Bonjour,\n\nJ'accorde formellement l'accès au Magasin Central MC01 pour " + r.name + " (" + r.email + ") avec le rôle " + r.role + ".\n\nLien de validation système : " + approvalLink + "\n\nCordialement,\nResponsable Magasin Propriétaire")}`;
+
+                        return `
+                        <div class="p-4 rounded-xl bg-gray-50 dark:bg-[#050D17] border border-gray-200 dark:border-gray-800 flex flex-col md:flex-row justify-between md:items-center gap-3 card-interactive">
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-500 font-extrabold flex items-center justify-center text-xs flex-shrink-0">
+                                    ${r.name.split(' ').map(n=>n[0]).slice(0,2).join('')}
+                                </div>
+                                <div class="space-y-1">
+                                    <div class="flex items-center gap-2">
+                                        <h4 class="font-bold text-xs text-gray-900 dark:text-white">${r.name}</h4>
+                                        <span class="text-[10px] font-bold bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full">
+                                            Rôle sollicité : ${r.role}
+                                        </span>
+                                        <span class="text-[10px] text-gray-400">• ${r.date}</span>
+                                    </div>
+                                    <p class="text-[11px] text-gray-600 dark:text-gray-400">
+                                        <strong class="text-gray-700 dark:text-gray-300">Email :</strong> ${r.email} | 
+                                        <strong class="text-gray-700 dark:text-gray-300">Matricule :</strong> ${r.matricule || 'N/A'}
+                                    </p>
+                                    <p class="text-[11px] text-gray-500 dark:text-gray-400 italic bg-white dark:bg-[#132A45] p-2 rounded-lg border border-gray-200 dark:border-gray-800">
+                                        "${r.reason}"
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col sm:flex-row items-end sm:items-center gap-2 flex-shrink-0">
+                                <a href="${mailtoOwner}" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-semibold text-xs rounded-xl flex items-center gap-1 transition" title="Ouvrir dans votre client de messagerie pour envoyer un email d'accord officiel">
+                                    <i data-lucide="mail" class="w-3.5 h-3.5"></i> Accord par Email
+                                </a>
+                                <button onclick="acceptAccessRequest('${r.id}')" class="px-3.5 py-1.5 bg-ocp hover:bg-ocp/90 text-white font-bold text-xs rounded-xl shadow-md shadow-ocp/20 flex items-center gap-1.5 transition">
+                                    <i data-lucide="check" class="w-3.5 h-3.5"></i> Accepter l'accès
+                                </button>
+                                <button onclick="rejectAccessRequest('${r.id}')" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-semibold text-xs rounded-xl transition">
+                                    <i data-lucide="x" class="w-3.5 h-3.5"></i> Refuser
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    }).join('');
+                }
+            }
+
+            // 2. Rendu du journal d'audit des emails
+            const emailTbody = document.getElementById('email-logs-tbody');
+            if (emailTbody) {
+                emailTbody.innerHTML = emailLogs.map(eml => `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-[#132A45]/40 transition text-xs">
+                        <td class="py-3 px-3 font-mono text-[11px] text-gray-500 dark:text-gray-400">${eml.timestamp}</td>
+                        <td class="py-3 px-3">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded ${eml.type.includes('Accord') ? 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-800 dark:text-emerald-300' : 'bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300'}">
+                                ${eml.type}
+                            </span>
+                        </td>
+                        <td class="py-3 px-3 font-mono text-[11px] max-w-[150px] truncate" title="${eml.to}">${eml.to}</td>
+                        <td class="py-3 px-3 font-medium text-gray-900 dark:text-white max-w-[220px] truncate" title="${eml.subject}">${eml.subject}</td>
+                        <td class="py-3 px-3">
+                            <span class="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> ${eml.status}
+                            </span>
+                        </td>
+                        <td class="py-3 px-3 text-right space-x-1.5">
+                            <button onclick="previewEmailLog('${eml.id}')" class="text-ocp-light hover:underline font-semibold text-[11px]">
+                                Voir Courriel
+                            </button>
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            // 3. Rendu des utilisateurs autorisés
+            const tbody = document.getElementById('authorized-users-tbody');
+            if (tbody) {
+                tbody.innerHTML = users.map(u => `
+                    <tr class="hover:bg-gray-50 dark:hover:bg-[#132A45]/40 transition">
+                        <td class="py-3 px-3 font-semibold text-gray-900 dark:text-white flex items-center gap-2.5">
+                            <div class="w-7 h-7 rounded-lg ${u.color || 'bg-ocp'} text-white font-bold flex items-center justify-center text-[10px]">
+                                ${u.badge || u.name.slice(0,2).toUpperCase()}
+                            </div>
+                            <span>${u.name} ${u.isOwner ? '👑' : ''}</span>
+                        </td>
+                        <td class="py-3 px-3 font-mono text-[11px]">${u.email}</td>
+                        <td class="py-3 px-3">
+                            <span class="text-[10px] font-bold px-2 py-0.5 rounded ${u.isOwner ? 'bg-ocp/20 text-ocp-light' : 'bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300'}">
+                                ${u.role}
+                            </span>
+                        </td>
+                        <td class="py-3 px-3">
+                            <span class="text-[10px] font-bold bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 px-2 py-0.5 rounded-full flex items-center gap-1 w-fit">
+                                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> ${u.status || 'Actif'}
+                            </span>
+                        </td>
+                        <td class="py-3 px-3 text-[11px] text-gray-400">${u.lastLogin || '04/10/2026'}</td>
+                        <td class="py-3 px-3 text-right">
+                            ${u.isOwner ? '<span class="text-[10px] text-gray-400 italic">Propriétaire Inaliénable</span>' : `
+                                <button onclick="revokeUser('${u.key || u.email}')" class="text-red-500 hover:text-red-700 text-[11px] font-semibold">
+                                    Révoquer
+                                </button>
+                            `}
+                        </td>
+                    </tr>
+                `).join('');
+            }
+
+            // Synchroniser le sélecteur de profils du header
+            syncProfileSwitcher(users);
+            lucide.createIcons();
+        }
+
+        function syncProfileSwitcher(users) {
+            const switcher = document.getElementById('profile-switcher');
+            if (!switcher) return;
+            const currentVal = switcher.value;
+            switcher.innerHTML = users.map(u => `
+                <option value="${u.key}" ${u.key === currentVal ? 'selected' : ''} class="bg-slate-900 text-white">
+                    ${u.name} (${u.role})
+                </option>
+            `).join('');
+        }
+
+        // =========================================================================
+        // ACCORD D'ACCÈS & NOTIFICATION PAR EMAIL DU COLLABORATEUR
+        // =========================================================================
+
+        function acceptAccessRequest(reqId, silent = false) {
+            let reqs = getStoredRequests();
+            let users = getStoredUsers();
+            let emailLogs = getStoredEmailLogs();
+
+            const reqIndex = reqs.findIndex(r => r.id === reqId);
+            if (reqIndex === -1) return;
+
+            const r = reqs[reqIndex];
+            const newKey = 'user_' + Date.now();
+
+            const newUser = {
+                key: newKey,
+                name: r.name,
+                email: r.email,
+                role: r.role,
+                badge: r.name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase(),
+                color: 'bg-emerald-600',
+                isOwner: false,
+                status: 'Actif',
+                lastLogin: 'Tout juste accordé'
+            };
+
+            users.push(newUser);
+            reqs.splice(reqIndex, 1);
+
+            // Générer et enregistrer l'email officiel d'accord
+            const now = new Date();
+            const timeStr = now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+            
+            const newLog = {
+                id: 'EML-' + Math.floor(100 + Math.random() * 900),
+                timestamp: timeStr,
+                type: 'Accord Officiel d\'Accès',
+                to: r.email,
+                subject: `[ACCORD ACCORDÉ] Votre accès au Magasin Central MC01 a été validé par le Responsable Propriétaire`,
+                status: 'Délivré',
+                applicantName: r.name,
+                applicantEmail: r.email,
+                role: r.role,
+                reqId: reqId
+            };
+            emailLogs.unshift(newLog);
+
+            saveStoredUsers(users);
+            saveStoredRequests(reqs);
+            saveStoredEmailLogs(emailLogs);
+
+            renderAccessControlView();
+
+            if (!silent) {
+                showToast('Accès Accordé & Email Envoyé !', `L'accord formel a été accordé à ${r.name}. La notification d'activation a été expédiée à ${r.email}.`, 'success');
+            }
+        }
+
+        function rejectAccessRequest(reqId) {
+            let reqs = getStoredRequests();
+            const r = reqs.find(item => item.id === reqId);
+            if (!r) return;
+
+            if (confirm(`Êtes-vous sûr de vouloir refuser la demande d'accès de ${r.name} ?`)) {
+                reqs = reqs.filter(item => item.id !== reqId);
+                saveStoredRequests(reqs);
+
+                // Enregistrer log email de refus
+                let emailLogs = getStoredEmailLogs();
+                const now = new Date();
+                emailLogs.unshift({
+                    id: 'EML-' + Math.floor(100 + Math.random() * 900),
+                    timestamp: now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}),
+                    type: 'Notification de Refus',
+                    to: r.email,
+                    subject: `[NOTIFICATION] Statut de votre demande d'accès Magasin MC01`,
+                    status: 'Délivré',
+                    applicantName: r.name,
+                    applicantEmail: r.email,
+                    role: r.role
+                });
+                saveStoredEmailLogs(emailLogs);
+
+                renderAccessControlView();
+                showToast('Demande Refusée', `La demande d'accès de ${r.name} a été rejetée et une notification par email a été envoyée.`, 'warning');
+            }
+        }
+
+        function handleDirectAddUser(e) {
+            e.preventDefault();
+            const name = document.getElementById('add-name').value.trim();
+            const email = document.getElementById('add-email').value.trim();
+            const role = document.getElementById('add-role').value;
+            const matricule = document.getElementById('add-matricule').value.trim();
+
+            if (!name || !email) return;
+
+            let users = getStoredUsers();
+            if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+                showToast('Email Déjà Existant', 'Cet email est déjà enregistré dans les utilisateurs autorisés.', 'error');
+                return;
+            }
+
+            const newKey = 'user_' + Date.now();
+            const newUser = {
+                key: newKey,
+                name: name,
+                email: email,
+                role: role,
+                badge: name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase(),
+                color: role.includes('Propriétaire') ? 'bg-ocp' : 'bg-blue-600',
+                isOwner: role.includes('Propriétaire'),
+                status: 'Actif',
+                lastLogin: 'Créé directement'
+            };
+
+            users.push(newUser);
+            saveStoredUsers(users);
+
+            // Log d'envoi d'email
+            let emailLogs = getStoredEmailLogs();
+            const now = new Date();
+            emailLogs.unshift({
+                id: 'EML-' + Math.floor(100 + Math.random() * 900),
+                timestamp: now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}),
+                type: 'Accord Direct Propriétaire',
+                to: email,
+                subject: `[BIENVENUE MC01] Vos identifiants d'accès au Magasin Central OCP`,
+                status: 'Délivré',
+                applicantName: name,
+                applicantEmail: email,
+                role: role
+            });
+            saveStoredEmailLogs(emailLogs);
+
+            document.getElementById('add-name').value = '';
+            document.getElementById('add-email').value = '';
+            document.getElementById('add-matricule').value = '';
+
+            renderAccessControlView();
+            showToast('Collaborateur Ajouté & Notifié !', `L'accès a été accordé immédiatement à ${name}. L'email d'activation a été expédié à ${email}.`, 'success');
+        }
+
+        function revokeUser(userKey) {
+            let users = getStoredUsers();
+            const target = users.find(u => u.key === userKey || u.email === userKey);
+            if (!target || target.isOwner) return;
+
+            if (confirm(`Voulez-vous révoquer l'accès de ${target.name} ?`)) {
+                users = users.filter(u => u.key !== target.key && u.email !== target.email);
+                saveStoredUsers(users);
+                renderAccessControlView();
+                showToast('Accès Révoqué', `Le compte de ${target.name} a été désactivé.`, 'warning');
+            }
+        }
+
+        // =========================================================================
+        // PORTAIL D'ACCÈS OBLIGATOIRE, CONNEXION ET DEMANDE D'INSCRIPTION PAR EMAIL
+        // =========================================================================
+
+        function openAuthModal(defaultTab = 'login') {
+            const modal = document.getElementById('auth-gate-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                switchAuthTab(defaultTab);
+                lucide.createIcons();
+            }
+        }
+
+        function closeAuthModal() {
+            // Ne fermer que si une session valide est active
+            const activeUserKey = sessionStorage.getItem('mc01_active_session');
+            if (!activeUserKey) {
+                showToast('Authentification Obligatoire', 'Vous devez vous connecter ou soumettre une demande d\'inscription pour accéder au magasin.', 'warning');
+                return;
+            }
+            const modal = document.getElementById('auth-gate-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function switchAuthTab(tab) {
+            const loginForm = document.getElementById('auth-form-login');
+            const regForm = document.getElementById('auth-form-register');
+            const tabLogin = document.getElementById('tab-btn-login');
+            const tabReg = document.getElementById('tab-btn-register');
+
+            if (tab === 'login') {
+                if (loginForm) loginForm.classList.remove('hidden');
+                if (regForm) regForm.classList.add('hidden');
+                if (tabLogin) tabLogin.className = "flex-1 py-2 rounded-xl bg-white dark:bg-[#132A45] text-ocp-light shadow-sm transition";
+                if (tabReg) tabReg.className = "flex-1 py-2 rounded-xl text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition";
+            } else {
+                if (loginForm) loginForm.classList.add('hidden');
+                if (regForm) regForm.classList.remove('hidden');
+                if (tabLogin) tabLogin.className = "flex-1 py-2 rounded-xl text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition";
+                if (tabReg) tabReg.className = "flex-1 py-2 rounded-xl bg-white dark:bg-[#132A45] text-ocp-light shadow-sm transition";
+                document.getElementById('register-form').classList.remove('hidden');
+                document.getElementById('register-success-box').classList.add('hidden');
+            }
+        }
+
+        function handleLoginSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value.trim().toLowerCase();
+            const users = getStoredUsers();
+            const user = users.find(u => u.email.toLowerCase() === email);
+
+            if (user) {
+                // CONNEXION RÉUSSIE
+                sessionStorage.setItem('mc01_active_session', user.key);
+                changeActiveUser(user.key);
+                document.getElementById('profile-switcher').value = user.key;
+                const closeBtn = document.getElementById('auth-modal-close-btn');
+                if (closeBtn) closeBtn.classList.remove('hidden');
+                closeAuthModal();
+                switchTab('dashboard');
+                showToast('Connexion Réussie', `Bienvenue ${user.name} (${user.role})`, 'success');
+            } else {
+                // Vérifier si une demande est en attente
+                const reqs = getStoredRequests();
+                const pending = reqs.find(r => r.email.toLowerCase() === email);
+                if (pending) {
+                    showToast('Demande En Cours d\'Examen', 'Votre demande d\'accès est actuellement examinée par le Responsable Magasin Propriétaire. Vous devez attendre son accord par email.', 'warning');
+                } else {
+                    showToast('Accès Non Autorisé', 'Cet email n\'est pas enregistré dans le système. Veuillez remplir le formulaire d\'inscription.', 'error');
+                }
+            }
+        }
+
+        function quickLogin(key) {
+            sessionStorage.setItem('mc01_active_session', key);
+            changeActiveUser(key);
+            const switcher = document.getElementById('profile-switcher');
+            if (switcher) switcher.value = key;
+            const closeBtn = document.getElementById('auth-modal-close-btn');
+            if (closeBtn) closeBtn.classList.remove('hidden');
+            closeAuthModal();
+            showToast('Connexion Réussie', `Session ouverte pour le profil ${key.toUpperCase()}`, 'success');
+        }
+
+        function handleRegisterSubmit(e) {
+            e.preventDefault();
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const matricule = document.getElementById('reg-matricule').value.trim();
+            const role = document.getElementById('reg-role').value;
+            const reason = document.getElementById('reg-reason').value.trim();
+
+            if (!name || !email) return;
+
+            let reqs = getStoredRequests();
+            let users = getStoredUsers();
+            let emailLogs = getStoredEmailLogs();
+
+            if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
+                showToast('Compte Déjà Actif', 'Cet email possède déjà un accès autorisé. Vous pouvez vous connecter directement.', 'warning');
+                switchAuthTab('login');
+                document.getElementById('login-email').value = email;
+                return;
+            }
+
+            if (reqs.some(r => r.email.toLowerCase() === email.toLowerCase())) {
+                showToast('Demande Déjà Enregistrée', 'Votre demande est déjà en attente d\'accord du Responsable Propriétaire.', 'warning');
+                return;
+            }
+
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('fr-FR') + ' à ' + now.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'});
+            const newReqId = 'REQ-' + Math.floor(100 + Math.random() * 900);
+
+            const newReq = {
+                id: newReqId,
+                name: name,
+                email: email,
+                matricule: matricule,
+                role: role,
+                date: dateStr,
+                reason: reason,
+                status: 'En attente'
+            };
+
+            reqs.unshift(newReq);
+            saveStoredRequests(reqs);
+
+            // 1. Notification par email envoyée aux Responsables Magasin Propriétaires
+            emailLogs.unshift({
+                id: 'EML-' + Math.floor(100 + Math.random() * 900),
+                timestamp: now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}),
+                type: 'Notification Responsable',
+                to: 'm.elatyqy@ocpgroup.ma, y.azizi@ocpgroup.ma',
+                subject: `[URGENT MC01] Demande d'accès par email à valider - ${name} (${role})`,
+                status: 'Délivré',
+                applicantName: name,
+                applicantEmail: email,
+                role: role,
+                reqId: newReqId
+            });
+
+            // 2. Accusé de réception envoyé au demandeur
+            emailLogs.unshift({
+                id: 'EML-' + Math.floor(100 + Math.random() * 900),
+                timestamp: now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}),
+                type: 'Accusé de Réception',
+                to: email,
+                subject: `[JESA OCP] Prise en compte de votre demande d'accès - Magasin MC01`,
+                status: 'Délivré',
+                applicantName: name,
+                applicantEmail: email,
+                role: role,
+                reqId: newReqId
+            });
+
+            saveStoredEmailLogs(emailLogs);
+
+            document.getElementById('register-form').classList.add('hidden');
+            document.getElementById('register-success-box').classList.remove('hidden');
+
+            renderAccessControlView();
+            showToast('Demande Enregistrée & Notifiée', `Emails d'accusé de réception et de notification aux Responsables Propriétaires expédiés avec succès !`, 'success');
+            lucide.createIcons();
+        }
+
+        // =========================================================================
+        // VISUALISATION & ENVOI DES COURRIELS OFFICIELS (EMAIL PREVIEW & MAILTO)
+        // =========================================================================
+
+        function previewEmailLog(emailId) {
+            const logs = getStoredEmailLogs();
+            const eml = logs.find(item => item.id === emailId);
+            if (!eml) return;
+
+            const modal = document.getElementById('email-preview-modal');
+            const titleEl = document.getElementById('modal-email-title');
+            const bodyEl = document.getElementById('modal-email-body');
+            const mailtoBtn = document.getElementById('modal-email-mailto-btn');
+
+            titleEl.innerText = eml.subject;
+
+            const approvalUrl = window.location.origin + window.location.pathname + '?action=approve&id=' + (eml.reqId || 'REQ-101');
+
+            let bodyContent = '';
+            if (eml.type.includes('Accord')) {
+                bodyContent = `
+                    <div style="border-left: 4px solid #00A859; padding-left: 12px; margin-bottom: 12px;">
+                        <strong style="color: #00A859; font-size: 13px;">GROUPE OCP • DIRECTION LOGISTIQUE & GESTION DES STOCKS MC01</strong><br>
+                        <span style="color: #64748b; font-size: 11px;">Réf. Notification : ${eml.id} | Date : ${eml.timestamp}</span>
+                    </div>
+                    <p>Bonjour <strong>${eml.applicantName}</strong>,</p>
+                    <p>Nous avons le plaisir de vous informer que votre demande d'accès au <strong>Magasin Central MC01</strong> a été <strong style="color: #00A859;">OFFICIELLEMENT ACCORDÉE ET VALIDÉE</strong> par le Responsable Magasin Propriétaire (EL ATYQY mohamed raid & yassine AZIZI).</p>
+                    <div style="background: rgba(0, 168, 89, 0.08); border: 1px solid rgba(0, 168, 89, 0.3); padding: 12px; border-radius: 8px;">
+                        <p style="margin: 0; font-weight: bold; color: #008343;">Profil et Rôle Actifs : ${eml.role}</p>
+                        <p style="margin: 4px 0 0; font-size: 11px; color: #334155;">Identifiant de connexion : <strong>${eml.to}</strong></p>
+                    </div>
+                    <p>Vous pouvez désormais vous connecter directement à l'application web :</p>
+                    <p><a href="${window.location.origin + window.location.pathname}" style="background: #00A859; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">Accéder au Magasin Central MC01</a></p>
+                    <p style="color: #64748b; font-size: 10px; margin-top: 15px;">Cet email est généré automatiquement par le système de gestion des accès JESA OCP.</p>
+                `;
+            } else {
+                bodyContent = `
+                    <div style="border-left: 4px solid #F59E0B; padding-left: 12px; margin-bottom: 12px;">
+                        <strong style="color: #D97706; font-size: 13px;">DEMANDE D'ACCÈS MAGASIN CENTRAL MC01 À VALIDER</strong><br>
+                        <span style="color: #64748b; font-size: 11px;">Réf. Demande : ${eml.reqId || 'REQ-101'} | Date : ${eml.timestamp}</span>
+                    </div>
+                    <p>À l'attention des <strong>Responsables Magasin Propriétaires (EL ATYQY mohamed raid & yassine AZIZI)</strong>,</p>
+                    <p>Un collaborateur a soumis une demande d'accès par email requérant votre accord formel :</p>
+                    <ul style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3); padding: 12px 20px; border-radius: 8px; list-style-type: square;">
+                        <li><strong>Collaborateur :</strong> ${eml.applicantName}</li>
+                        <li><strong>Email :</strong> ${eml.applicantEmail || eml.to}</li>
+                        <li><strong>Rôle sollicité :</strong> ${eml.role}</li>
+                    </ul>
+                    <p>Pour accorder directement l'accès par email en un clic :</p>
+                    <p><a href="${approvalLink}" style="background: #00A859; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">Valider et Accorder l'Accès Maintenant</a></p>
+                `;
+            }
+
+            bodyEl.innerHTML = bodyContent;
+
+            const mailtoUrl = `mailto:${eml.to}?subject=${encodeURIComponent(eml.subject)}&body=${encodeURIComponent("Bonjour " + eml.applicantName + ",\n\nVotre demande d'accès au Magasin Central MC01 a été traitée par le Responsable Magasin Propriétaire.\n\nLien d'accès : " + window.location.origin + window.location.pathname + "\n\nCordialement,\nDirection Magasin Central MC01")}`;
+            mailtoBtn.href = mailtoUrl;
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            lucide.createIcons();
+        }
+
+        function closeEmailPreview() {
+            const modal = document.getElementById('email-preview-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
     </script>
+
+    <!-- =========================================================================
+         PORTAIL D'ACCÈS SÉCURISÉ & VERROU D'ACCÈS STRICT OBLIGATOIRE
+         ========================================================================= -->
+    <div id="auth-gate-modal" class="fixed inset-0 z-50 bg-[#050D17]/95 backdrop-blur-xl flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#0D2137] border border-gray-200 dark:border-gray-700/80 rounded-3xl shadow-2xl max-w-xl w-full p-6 space-y-5 text-gray-900 dark:text-gray-100 card-interactive relative max-h-[92vh] overflow-y-auto custom-scrollbar">
+            
+            <!-- BOUTON FERMER (Actif uniquement si session active) -->
+            <button onclick="closeAuthModal()" id="auth-modal-close-btn" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 dark:hover:text-white transition hidden">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- EN-TÊTE DU PORTAIL -->
+            <div class="text-center space-y-1">
+                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-ocp/10 border border-ocp/20 text-ocp-light text-xs font-bold mb-1">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> JESA OCP • Magasin Central MC01
+                </div>
+                <h3 class="text-xl font-extrabold text-gray-900 dark:text-white">Portail de Contrôle d'Accès Sécurisé</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400">
+                    L'accès aux données de stock et d'inventaire est strictement soumis à l'accord formel et à la notification par email du Responsable Magasin Propriétaire.
+                </p>
+            </div>
+
+            <!-- ONGLETS : CONNEXION vs DEMANDE D'INSCRIPTION PAR EMAIL -->
+            <div class="flex bg-gray-100 dark:bg-[#050D17] p-1 rounded-2xl border border-gray-200 dark:border-gray-800 text-xs font-bold">
+                <button type="button" onclick="switchAuthTab('login')" id="tab-btn-login" class="flex-1 py-2 rounded-xl bg-white dark:bg-[#132A45] text-ocp-light shadow-sm transition">
+                    <i data-lucide="log-in" class="w-3.5 h-3.5 inline mr-1"></i> Connexion par Email
+                </button>
+                <button type="button" onclick="switchAuthTab('register')" id="tab-btn-register" class="flex-1 py-2 rounded-xl text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition">
+                    <i data-lucide="mail-plus" class="w-3.5 h-3.5 inline mr-1"></i> Inscription par Email (Accord Requis)
+                </button>
+            </div>
+
+            <!-- ONGLET 1 : FORMULAIRE DE CONNEXION -->
+            <div id="auth-form-login" class="space-y-4">
+                <form onsubmit="handleLoginSubmit(event)" class="space-y-3 text-xs">
+                    <div>
+                        <label class="block text-gray-600 dark:text-gray-300 font-semibold mb-1">Adresse Email Professionnelle autorisée *</label>
+                        <input type="email" id="login-email" required placeholder="nom@ocpgroup.ma" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3.5 py-2.5 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                    </div>
+                    <button type="submit" class="w-full py-2.5 bg-ocp hover:bg-ocp/90 text-white font-bold rounded-xl shadow-lg shadow-ocp/20 flex items-center justify-center gap-2 transition">
+                        <i data-lucide="arrow-right" class="w-4 h-4"></i> Déverrouiller & Accéder à l'Application
+                    </button>
+                </form>
+
+                <div class="border-t border-gray-200 dark:border-gray-800 pt-3">
+                    <p class="text-[11px] font-bold text-gray-500 dark:text-gray-400 mb-2">Comptes d'accès rapide prédéfinis pour test :</p>
+                    <div class="grid grid-cols-2 gap-2 text-[11px]">
+                        <button onclick="quickLogin('raid')" class="p-2 text-left bg-gray-50 dark:bg-[#050D17] hover:bg-ocp/10 border border-gray-200 dark:border-gray-800 rounded-xl transition">
+                            <p class="font-bold text-ocp-light">👑 EL ATYQY raid</p>
+                            <p class="text-[10px] text-gray-400">Responsable / Propriétaire</p>
+                        </button>
+                        <button onclick="quickLogin('azizi')" class="p-2 text-left bg-gray-50 dark:bg-[#050D17] hover:bg-ocp/10 border border-gray-200 dark:border-gray-800 rounded-xl transition">
+                            <p class="font-bold text-ocp-light">👑 yassine AZIZI</p>
+                            <p class="text-[10px] text-gray-400">Responsable / Propriétaire</p>
+                        </button>
+                        <button onclick="quickLogin('soufiane')" class="p-2 text-left bg-gray-50 dark:bg-[#050D17] hover:bg-blue-500/10 border border-gray-200 dark:border-gray-800 rounded-xl transition">
+                            <p class="font-bold text-blue-400">soufiane BOUHZAM</p>
+                            <p class="text-[10px] text-gray-400">Appro. Mécanique</p>
+                        </button>
+                        <button onclick="quickLogin('omar')" class="p-2 text-left bg-gray-50 dark:bg-[#050D17] hover:bg-purple-500/10 border border-gray-200 dark:border-gray-800 rounded-xl transition">
+                            <p class="font-bold text-purple-400">Omar BENALLA</p>
+                            <p class="text-[10px] text-gray-400">Appro. Électrique</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ONGLET 2 : FORMULAIRE DE DEMANDE D'INSCRIPTION PAR EMAIL -->
+            <div id="auth-form-register" class="hidden space-y-4 text-xs">
+                <!-- AVERTISSEMENT PROTOCOLE OCP -->
+                <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-start gap-2.5 text-amber-600 dark:text-amber-400">
+                    <i data-lucide="shield-alert" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
+                    <div class="text-[11px] leading-relaxed">
+                        <strong>Protocole d'inscription WMS :</strong> Renseignez votre adresse email. Une notification est automatiquement envoyée aux Responsables Magasin Propriétaires (EL ATYQY mohamed raid & yassine AZIZI). <strong>Votre accès ne sera ouvert qu'après leur accord explicite par email.</strong>
+                    </div>
+                </div>
+
+                <form onsubmit="handleRegisterSubmit(event)" id="register-form" class="space-y-3">
+                    <div>
+                        <label class="block text-gray-600 dark:text-gray-300 font-semibold mb-1">Nom et Prénom *</label>
+                        <input type="text" id="reg-name" required placeholder="ex: Amine TAZI" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3.5 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-gray-600 dark:text-gray-300 font-semibold mb-1">Email Professionnel *</label>
+                            <input type="email" id="reg-email" required placeholder="a.tazi@ocpgroup.ma" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3.5 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                        </div>
+                        <div>
+                            <label class="block text-gray-600 dark:text-gray-300 font-semibold mb-1">Matricule OCP / Tél *</label>
+                            <input type="text" id="reg-matricule" required placeholder="OCP-94812" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3.5 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-gray-600 dark:text-gray-300 font-semibold mb-1">Rôle Sollicité *</label>
+                        <select id="reg-role" required class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3.5 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                            <option value="Magasinier">Magasinier (Gestion Entrées / Sorties)</option>
+                            <option value="Approvisionneur Mécanique">Approvisionneur Mécanique</option>
+                            <option value="Approvisionneur Électrique">Approvisionneur Électrique</option>
+                            <option value="Préparateur">Préparateur de commandes</option>
+                            <option value="Contrôleur Inventaire">Contrôleur Inventaire & Audit</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-gray-600 dark:text-gray-300 font-semibold mb-1">Motif / Justification d'accès *</label>
+                        <textarea id="reg-reason" required rows="2" placeholder="Précisez votre affectation, équipe ou mission..." class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3.5 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp"></textarea>
+                    </div>
+                    <button type="submit" class="w-full py-2.5 bg-ocp hover:bg-ocp/90 text-white font-bold rounded-xl shadow-lg shadow-ocp/20 flex items-center justify-center gap-2 transition">
+                        <i data-lucide="send" class="w-4 h-4"></i> Transmettre ma demande & Notifier le Responsable par Email
+                    </button>
+                </form>
+
+                <!-- MESSAGE DE SUCCÈS APRÈS SOUMISSION -->
+                <div id="register-success-box" class="hidden p-4 bg-emerald-500/10 border border-emerald-500/30 rounded-2xl text-emerald-600 dark:text-emerald-400 space-y-3 text-center">
+                    <div class="w-10 h-10 rounded-full bg-emerald-500/20 mx-auto flex items-center justify-center">
+                        <i data-lucide="mail-check" class="w-6 h-6 text-emerald-500"></i>
+                    </div>
+                    <h4 class="font-bold text-sm">Demande transmise & Emails expédiés !</h4>
+                    <p class="text-[11px] leading-relaxed text-gray-600 dark:text-gray-300">
+                        1. Un <strong>accusé de réception</strong> vous a été expédié.<br>
+                        2. Une <strong>notification prioritaire</strong> a été transmise aux Responsables Magasin Propriétaires (EL ATYQY mohamed raid & yassine AZIZI).<br>
+                        Dès validation de leur accord, vous recevrez votre confirmation d'accès.
+                    </p>
+                    <div class="pt-2 flex flex-col gap-2">
+                        <button onclick="quickLogin('raid')" class="px-4 py-2 bg-ocp text-white font-bold rounded-xl text-xs hover:bg-ocp/90 transition shadow-md">
+                            👑 Simuler connexion en tant que Responsable pour accorder l'accès
+                        </button>
+                        <button onclick="switchAuthTab('login')" class="text-xs text-gray-500 dark:text-gray-400 hover:underline">
+                            Retour à l'écran de connexion
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         MODAL : VISUALISEUR DE COURRIEL OFFICIEL JESA OCP (EMAIL PREVIEW)
+         ========================================================================= -->
+    <div id="email-preview-modal" class="fixed inset-0 z-50 bg-[#050D17]/85 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#0D2137] border border-gray-200 dark:border-gray-700/80 rounded-3xl shadow-2xl max-w-2xl w-full p-6 space-y-4 text-gray-900 dark:text-gray-100 card-interactive relative max-h-[92vh] overflow-y-auto custom-scrollbar">
+            <button onclick="closeEmailPreview()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 dark:hover:text-white transition">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-2 border-b border-gray-200 dark:border-gray-800 pb-3">
+                <i data-lucide="mail" class="w-5 h-5 text-ocp-light"></i>
+                <h3 class="font-bold text-sm text-gray-900 dark:text-white" id="modal-email-title">Aperçu du Courriel d'Entreprise OCP</h3>
+            </div>
+            <div id="modal-email-body" class="bg-gray-50 dark:bg-[#050D17] border border-gray-200 dark:border-gray-800 rounded-2xl p-5 text-xs text-gray-800 dark:text-gray-200 space-y-3 font-sans">
+                <!-- Contenu HTML du mail injecté ici -->
+            </div>
+            <div class="flex justify-end gap-2 pt-2 border-t border-gray-200 dark:border-gray-800">
+                <button onclick="closeEmailPreview()" class="px-4 py-2 bg-gray-200 dark:bg-slate-700 text-gray-800 dark:text-gray-200 rounded-xl text-xs font-semibold">
+                    Fermer
+                </button>
+                <a id="modal-email-mailto-btn" href="#" class="px-4 py-2 bg-ocp text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-md shadow-ocp/20">
+                    <i data-lucide="send" class="w-4 h-4"></i> Ouvrir dans mon Client Mail (Outlook / Gmail)
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENEUR DES NOTIFICATIONS TOAST -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
 </body>
 </html>
