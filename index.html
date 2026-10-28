@@ -2733,12 +2733,107 @@
         ];
 
         const DEFAULT_USERS = [
-            { key: 'raid', name: 'EL ATYQY mohamed raid', email: 'm.elatyqy@ocpgroup.ma', role: 'Responsable Magasin / Propriétaire', badge: 'RA', color: 'bg-ocp', isOwner: true, status: 'Actif', lastLogin: 'En ligne' },
-            { key: 'azizi', name: 'yassine AZIZI', email: 'y.azizi@ocpgroup.ma', role: 'Responsable Magasin / Propriétaire', badge: 'YA', color: 'bg-ocp', isOwner: true, status: 'Actif', lastLogin: '04/10/2026 09:15' },
-            { key: 'soufiane', name: 'soufiane BOUHZAM', email: 's.bouhzam@ocpgroup.ma', role: 'Approvisionneur Mécanique', badge: 'SB', color: 'bg-blue-600', isOwner: false, status: 'Actif', lastLogin: '04/10/2026 08:30' },
-            { key: 'omar', name: 'Omar BENALLA', email: 'o.benalla@ocpgroup.ma', role: 'Approvisionneur Électrique', badge: 'OB', color: 'bg-purple-600', isOwner: false, status: 'Actif', lastLogin: '03/10/2026 17:45' },
-            { key: 'ghizlan', name: 'Ghizlan', email: 'ghizlan@ocpgroup.ma', role: 'Préparatrice', badge: 'GH', color: 'bg-amber-500', isOwner: false, status: 'Actif', lastLogin: '04/10/2026 07:15' }
+            {
+                key: 'azizi',
+                name: 'yassine AZIZI',
+                email: 'yassine.azizi@ocpgroup.ma',
+                aliases: ['y.azizi@ocpgroup.ma', 'yassine.azizi@ocpgroup.ma', 'yassine@ocpgroup.ma', 'azizi@ocpgroup.ma', 'yassine', 'azizi', 'yassine azizi'],
+                role: 'Responsable Magasin / Propriétaire',
+                badge: 'YA',
+                color: 'bg-ocp',
+                isOwner: true,
+                status: 'Actif',
+                lastLogin: 'En ligne'
+            },
+            {
+                key: 'raid',
+                name: 'EL ATYQY mohamed raid',
+                email: 'mohamed.raid.elatyqy@ocpgroup.ma',
+                aliases: ['m.elatyqy@ocpgroup.ma', 'mohamed.raid.elatyqy@ocpgroup.ma', 'raid@ocpgroup.ma', 'elatyqy@ocpgroup.ma', 'raid', 'elatyqy', 'mohamed raid', 'el atyqy raid'],
+                role: 'Responsable Magasin / Propriétaire',
+                badge: 'RA',
+                color: 'bg-ocp',
+                isOwner: true,
+                status: 'Actif',
+                lastLogin: 'En ligne'
+            },
+            {
+                key: 'soufiane',
+                name: 'soufiane BOUHZAM',
+                email: 'soufiane.bouhzam@ocpgroup.ma',
+                aliases: ['s.bouhzam@ocpgroup.ma', 'soufiane.bouhzam@ocpgroup.ma', 'soufiane@ocpgroup.ma', 'bouhzam@ocpgroup.ma', 'soufiane'],
+                role: 'Approvisionneur Mécanique',
+                badge: 'SB',
+                color: 'bg-blue-600',
+                isOwner: false,
+                status: 'Actif',
+                lastLogin: '04/10/2026 08:30'
+            },
+            {
+                key: 'omar',
+                name: 'Omar BENALLA',
+                email: 'omar.benalla@ocpgroup.ma',
+                aliases: ['o.benalla@ocpgroup.ma', 'omar.benalla@ocpgroup.ma', 'omar@ocpgroup.ma', 'benalla@ocpgroup.ma', 'omar'],
+                role: 'Approvisionneur Électrique',
+                badge: 'OB',
+                color: 'bg-purple-600',
+                isOwner: false,
+                status: 'Actif',
+                lastLogin: '03/10/2026 17:45'
+            },
+            {
+                key: 'ghizlan',
+                name: 'Ghizlan',
+                email: 'ghizlan@ocpgroup.ma',
+                aliases: ['ghizlan@ocpgroup.ma', 'ghizlan'],
+                role: 'Préparatrice',
+                badge: 'GH',
+                color: 'bg-amber-500',
+                isOwner: false,
+                status: 'Actif',
+                lastLogin: '04/10/2026 07:15'
+            }
         ];
+
+        function findUserByEmailOrAlias(inputRaw) {
+            if (!inputRaw) return null;
+            const input = inputRaw.trim().toLowerCase();
+            const clean = input.replace(/\s+/g, '');
+            const users = getStoredUsers();
+
+            // 1. Recherche directe dans la liste des utilisateurs enregistrés
+            for (const u of users) {
+                const uEmail = (u.email || '').toLowerCase().trim();
+                const uKey = (u.key || '').toLowerCase().trim();
+                const uName = (u.name || '').toLowerCase().trim();
+                const uAliases = Array.isArray(u.aliases) ? u.aliases.map(a => a.toLowerCase().trim()) : [];
+
+                if (uEmail === input || uEmail === clean) return u;
+                if (uKey === input || uKey === clean) return u;
+                if (uName === input) return u;
+                if (uAliases.includes(input) || uAliases.includes(clean)) return u;
+            }
+
+            // 2. Recherche tolérante sur les alias des utilisateurs par défaut (yassine, raid, etc.)
+            for (const def of DEFAULT_USERS) {
+                const dEmail = (def.email || '').toLowerCase().trim();
+                const dKey = (def.key || '').toLowerCase().trim();
+                const dAliases = def.aliases ? def.aliases.map(a => a.toLowerCase().trim()) : [];
+                if (dEmail === input || dEmail === clean || dKey === input || dKey === clean || dAliases.includes(input) || dAliases.includes(clean)) {
+                    return users.find(u => u.key === def.key) || def;
+                }
+            }
+
+            // 3. Détection intelligente par mot-clé pour yassine et raid
+            if (input.includes('azizi') || input.includes('yassine')) {
+                return users.find(u => u.key === 'azizi') || DEFAULT_USERS.find(u => u.key === 'azizi');
+            }
+            if (input.includes('raid') || input.includes('elatyqy') || input.includes('el atyqy')) {
+                return users.find(u => u.key === 'raid') || DEFAULT_USERS.find(u => u.key === 'raid');
+            }
+
+            return null;
+        }
 
         const DEFAULT_EMAIL_LOGS = [
             {
@@ -2785,7 +2880,20 @@
         function getStoredUsers() {
             try {
                 const data = localStorage.getItem('mc01_authorized_users');
-                return data ? JSON.parse(data) : DEFAULT_USERS;
+                if (!data) return DEFAULT_USERS;
+                let parsed = JSON.parse(data);
+                // Harmoniser les utilisateurs pour s'assurer que les alias et emails officiels à jour sont toujours présents
+                DEFAULT_USERS.forEach(def => {
+                    const existing = parsed.find(u => u.key === def.key);
+                    if (existing) {
+                        existing.aliases = def.aliases;
+                        if (!existing.email || existing.email === 'y.azizi@ocpgroup.ma') existing.email = def.email;
+                        if (!existing.email || existing.email === 'm.elatyqy@ocpgroup.ma') existing.email = def.email;
+                    } else {
+                        parsed.push(def);
+                    }
+                });
+                return parsed;
             } catch (e) {
                 return DEFAULT_USERS;
             }
@@ -2862,25 +2970,34 @@
                 return;
             }
 
-            // 2. Vérification normale de session
-            const activeUserKey = sessionStorage.getItem('mc01_active_session');
+            // 2. Vérification de session persistante (localStorage en priorité, fallback sessionStorage)
+            const activeUserKey = localStorage.getItem('mc01_active_session') || sessionStorage.getItem('mc01_active_session');
             if (!activeUserKey) {
-                // VERROUILLAGE STRICT OBLIGATOIRE : Aucun accès au dashboard sans authentification
+                // VERROUILLAGE STRICT : Aucun accès au dashboard sans authentification préalable
                 openAuthModal('login');
                 const closeBtn = document.getElementById('auth-modal-close-btn');
                 if (closeBtn) closeBtn.classList.add('hidden'); // Empêcher la fermeture sans connexion
             } else {
+                // Session active persistante : restaurer l'état sans afficher la modale
+                localStorage.setItem('mc01_active_session', activeUserKey);
+                sessionStorage.setItem('mc01_active_session', activeUserKey);
                 changeActiveUser(activeUserKey);
                 const switcher = document.getElementById('profile-switcher');
                 if (switcher) switcher.value = activeUserKey;
                 const closeBtn = document.getElementById('auth-modal-close-btn');
                 if (closeBtn) closeBtn.classList.remove('hidden');
+                const modal = document.getElementById('auth-gate-modal');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
             }
         }
 
         function logoutSession() {
+            localStorage.removeItem('mc01_active_session');
             sessionStorage.removeItem('mc01_active_session');
-            showToast('Déconnexion Sécurisée', 'Votre session a été fermée. L\'application est verrouillée.', 'warning');
+            showToast('Déconnexion Réussie', 'Votre session a été fermée avec succès. L\'application est verrouillée.', 'warning');
             openAuthModal('login');
             const closeBtn = document.getElementById('auth-modal-close-btn');
             if (closeBtn) closeBtn.classList.add('hidden');
@@ -2896,7 +3013,8 @@
                 return;
             }
 
-            // Connecter le Responsable d'office
+            // Connecter le Responsable d'office et persister dans localStorage
+            localStorage.setItem('mc01_active_session', 'raid');
             sessionStorage.setItem('mc01_active_session', 'raid');
             changeActiveUser('raid');
             closeAuthModal();
@@ -3257,9 +3375,9 @@
 
         function closeAuthModal() {
             // Ne fermer que si une session valide est active
-            const activeUserKey = sessionStorage.getItem('mc01_active_session');
+            const activeUserKey = localStorage.getItem('mc01_active_session') || sessionStorage.getItem('mc01_active_session');
             if (!activeUserKey) {
-                showToast('Authentification Obligatoire', 'Vous devez vous connecter ou soumettre une demande d\'inscription pour accéder au magasin.', 'warning');
+                showToast('Authentification Obligatoire', 'Veuillez renseigner votre email ou identifiant professionnel pour accéder au magasin.', 'warning');
                 return;
             }
             const modal = document.getElementById('auth-gate-modal');
@@ -3292,33 +3410,34 @@
 
         function handleLoginSubmit(e) {
             e.preventDefault();
-            const email = document.getElementById('login-email').value.trim().toLowerCase();
-            const users = getStoredUsers();
-            const user = users.find(u => u.email.toLowerCase() === email);
+            const inputVal = (document.getElementById('login-email').value || '').trim();
+            const user = findUserByEmailOrAlias(inputVal);
 
             if (user) {
-                // CONNEXION RÉUSSIE
+                // CONNEXION RÉUSSIE & PERSISTANTE DANS LE NAVIGATEUR (SURVIT AUX ACTUALISATIONS F5)
+                localStorage.setItem('mc01_active_session', user.key);
                 sessionStorage.setItem('mc01_active_session', user.key);
                 changeActiveUser(user.key);
-                document.getElementById('profile-switcher').value = user.key;
+                const switcher = document.getElementById('profile-switcher');
+                if (switcher) switcher.value = user.key;
                 const closeBtn = document.getElementById('auth-modal-close-btn');
                 if (closeBtn) closeBtn.classList.remove('hidden');
                 closeAuthModal();
-                switchTab('dashboard');
-                showToast('Connexion Réussie', `Bienvenue ${user.name} (${user.role})`, 'success');
+                showToast('Connexion Réussie', `Bienvenue ${user.name} (${user.role}) — Session persistante active`, 'success');
             } else {
                 // Vérifier si une demande est en attente
                 const reqs = getStoredRequests();
-                const pending = reqs.find(r => r.email.toLowerCase() === email);
+                const pending = reqs.find(r => (r.email || '').toLowerCase() === inputVal.toLowerCase());
                 if (pending) {
-                    showToast('Demande En Cours d\'Examen', 'Votre demande d\'accès est actuellement examinée par le Responsable Magasin Propriétaire. Vous devez attendre son accord par email.', 'warning');
+                    showToast('Demande En Cours d\'Examen', 'Votre demande d\'accès est en cours de validation par les Responsables Magasin Propriétaires (EL ATYQY mohamed raid & yassine AZIZI).', 'warning');
                 } else {
-                    showToast('Accès Non Autorisé', 'Cet email n\'est pas enregistré dans le système. Veuillez remplir le formulaire d\'inscription.', 'error');
+                    showToast('Accès Non Autorisé', 'Identifiant ou email non reconnu. Veuillez vérifier votre saisie ou remplir une demande d\'inscription.', 'error');
                 }
             }
         }
 
         function quickLogin(key) {
+            localStorage.setItem('mc01_active_session', key);
             sessionStorage.setItem('mc01_active_session', key);
             changeActiveUser(key);
             const switcher = document.getElementById('profile-switcher');
@@ -3489,7 +3608,7 @@
 
         function checkRolePermission(actionName, requiredRoles = ['Responsable / Propriétaire']) {
             const users = getStoredUsers();
-            const activeKey = sessionStorage.getItem('mc01_active_session') || currentActiveUserKey || 'raid';
+            const activeKey = localStorage.getItem('mc01_active_session') || sessionStorage.getItem('mc01_active_session') || currentActiveUserKey || 'raid';
             const user = users.find(u => u.key === activeKey);
 
             if (!user) {
@@ -8794,66 +8913,59 @@
     <!-- =========================================================================
          PORTAIL D'ACCÈS SÉCURISÉ & VERROU D'ACCÈS STRICT OBLIGATOIRE
          ========================================================================= -->
-    <div id="auth-gate-modal" class="fixed inset-0 z-50 bg-[#050D17]/95 backdrop-blur-xl flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-[#0D2137] border border-gray-200 dark:border-gray-700/80 rounded-3xl shadow-2xl max-w-xl w-full p-6 space-y-5 text-gray-900 dark:text-gray-100 card-interactive relative max-h-[92vh] overflow-y-auto custom-scrollbar">
+    <div id="auth-gate-modal" class="fixed inset-0 z-50 bg-[#050D17]/90 backdrop-blur-xl hidden items-center justify-center p-4 transition-all duration-300">
+        <div class="bg-white dark:bg-[#0D2137] border border-gray-200 dark:border-gray-700/80 rounded-3xl shadow-2xl max-w-lg w-full p-6 md:p-8 space-y-6 text-gray-900 dark:text-gray-100 card-interactive relative max-h-[92vh] overflow-y-auto custom-scrollbar">
             
             <!-- BOUTON FERMER (Actif uniquement si session active) -->
-            <button onclick="closeAuthModal()" id="auth-modal-close-btn" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 dark:hover:text-white transition hidden">
+            <button onclick="closeAuthModal()" id="auth-modal-close-btn" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 dark:hover:text-white p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 transition hidden" title="Fermer la fenêtre">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
 
             <!-- EN-TÊTE DU PORTAIL -->
-            <div class="text-center space-y-1">
-                <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-ocp/10 border border-ocp/20 text-ocp-light text-xs font-bold mb-1">
+            <div class="text-center space-y-2">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-ocp/10 border border-ocp/25 text-ocp-light text-xs font-bold shadow-sm">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                     <i data-lucide="shield-check" class="w-3.5 h-3.5"></i> JESA OCP • Magasin Central MC01
                 </div>
-                <h3 class="text-xl font-extrabold text-gray-900 dark:text-white">Portail de Contrôle d'Accès Sécurisé</h3>
-                <p class="text-xs text-gray-500 dark:text-gray-400">
-                    L'accès aux données de stock et d'inventaire est strictement soumis à l'accord formel et à la notification par email du Responsable Magasin Propriétaire.
+                <h3 class="text-2xl font-black text-gray-900 dark:text-white tracking-tight">Portail de Contrôle d'Accès Sécurisé</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 max-w-sm mx-auto leading-relaxed">
+                    Plateforme certifiée WMS JESA OCP. L'accès aux données de stock et d'inventaire est strictement réservé aux collaborateurs habilités.
                 </p>
             </div>
 
             <!-- ONGLETS : CONNEXION vs DEMANDE D'INSCRIPTION PAR EMAIL -->
             <div class="flex bg-gray-100 dark:bg-[#050D17] p-1 rounded-2xl border border-gray-200 dark:border-gray-800 text-xs font-bold">
                 <button type="button" onclick="switchAuthTab('login')" id="tab-btn-login" class="flex-1 py-2 rounded-xl bg-white dark:bg-[#132A45] text-ocp-light shadow-sm transition">
-                    <i data-lucide="log-in" class="w-3.5 h-3.5 inline mr-1"></i> Connexion par Email
+                    <i data-lucide="log-in" class="w-3.5 h-3.5 inline mr-1"></i> Connexion
                 </button>
                 <button type="button" onclick="switchAuthTab('register')" id="tab-btn-register" class="flex-1 py-2 rounded-xl text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition">
-                    <i data-lucide="mail-plus" class="w-3.5 h-3.5 inline mr-1"></i> Inscription par Email (Accord Requis)
+                    <i data-lucide="mail-plus" class="w-3.5 h-3.5 inline mr-1"></i> Demande d'Inscription
                 </button>
             </div>
 
             <!-- ONGLET 1 : FORMULAIRE DE CONNEXION -->
             <div id="auth-form-login" class="space-y-4">
-                <form onsubmit="handleLoginSubmit(event)" class="space-y-3 text-xs">
+                <form onsubmit="handleLoginSubmit(event)" class="space-y-4 text-xs">
                     <div>
-                        <label class="block text-gray-600 dark:text-gray-300 font-semibold mb-1">Adresse Email Professionnelle autorisée *</label>
-                        <input type="email" id="login-email" required placeholder="nom@ocpgroup.ma" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3.5 py-2.5 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                        <label class="block text-gray-700 dark:text-gray-300 font-semibold mb-1.5">Adresse Email Professionnelle ou Identifiant *</label>
+                        <div class="relative">
+                            <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
+                                <i data-lucide="user" class="w-4 h-4"></i>
+                            </span>
+                            <input type="text" id="login-email" required placeholder="nom@ocpgroup.ma ou identifiant" autocomplete="username" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-white outline-none focus:border-ocp focus:ring-2 focus:ring-ocp/20 transition">
+                        </div>
                     </div>
-                    <button type="submit" class="w-full py-2.5 bg-ocp hover:bg-ocp/90 text-white font-bold rounded-xl shadow-lg shadow-ocp/20 flex items-center justify-center gap-2 transition">
-                        <i data-lucide="arrow-right" class="w-4 h-4"></i> Déverrouiller & Accéder à l'Application
+
+                    <button type="submit" class="w-full py-3 bg-ocp hover:bg-ocp/90 text-white font-bold rounded-xl shadow-lg shadow-ocp/25 flex items-center justify-center gap-2 transition text-sm">
+                        <i data-lucide="shield-check" class="w-4 h-4"></i> Déverrouiller & Accéder à l'Application
                     </button>
                 </form>
 
-                <div class="border-t border-gray-200 dark:border-gray-800 pt-3">
-                    <p class="text-[11px] font-bold text-gray-500 dark:text-gray-400 mb-2">Comptes d'accès rapide prédéfinis pour test :</p>
-                    <div class="grid grid-cols-2 gap-2 text-[11px]">
-                        <button onclick="quickLogin('raid')" class="p-2 text-left bg-gray-50 dark:bg-[#050D17] hover:bg-ocp/10 border border-gray-200 dark:border-gray-800 rounded-xl transition">
-                            <p class="font-bold text-ocp-light">👑 EL ATYQY raid</p>
-                            <p class="text-[10px] text-gray-400">Responsable / Propriétaire</p>
-                        </button>
-                        <button onclick="quickLogin('azizi')" class="p-2 text-left bg-gray-50 dark:bg-[#050D17] hover:bg-ocp/10 border border-gray-200 dark:border-gray-800 rounded-xl transition">
-                            <p class="font-bold text-ocp-light">👑 yassine AZIZI</p>
-                            <p class="text-[10px] text-gray-400">Responsable / Propriétaire</p>
-                        </button>
-                        <button onclick="quickLogin('soufiane')" class="p-2 text-left bg-gray-50 dark:bg-[#050D17] hover:bg-blue-500/10 border border-gray-200 dark:border-gray-800 rounded-xl transition">
-                            <p class="font-bold text-blue-400">soufiane BOUHZAM</p>
-                            <p class="text-[10px] text-gray-400">Appro. Mécanique</p>
-                        </button>
-                        <button onclick="quickLogin('omar')" class="p-2 text-left bg-gray-50 dark:bg-[#050D17] hover:bg-purple-500/10 border border-gray-200 dark:border-gray-800 rounded-xl transition">
-                            <p class="font-bold text-purple-400">Omar BENALLA</p>
-                            <p class="text-[10px] text-gray-400">Appro. Électrique</p>
-                        </button>
+                <!-- BANDEAU INFORMATION SESSION PERSISTANTE -->
+                <div class="p-3.5 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-start gap-2.5 text-blue-600 dark:text-blue-400 text-[11px] leading-relaxed">
+                    <i data-lucide="sparkles" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
+                    <div>
+                        <strong>Session permanente activée :</strong> Une fois connecté, vous restez connecté sans interruption lors de l'actualisation de la page (F5). La session reste ouverte jusqu'à votre déconnexion volontaire.
                     </div>
                 </div>
             </div>
@@ -8861,31 +8973,31 @@
             <!-- ONGLET 2 : FORMULAIRE DE DEMANDE D'INSCRIPTION PAR EMAIL -->
             <div id="auth-form-register" class="hidden space-y-4 text-xs">
                 <!-- AVERTISSEMENT PROTOCOLE OCP -->
-                <div class="p-3 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-start gap-2.5 text-amber-600 dark:text-amber-400">
+                <div class="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-start gap-2.5 text-amber-600 dark:text-amber-400">
                     <i data-lucide="shield-alert" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
                     <div class="text-[11px] leading-relaxed">
-                        <strong>Protocole d'inscription WMS :</strong> Renseignez votre adresse email. Une notification est automatiquement envoyée aux Responsables Magasin Propriétaires (EL ATYQY mohamed raid & yassine AZIZI). <strong>Votre accès ne sera ouvert qu'après leur accord explicite par email.</strong>
+                        <strong>Protocole d'inscription WMS :</strong> Renseignez vos coordonnées. Une notification est automatiquement transmise aux Responsables Magasin Propriétaires pour accord formel préalable par email.
                     </div>
                 </div>
 
                 <form onsubmit="handleRegisterSubmit(event)" id="register-form" class="space-y-3">
                     <div>
                         <label class="block text-gray-600 dark:text-gray-300 font-semibold mb-1">Nom et Prénom *</label>
-                        <input type="text" id="reg-name" required placeholder="ex: Amine TAZI" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3.5 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                        <input type="text" id="reg-name" required placeholder="ex: Karim EL IDRISSI" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3.5 py-2.5 text-gray-900 dark:text-white outline-none focus:border-ocp">
                     </div>
                     <div class="grid grid-cols-2 gap-2">
                         <div>
                             <label class="block text-gray-600 dark:text-gray-300 font-semibold mb-1">Email Professionnel *</label>
-                            <input type="email" id="reg-email" required placeholder="a.tazi@ocpgroup.ma" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3.5 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                            <input type="email" id="reg-email" required placeholder="k.elidrissi@ocpgroup.ma" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3.5 py-2.5 text-gray-900 dark:text-white outline-none focus:border-ocp">
                         </div>
                         <div>
                             <label class="block text-gray-600 dark:text-gray-300 font-semibold mb-1">Matricule OCP / Tél *</label>
-                            <input type="text" id="reg-matricule" required placeholder="OCP-94812" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3.5 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                            <input type="text" id="reg-matricule" required placeholder="OCP-94812" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3.5 py-2.5 text-gray-900 dark:text-white outline-none focus:border-ocp">
                         </div>
                     </div>
                     <div>
                         <label class="block text-gray-600 dark:text-gray-300 font-semibold mb-1">Rôle Sollicité *</label>
-                        <select id="reg-role" required class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3.5 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                        <select id="reg-role" required class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3.5 py-2.5 text-gray-900 dark:text-white outline-none focus:border-ocp">
                             <option value="Magasinier">Magasinier (Gestion Entrées / Sorties)</option>
                             <option value="Approvisionneur Mécanique">Approvisionneur Mécanique</option>
                             <option value="Approvisionneur Électrique">Approvisionneur Électrique</option>
@@ -8910,15 +9022,12 @@
                     <h4 class="font-bold text-sm">Demande transmise & Emails expédiés !</h4>
                     <p class="text-[11px] leading-relaxed text-gray-600 dark:text-gray-300">
                         1. Un <strong>accusé de réception</strong> vous a été expédié.<br>
-                        2. Une <strong>notification prioritaire</strong> a été transmise aux Responsables Magasin Propriétaires (EL ATYQY mohamed raid & yassine AZIZI).<br>
+                        2. Une <strong>notification prioritaire</strong> a été transmise aux Responsables Magasin Propriétaires.<br>
                         Dès validation de leur accord, vous recevrez votre confirmation d'accès.
                     </p>
-                    <div class="pt-2 flex flex-col gap-2">
-                        <button onclick="quickLogin('raid')" class="px-4 py-2 bg-ocp text-white font-bold rounded-xl text-xs hover:bg-ocp/90 transition shadow-md">
-                            👑 Simuler connexion en tant que Responsable pour accorder l'accès
-                        </button>
-                        <button onclick="switchAuthTab('login')" class="text-xs text-gray-500 dark:text-gray-400 hover:underline">
-                            Retour à l'écran de connexion
+                    <div class="pt-2">
+                        <button onclick="switchAuthTab('login')" class="px-4 py-2 bg-ocp text-white font-bold rounded-xl text-xs hover:bg-ocp/90 transition shadow-md flex items-center justify-center gap-1.5 mx-auto">
+                            <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Retour à l'écran de connexion
                         </button>
                     </div>
                 </div>
