@@ -2759,8 +2759,8 @@
             {
                 key: 'azizi',
                 name: 'yassine AZIZI',
-                email: 'yassine.azizi@ocpgroup.ma',
-                aliases: ['y.azizi@ocpgroup.ma', 'yassine.azizi@ocpgroup.ma', 'yassine@ocpgroup.ma', 'azizi@ocpgroup.ma', 'yassine', 'azizi', 'yassine azizi'],
+                email: 'yazizi295i@gmail.com',
+                aliases: ['yazizi295i@gmail.com', 'yazizi295i', 'y.azizi@ocpgroup.ma', 'yassine.azizi@ocpgroup.ma', 'yassine@ocpgroup.ma', 'azizi@ocpgroup.ma', 'yassine', 'azizi', 'yassine azizi'],
                 role: 'Responsable Magasin / Propriétaire',
                 badge: 'YA',
                 color: 'bg-ocp',
@@ -2771,8 +2771,8 @@
             {
                 key: 'raid',
                 name: 'EL ATYQY mohamed raid',
-                email: 'mohamed.raid.elatyqy@ocpgroup.ma',
-                aliases: ['m.elatyqy@ocpgroup.ma', 'mohamed.raid.elatyqy@ocpgroup.ma', 'raid@ocpgroup.ma', 'elatyqy@ocpgroup.ma', 'raid', 'elatyqy', 'mohamed raid', 'el atyqy raid'],
+                email: 'mohamedraidel@gmail.com',
+                aliases: ['mohamedraidel@gmail.com', 'mohamedraidel', 'mohamed.raid.elatyqy@ocpgroup.ma', 'm.elatyqy@ocpgroup.ma', 'raid@ocpgroup.ma', 'elatyqy@ocpgroup.ma', 'raid', 'elatyqy', 'elatiqy', 'mohamed raid', 'el atyqy raid'],
                 role: 'Responsable Magasin / Propriétaire',
                 badge: 'RA',
                 color: 'bg-ocp',
@@ -2829,7 +2829,13 @@
             const user = getActiveSessionUser();
             if (!user) return false;
             return user.isOwner === true || user.key === 'azizi' || user.key === 'raid' || 
-                   (user.email && (user.email.toLowerCase().includes('azizi') || user.email.toLowerCase().includes('elatyqy')));
+                   (user.email && (
+                       user.email.toLowerCase().includes('azizi') || 
+                       user.email.toLowerCase().includes('elatyqy') || 
+                       user.email.toLowerCase().includes('elatiqy') || 
+                       user.email.toLowerCase().includes('yazizi295i') || 
+                       user.email.toLowerCase().includes('mohamedraidel')
+                   ));
         }
 
         function findUserByEmailOrAlias(inputRaw) {
@@ -2838,12 +2844,12 @@
             const clean = input.replace(/\s+/g, '');
             const users = getStoredUsers();
 
-            // 1. Détection Administrateurs par mots-clés dans l'email ou identifiant (Yassine AZIZI et Mohamed Raid EL ATYQY)
-            // Les deux administrateurs sont autorisés à l'ouverture directe immédiate en tapant simplement leur email
-            if (input.includes('azizi') || input.includes('yassine')) {
+            // 1. Détection Administrateurs par emails officiels et mots-clés
+            // yazizi295i@gmail.com (Yassine AZIZI) & mohamedraidel@gmail.com (Mohamed Raid EL ATYQY)
+            if (input === 'yazizi295i@gmail.com' || input.includes('yazizi295i') || input.includes('azizi') || input.includes('yassine')) {
                 return users.find(u => u.key === 'azizi') || DEFAULT_USERS.find(u => u.key === 'azizi');
             }
-            if (input.includes('raid') || input.includes('elatyqy') || input.includes('atyqy')) {
+            if (input === 'mohamedraidel@gmail.com' || input.includes('mohamedraidel') || input.includes('raid') || input.includes('elatyqy') || input.includes('elatiqy') || input.includes('atyqy')) {
                 return users.find(u => u.key === 'raid') || DEFAULT_USERS.find(u => u.key === 'raid');
             }
 
@@ -2876,7 +2882,7 @@
                 id: 'EML-901',
                 timestamp: '26/10/2026 14:31',
                 type: 'Notification Responsable',
-                to: 'm.elatyqy@ocpgroup.ma, y.azizi@ocpgroup.ma',
+                to: 'mohamedraidel@gmail.com, yazizi295i@gmail.com',
                 subject: '[URGENT MC01] Nouvelle demande d\'accès par email - Karim EL IDRISSI (Magasinier)',
                 status: 'Délivré',
                 applicantName: 'Karim EL IDRISSI',
@@ -2888,7 +2894,7 @@
                 id: 'EML-902',
                 timestamp: '27/10/2026 08:16',
                 type: 'Notification Responsable',
-                to: 'm.elatyqy@ocpgroup.ma, y.azizi@ocpgroup.ma',
+                to: 'mohamedraidel@gmail.com, yazizi295i@gmail.com',
                 subject: '[URGENT MC01] Nouvelle demande d\'accès par email - Fatima Zohra NACIRI (Contrôleur Inventaire)',
                 status: 'Délivré',
                 applicantName: 'Fatima Zohra NACIRI',
@@ -2923,8 +2929,11 @@
                     const existing = parsed.find(u => u.key === def.key);
                     if (existing) {
                         existing.aliases = def.aliases;
-                        if (!existing.email || existing.email === 'y.azizi@ocpgroup.ma') existing.email = def.email;
-                        if (!existing.email || existing.email === 'm.elatyqy@ocpgroup.ma') existing.email = def.email;
+                        if (def.key === 'azizi' || def.key === 'raid') {
+                            existing.email = def.email;
+                            existing.isOwner = true;
+                            existing.status = 'Actif';
+                        }
                     } else {
                         parsed.push(def);
                     }
@@ -3133,7 +3142,7 @@
                 } else {
                     reqListEl.innerHTML = reqs.map(r => {
                         const approvalLink = window.location.origin + window.location.pathname + '?action=approve&id=' + r.id;
-                        const mailtoOwner = `mailto:m.elatyqy@ocpgroup.ma,y.azizi@ocpgroup.ma?subject=${encodeURIComponent("[ACCORD ACCORDÉ] Validation accès Magasin MC01 - " + r.name)}&body=${encodeURIComponent("Bonjour,\n\nJ'accorde formellement l'accès au Magasin Central MC01 pour " + r.name + " (" + r.email + ") avec le rôle " + r.role + ".\n\nLien de validation système : " + approvalLink + "\n\nCordialement,\nResponsable Magasin Propriétaire")}`;
+                        const mailtoOwner = `mailto:mohamedraidel@gmail.com,yazizi295i@gmail.com?subject=${encodeURIComponent("[ACCORD ACCORDÉ] Validation accès Magasin MC01 - " + r.name)}&body=${encodeURIComponent("Bonjour,\n\nJ'accorde formellement l'accès au Magasin Central MC01 pour " + r.name + " (" + r.email + ") avec le rôle " + r.role + ".\n\nLien de validation système : " + approvalLink + "\n\nCordialement,\nResponsable Magasin Propriétaire")}`;
 
                         return `
                         <div class="p-4 rounded-xl bg-gray-50 dark:bg-[#050D17] border border-gray-200 dark:border-gray-800 flex flex-col md:flex-row justify-between md:items-center gap-3 card-interactive">
@@ -3687,7 +3696,7 @@
                 id: 'EML-' + Math.floor(100 + Math.random() * 900),
                 timestamp: now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}),
                 type: 'Notification Responsable',
-                to: 'm.elatyqy@ocpgroup.ma, y.azizi@ocpgroup.ma',
+                to: 'mohamedraidel@gmail.com, yazizi295i@gmail.com',
                 subject: `[URGENT MC01] Demande d'accès par email à valider - ${name} (${role})`,
                 status: 'Délivré',
                 applicantName: name,
