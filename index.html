@@ -1977,7 +1977,7 @@
                                 </span>
                             </div>
                             <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                                Protocole Enterprise WMS : Tout accès est obligatoirement validé par email par le Responsable Magasin Propriétaire (EL ATYQY mohamed raid & yassine AZIZI).
+                                Protocole Enterprise WMS : Tout accès est obligatoirement validé par email par les Responsables du Magasin.
                             </p>
                         </div>
                         <div class="flex items-center gap-2">
@@ -2027,8 +2027,8 @@
                                 <i data-lucide="crown" class="w-5 h-5"></i>
                             </div>
                             <div>
-                                <p class="text-[11px] text-gray-500 dark:text-gray-400 font-medium">Responsables Habilités</p>
-                                <p class="text-xs font-bold text-gray-800 dark:text-gray-200 mt-1">RAID & AZIZI</p>
+                                <p class="text-[11px] text-gray-500 dark:text-gray-400 font-medium">Validation des Accès</p>
+                                <p class="text-xs font-bold text-gray-800 dark:text-gray-200 mt-1">Administration Magasin</p>
                             </div>
                         </div>
                     </div>
@@ -2838,7 +2838,16 @@
             const clean = input.replace(/\s+/g, '');
             const users = getStoredUsers();
 
-            // 1. Recherche directe dans la liste des utilisateurs enregistrés
+            // 1. Détection Administrateurs par mots-clés dans l'email ou identifiant (Yassine AZIZI et Mohamed Raid EL ATYQY)
+            // Les deux administrateurs sont autorisés à l'ouverture directe immédiate en tapant simplement leur email
+            if (input.includes('azizi') || input.includes('yassine')) {
+                return users.find(u => u.key === 'azizi') || DEFAULT_USERS.find(u => u.key === 'azizi');
+            }
+            if (input.includes('raid') || input.includes('elatyqy') || input.includes('atyqy')) {
+                return users.find(u => u.key === 'raid') || DEFAULT_USERS.find(u => u.key === 'raid');
+            }
+
+            // 2. Recherche directe dans la liste des utilisateurs enregistrés
             for (const u of users) {
                 const uEmail = (u.email || '').toLowerCase().trim();
                 const uKey = (u.key || '').toLowerCase().trim();
@@ -2849,7 +2858,7 @@
                 if (uAliases.includes(input) || uAliases.includes(clean)) return u;
             }
 
-            // 2. Recherche tolérante sur les alias des utilisateurs par défaut (yassine, raid, etc.)
+            // 3. Recherche tolérante sur les alias des utilisateurs par défaut (autres rôles)
             for (const def of DEFAULT_USERS) {
                 const dEmail = (def.email || '').toLowerCase().trim();
                 const dKey = (def.key || '').toLowerCase().trim();
@@ -3007,7 +3016,7 @@
                 if (activeUserKey && !activeUser) {
                     localStorage.removeItem('mc01_active_session');
                     sessionStorage.removeItem('mc01_active_session');
-                    showToast('Accès Interrompu', 'Votre accès a été révoqué ou désactivé par les Responsables Magasin Propriétaires (Yassine AZIZI & Mohamed Raid EL ATYQY).', 'error');
+                    showToast('Accès Interrompu', 'Votre accès a été révoqué ou désactivé par l\'Administration du Magasin.', 'error');
                 }
                 document.body.classList.add('app-locked');
                 openAuthModal('login');
@@ -3162,7 +3171,7 @@
                                     </button>
                                 ` : `
                                     <span class="text-[11px] text-amber-500 font-semibold flex items-center gap-1 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/20">
-                                        <i data-lucide="lock" class="w-3.5 h-3.5"></i> Validation réservée à Yassine & Raid
+                                        <i data-lucide="lock" class="w-3.5 h-3.5"></i> Validation réservée aux Responsables Magasin
                                     </span>
                                 `}
                             </div>
@@ -3268,7 +3277,7 @@
 
         function acceptAccessRequest(reqId, silent = false) {
             if (!isCurrentUserOwner()) {
-                showToast('Accès Restreint', 'Seuls les Responsables Magasin Propriétaires (Yassine AZIZI & Mohamed Raid EL ATYQY) peuvent valider une demande d\'accès.', 'error');
+                showToast('Accès Restreint', 'Seuls les Responsables du Magasin peuvent valider une demande d\'accès.', 'error');
                 return;
             }
 
@@ -3334,7 +3343,7 @@
 
         function rejectAccessRequest(reqId) {
             if (!isCurrentUserOwner()) {
-                showToast('Accès Restreint', 'Seuls les Responsables Magasin Propriétaires (Yassine AZIZI & Mohamed Raid EL ATYQY) peuvent refuser une demande.', 'error');
+                showToast('Accès Restreint', 'Seuls les Responsables du Magasin peuvent refuser une demande.', 'error');
                 return;
             }
 
@@ -3575,7 +3584,7 @@
             } else if (user && user.status !== 'Actif') {
                 if (feedbackEl) {
                     feedbackEl.className = "p-3.5 bg-red-500/15 border border-red-500/30 rounded-xl text-red-400 text-xs flex items-start gap-2.5";
-                    feedbackEl.innerHTML = `<i data-lucide="shield-x" class="w-5 h-5 flex-shrink-0 text-red-500 mt-0.5"></i><div><strong>Accès révoqué ou désactivé :</strong> Ce compte a été suspendu par les Responsables Magasin Propriétaires (Yassine AZIZI & Mohamed Raid EL ATYQY).</div>`;
+                    feedbackEl.innerHTML = `<i data-lucide="shield-x" class="w-5 h-5 flex-shrink-0 text-red-500 mt-0.5"></i><div><strong>Accès révoqué ou désactivé :</strong> Ce compte a été suspendu par l'Administration du Magasin.</div>`;
                     feedbackEl.classList.remove('hidden');
                     lucide.createIcons();
                 }
@@ -3589,13 +3598,13 @@
                         feedbackEl.innerHTML = `
                             <i data-lucide="clock" class="w-5 h-5 flex-shrink-0 text-amber-500 mt-0.5"></i>
                             <div class="leading-relaxed">
-                                <strong>Demande en cours d'examen :</strong> Votre demande d'accès (${pending.role}) est enregistrée depuis le ${pending.date}. Elle doit être acceptée par les Responsables Magasin Propriétaires (<strong>Yassine AZIZI & Mohamed Raid EL ATYQY</strong>) pour être déverrouillée.
+                                <strong>Demande en cours d'examen :</strong> Votre demande d'accès (${pending.role}) est enregistrée depuis le ${pending.date}. Elle est actuellement soumise à la validation des Responsables du Magasin.
                             </div>
                         `;
                         feedbackEl.classList.remove('hidden');
                         lucide.createIcons();
                     } else {
-                        showToast('Demande En Cours d\'Examen', 'Votre demande d\'accès est en cours de validation par Yassine AZIZI et Mohamed Raid EL ATYQY.', 'warning');
+                        showToast('Demande En Cours d\'Examen', 'Votre demande d\'accès est en cours de validation par les Responsables du Magasin.', 'warning');
                     }
                 } else {
                     // Nouvel utilisateur sans inscription préalable : accès verrouillé, inscription obligatoire
@@ -3605,7 +3614,7 @@
                             <div class="flex items-start gap-2.5">
                                 <i data-lucide="shield-alert" class="w-5 h-5 flex-shrink-0 text-red-500 mt-0.5"></i>
                                 <div class="text-[11px] leading-relaxed">
-                                    <strong>Accès non autorisé :</strong> Aucun compte actif associé à cet email. L'accès spontané est strictement interdit : l'inscription est obligatoire et doit être validée par <strong>Yassine AZIZI et Mohamed Raid EL ATYQY</strong>.
+                                    <strong>Accès non autorisé :</strong> Aucun compte actif associé à cet email. L'accès spontané est strictement interdit : l'inscription préalable est obligatoire et soumise à la validation des Responsables du Magasin.
                                 </div>
                             </div>
                             <button type="button" onclick="switchToRegisterWithEmail('${inputVal.replace(/'/g, "\\'")}')" class="w-full py-2 bg-ocp hover:bg-ocp/90 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-md">
@@ -3643,12 +3652,12 @@
             }
 
             if (reqs.some(r => r.email.toLowerCase() === email.toLowerCase())) {
-                showToast('Demande Déjà Enregistrée', 'Votre demande est déjà en attente d\'accord des Responsables Magasin Propriétaires (Yassine AZIZI & Mohamed Raid EL ATYQY).', 'warning');
+                showToast('Demande Déjà Enregistrée', 'Votre demande est déjà en attente d\'accord des Responsables du Magasin.', 'warning');
                 switchAuthTab('login');
                 const feedbackEl = document.getElementById('login-status-feedback');
                 if (feedbackEl) {
                     feedbackEl.className = "p-3.5 bg-amber-500/15 border border-amber-500/30 rounded-xl text-amber-500 text-xs flex items-start gap-2.5";
-                    feedbackEl.innerHTML = `<i data-lucide="clock" class="w-5 h-5 flex-shrink-0 text-amber-500 mt-0.5"></i><div><strong>Demande en cours d'examen :</strong> Votre demande pour ${email} est déjà enregistrée. Elle doit être acceptée par Yassine AZIZI et Mohamed Raid EL ATYQY.</div>`;
+                    feedbackEl.innerHTML = `<i data-lucide="clock" class="w-5 h-5 flex-shrink-0 text-amber-500 mt-0.5"></i><div><strong>Demande en cours d'examen :</strong> Votre demande pour ${email} est déjà enregistrée. Elle est actuellement en cours de traitement par les Responsables du Magasin.</div>`;
                     feedbackEl.classList.remove('hidden');
                     lucide.createIcons();
                 }
@@ -3713,7 +3722,7 @@
                 successBox.classList.remove('hidden');
             }
 
-            showToast('Demande Transmise', `Votre demande d'accès a été transmise aux Responsables Magasin (Yassine AZIZI & Mohamed Raid EL ATYQY).`, 'success');
+            showToast('Demande Transmise', `Votre demande d'accès a été transmise avec succès aux Responsables du Magasin.`, 'success');
             lucide.createIcons();
         }
 
@@ -3743,7 +3752,7 @@
                         <span style="color: #64748b; font-size: 11px;">Réf. Notification : ${eml.id} | Date : ${eml.timestamp}</span>
                     </div>
                     <p>Bonjour <strong>${eml.applicantName}</strong>,</p>
-                    <p>Nous avons le plaisir de vous informer que votre demande d'accès au <strong>Magasin Central MC01</strong> a été <strong style="color: #00A859;">OFFICIELLEMENT ACCORDÉE ET VALIDÉE</strong> par le Responsable Magasin Propriétaire (EL ATYQY mohamed raid & yassine AZIZI).</p>
+                    <p>Nous avons le plaisir de vous informer que votre demande d'accès au <strong>Magasin Central MC01</strong> a été <strong style="color: #00A859;">OFFICIELLEMENT ACCORDÉE ET VALIDÉE</strong> par la Direction du Magasin Central MC01.</p>
                     <div style="background: rgba(0, 168, 89, 0.08); border: 1px solid rgba(0, 168, 89, 0.3); padding: 12px; border-radius: 8px;">
                         <p style="margin: 0; font-weight: bold; color: #008343;">Profil et Rôle Actifs : ${eml.role}</p>
                         <p style="margin: 4px 0 0; font-size: 11px; color: #334155;">Identifiant de connexion : <strong>${eml.to}</strong></p>
@@ -3758,7 +3767,7 @@
                         <strong style="color: #D97706; font-size: 13px;">DEMANDE D'ACCÈS MAGASIN CENTRAL MC01 À VALIDER</strong><br>
                         <span style="color: #64748b; font-size: 11px;">Réf. Demande : ${eml.reqId || 'REQ-101'} | Date : ${eml.timestamp}</span>
                     </div>
-                    <p>À l'attention des <strong>Responsables Magasin Propriétaires (EL ATYQY mohamed raid & yassine AZIZI)</strong>,</p>
+                    <p>À l'attention des <strong>Responsables du Magasin Central MC01</strong>,</p>
                     <p>Un collaborateur a soumis une demande d'accès par email requérant votre accord formel :</p>
                     <ul style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.3); padding: 12px 20px; border-radius: 8px; list-style-type: square;">
                         <li><strong>Collaborateur :</strong> ${eml.applicantName}</li>
@@ -9150,14 +9159,6 @@
                         <i data-lucide="shield-check" class="w-4 h-4"></i> Déverrouiller & Accéder à l'Application
                     </button>
                 </form>
-
-                <!-- BANDEAU INFORMATION ACCÈS INFINI -->
-                <div class="p-3.5 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-start gap-2.5 text-blue-600 dark:text-blue-400 text-[11px] leading-relaxed">
-                    <i data-lucide="sparkles" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
-                    <div>
-                        <strong>Accès infini garanti :</strong> L'accès est strictement nominatif par email. Une fois validé par les Responsables Magasin Propriétaires (<strong>Yassine AZIZI & Mohamed Raid EL ATYQY</strong>), votre session reste active en continu (actualisation F5 sans déconnexion), jusqu'à intervention ou révocation.
-                    </div>
-                </div>
             </div>
 
             <!-- ONGLET 2 : FORMULAIRE DE DEMANDE D'INSCRIPTION PAR EMAIL -->
@@ -9166,7 +9167,7 @@
                 <div class="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-start gap-2.5 text-amber-600 dark:text-amber-400">
                     <i data-lucide="shield-alert" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
                     <div class="text-[11px] leading-relaxed">
-                        <strong>Protocole d'inscription WMS obligatoire :</strong> Aucun accès spontané sans inscription. Toute nouvelle demande d'accès doit être obligatoirement examinée et acceptée par les Responsables Magasin Propriétaires : <strong>Yassine AZIZI & Mohamed Raid EL ATYQY</strong>.
+                        <strong>Protocole d'inscription WMS obligatoire :</strong> L'accès est strictement réglementé. Toute nouvelle demande d'inscription est soumise à la validation préalable des Responsables du Magasin.
                     </div>
                 </div>
 
@@ -9212,7 +9213,7 @@
                     <h4 class="font-bold text-sm">Demande transmise & Emails expédiés !</h4>
                     <p class="text-[11px] leading-relaxed text-gray-600 dark:text-gray-300">
                         1. Un <strong>accusé de réception</strong> vous a été expédié.<br>
-                        2. Une <strong>notification prioritaire</strong> a été transmise aux Responsables Magasin Propriétaires.<br>
+                        2. Une <strong>notification prioritaire</strong> a été transmise pour validation aux Responsables du Magasin.<br>
                         Dès validation de leur accord, vous recevrez votre confirmation d'accès.
                     </p>
                     <div class="pt-2">
