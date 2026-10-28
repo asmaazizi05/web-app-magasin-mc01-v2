@@ -546,7 +546,7 @@
                 <div class="flex items-center gap-4 flex-1 max-w-xl">
                     <div class="relative w-full">
                         <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-gray-400"></i>
-                        <input type="text" placeholder="Rechercher code article, désignation, bon, zone..." class="w-full pl-9 pr-4 py-1.5 bg-gray-100 dark:bg-[#132A45]/60 border border-gray-300 dark:border-gray-700/60 rounded-xl text-xs text-gray-900 dark:text-white focus:ring-2 focus:ring-ocp outline-none transition placeholder-gray-500 dark:placeholder-gray-400">
+                        <input type="text" placeholder="Rechercher code article, désignation, bon, zone..." class="w-full pl-9 pr-4 py-1.5 bg-gray-100 dark:bg-[#0D2137]/60 border border-gray-300 dark:border-gray-700/60 rounded-xl text-xs text-gray-900 dark:text-white focus:ring-2 focus:ring-ocp outline-none transition placeholder-gray-500 dark:placeholder-gray-400">
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
@@ -554,7 +554,7 @@
                         <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                         <span>Site: <strong>Magasin MC01 (Online)</strong></span>
                     </div>
-                    <button onclick="openNotificationsModal()" class="relative p-1.5 bg-gray-100 dark:bg-[#132A45] hover:bg-gray-200 dark:hover:bg-slate-700 rounded-xl text-gray-700 dark:text-gray-300 transition" title="Centre de notifications et alertes SAP">
+                    <button onclick="openNotificationsModal()" class="relative p-1.5 bg-gray-100 dark:bg-[#0D2137] hover:bg-gray-200 dark:hover:bg-slate-700 rounded-xl text-gray-700 dark:text-gray-300 transition" title="Centre de notifications et alertes SAP">
                         <i data-lucide="bell" class="w-4 h-4"></i>
                         <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
                     </button>
@@ -563,110 +563,101 @@
 
             <div class="p-6 flex-1 overflow-y-auto custom-scrollbar">
 
-                <!-- BANNIÈRE INDICATRICE DU PROFIL CONSULTÉ -->
-                <div id="role-notification" class="bg-blue-900/40 border border-blue-500/50 p-3 rounded-xl mb-5 flex justify-between items-center text-xs">
+                <!-- BANNIÈRE INDICATRICE DU PROFIL CONSULTÉ (Masquée pour supprimer la pollution visuelle - profil visible dans la barre latérale) -->
+                <div id="role-notification" class="hidden">
                     <div class="flex items-center gap-2">
                         <i data-lucide="eye" class="w-4 h-4 text-blue-400"></i>
-                        <span>Vous visualisez actuellement l'interface comme : <strong id="notify-user-role" class="text-white">EL ATYQY mohamed raid (Responsable / Propriétaire)</strong></span>
+                        <span>Vous visualisez actuellement l'interface comme : <strong id="notify-user-role" class="text-white">yassine AZIZI (Responsable Magasin / Propriétaire)</strong></span>
                     </div>
                     <span id="notify-access-level" class="bg-ocp text-white font-bold text-[10px] px-2 py-0.5 rounded">Accès Admin Complet</span>
                 </div>
 
                 <!-- 1. TABLEAU DE BORD GLOBAL RESTRUCTURÉ -->
                 <div id="view-dashboard" class="space-y-6 anim-dashboard">
-                    <div class="flex justify-between items-center stagger-item stagger-1">
-                        <div>
-                            <h2 class="text-xl font-bold tracking-tight text-gray-900 dark:text-white">Tableau de Bord Global & KPIs d'Exploitation</h2>
-                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Synthèse des volumes, valorisation, alerte stock minimum, effectif et camemberts de flux par catégorie.</p>
+                    <!-- EN-TÊTE ÉPURÉ & MODERNE DU TABLEAU DE BORD (INTÉGRATION SYNCHRO GOOGLE SHEETS SANS POLLUTION) -->
+                    <div class="flex flex-wrap justify-between items-center gap-4 bg-white dark:bg-[#0D2137] border border-gray-200 dark:border-gray-800 rounded-2xl p-5 shadow-sm stagger-item stagger-1">
+                        <div class="space-y-1.5">
+                            <div class="flex items-center gap-2.5">
+                                <h2 class="text-xl font-extrabold tracking-tight text-gray-900 dark:text-white">Tableau de Bord Global & KPIs d'Exploitation</h2>
+                                <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/10 border border-emerald-500/25 text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5 shadow-sm">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                    <span id="live-sheet-rows-badge">83 mouvements réels</span>
+                                </span>
+                            </div>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 flex flex-wrap items-center gap-2">
+                                <span>Flux WMS temps réel connectés au formulaire mobile terrain</span>
+                                <span class="text-gray-300 dark:text-gray-700">&bull;</span>
+                                <span>Dernier flux : <strong id="live-sheet-last-sync" class="text-emerald-600 dark:text-emerald-400 font-mono">En direct</strong></span>
+                                <span class="text-gray-300 dark:text-gray-700">&bull;</span>
+                                <a href="https://docs.google.com/spreadsheets/d/1uuox6SaBa_gb-sOY04QFUj0tzinKI1XmYU80FkXN_u0/edit?gid=713155884#gid=713155884" target="_blank" rel="noopener noreferrer" class="text-purple-600 dark:text-purple-400 hover:underline font-mono inline-flex items-center gap-1" title="Consulter la feuille Google Sheets">
+                                    <i data-lucide="external-link" class="w-3 h-3"></i> Google Sheet MC01
+                                </a>
+                            </p>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <a href="https://docs.google.com/forms/d/1ZoIQbEJsMwr6NQvk77b_ivE3ZebJL1lfshQwKmtHN2o/viewform" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition shadow">
+                        <div class="flex items-center gap-2.5">
+                            <a href="https://docs.google.com/forms/d/1ZoIQbEJsMwr6NQvk77b_ivE3ZebJL1lfshQwKmtHN2o/viewform" target="_blank" rel="noopener noreferrer" class="px-3.5 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition shadow-sm" title="Ouvrir le formulaire Google Forms de saisie">
                                 <i data-lucide="smartphone" class="w-3.5 h-3.5"></i> Formulaire Mobile
                             </a>
-                            <button onclick="syncLiveGoogleSheetData(true)" id="dashboard-refresh-sheet-btn" class="px-3 py-1.5 bg-ocp hover:bg-ocp/90 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition shadow">
+                            <button onclick="syncLiveGoogleSheetData(true)" id="dashboard-refresh-sheet-btn" class="px-3.5 py-2 bg-ocp hover:bg-ocp/90 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition shadow-sm" title="Synchroniser immédiatement avec Google Sheets">
                                 <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i> Actualiser Données Réelles
                             </button>
                         </div>
                     </div>
 
-                    <!-- BANDEAU SYNCHRONISATION EN DIRECT GOOGLE SHEETS & FORMULAIRE MOBILE -->
-                    <div class="p-4 bg-gradient-to-r from-purple-950/60 via-[#0A1A2E] to-ocp/25 border-2 border-purple-500/50 rounded-2xl flex flex-wrap justify-between items-center gap-3 shadow-md card-interactive stagger-item">
-                        <div class="flex items-center gap-3.5">
-                            <div class="w-11 h-11 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold flex-shrink-0">
-                                <i data-lucide="file-spreadsheet" class="w-6 h-6"></i>
-                            </div>
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <h4 class="font-extrabold text-sm text-gray-900 dark:text-white">Tableau de Bord Aligné sur Google Sheets & Formulaire Mobile</h4>
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/20 text-green-700 dark:text-green-300 border border-green-500/40 flex items-center gap-1">
-                                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span> Données Réelles Connectées
-                                    </span>
-                                </div>
-                                <p class="text-xs text-gray-600 dark:text-gray-300 mt-0.5">
-                                    Source : <a href="https://docs.google.com/spreadsheets/d/1uuox6SaBa_gb-sOY04QFUj0tzinKI1XmYU80FkXN_u0/edit?gid=713155884#gid=713155884" target="_blank" rel="noopener noreferrer" class="text-purple-600 dark:text-purple-300 underline font-mono">Google Sheet MC01 (gid: 713155884)</a> &bull; Généré en temps réel par le formulaire mobile terrain.
-                                </p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-3 text-xs">
-                            <span class="text-gray-500 dark:text-gray-300">Dernier flux : <strong id="live-sheet-last-sync" class="text-purple-600 dark:text-purple-300 font-mono">En direct</strong></span>
-                            <span id="live-sheet-rows-badge" class="px-3 py-1 bg-purple-100 dark:bg-purple-950/60 text-purple-800 dark:text-purple-200 border border-purple-400/40 font-extrabold rounded-xl font-mono">83 mouvements réels</span>
-                        </div>
-                    </div>
-
-                    <!-- 1. KPIS EN HAUT : TOTAL ARTICLES & VALORISATION -->
+                    <!-- 1. KPIS EN HAUT : TOTAL ARTICLES & VALORISATION (DESIGN ÉPURÉ & MODERNE) -->
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 stagger-item stagger-2">
                         <!-- KPI 1 : TOTAL MOUVEMENTS RÉELS -->
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl shadow border border-purple-500/30 flex justify-between items-center card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 hover:border-purple-500/40 flex justify-between items-center card-interactive transition-all duration-200">
                             <div>
-                                <p class="text-[10px] font-bold tracking-wider text-purple-500 uppercase">TOTAL MOUVEMENTS RÉELS</p>
+                                <p class="text-[10px] font-bold tracking-wider text-purple-600 dark:text-purple-400 uppercase">TOTAL MOUVEMENTS RÉELS</p>
                                 <h3 class="text-3xl font-black text-gray-900 dark:text-white mt-1"><span id="kpi-real-movements">83</span></h3>
                                 <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-1">
-                                    <span class="text-ocp-light font-bold" id="kpi-real-entrees">14 Entrées</span> &bull; <span class="text-blue-500 font-bold" id="kpi-real-sorties">69 Sorties</span>
+                                    <span class="text-emerald-600 dark:text-emerald-400 font-bold" id="kpi-real-entrees">14 Entrées</span> &bull; <span class="text-blue-600 dark:text-blue-400 font-bold" id="kpi-real-sorties">69 Sorties</span>
                                 </p>
                             </div>
-                            <div class="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-500 flex items-center justify-center font-bold">
+                            <div class="w-12 h-12 rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold">
                                 <i data-lucide="arrow-left-right" class="w-6 h-6"></i>
                             </div>
                         </div>
 
                         <!-- KPI 2 : ARTICLES & RÉFÉRENCES GÉRÉES -->
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl shadow border border-blue-500/30 flex justify-between items-center card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 hover:border-blue-500/40 flex justify-between items-center card-interactive transition-all duration-200">
                             <div>
-                                <p class="text-[10px] font-bold tracking-wider text-blue-500 uppercase">RÉFÉRENCES UNIQUES</p>
+                                <p class="text-[10px] font-bold tracking-wider text-blue-600 dark:text-blue-400 uppercase">RÉFÉRENCES UNIQUES</p>
                                 <h3 class="text-3xl font-black text-gray-900 dark:text-white mt-1"><span id="kpi-real-items">80</span></h3>
                                 <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-1">
-                                    <span class="text-blue-500 font-bold">9 familles</span> de pièces actives
+                                    <span class="text-blue-600 dark:text-blue-400 font-bold">9 familles</span> de pièces actives
                                 </p>
                             </div>
-                            <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-500 flex items-center justify-center font-bold">
+                            <div class="w-12 h-12 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center font-bold">
                                 <i data-lucide="package" class="w-6 h-6"></i>
                             </div>
                         </div>
 
                         <!-- KPI 3 : LUBRIFIANTS & GRAISSES ENTRÉES -->
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl shadow border border-green-500/30 flex justify-between items-center card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 hover:border-emerald-500/40 flex justify-between items-center card-interactive transition-all duration-200">
                             <div>
-                                <p class="text-[10px] font-bold tracking-wider text-green-600 dark:text-green-400 uppercase">LUBRIFIANTS RÉCEPTIONNÉS</p>
+                                <p class="text-[10px] font-bold tracking-wider text-emerald-600 dark:text-emerald-400 uppercase">LUBRIFIANTS RÉCEPTIONNÉS</p>
                                 <h3 class="text-3xl font-black text-gray-900 dark:text-white mt-1"><span id="kpi-real-lubrifiants">1 020</span> <span class="text-sm font-semibold text-gray-400">KG</span></h3>
                                 <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-1">
-                                    Fournisseur : <strong class="text-ocp-light">PETROLAF (FUCHS)</strong>
+                                    Fournisseur : <strong class="text-emerald-600 dark:text-emerald-400">PETROLAF (FUCHS)</strong>
                                 </p>
                             </div>
-                            <div class="w-12 h-12 rounded-2xl bg-green-500/10 text-ocp-light flex items-center justify-center font-bold">
+                            <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
                                 <i data-lucide="droplet" class="w-6 h-6"></i>
                             </div>
                         </div>
 
                         <!-- KPI 4 : ZONE PRINCIPALE LAVERIE OCP -->
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl shadow border border-amber-500/30 flex justify-between items-center card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-800 hover:border-amber-500/40 flex justify-between items-center card-interactive transition-all duration-200">
                             <div>
-                                <p class="text-[10px] font-bold tracking-wider text-amber-500 uppercase">IMPUTATION CHANTIER OCP</p>
-                                <h3 class="text-3xl font-black text-gray-900 dark:text-white mt-1">Laverie <span class="text-base text-amber-500 font-bold">61%</span></h3>
+                                <p class="text-[10px] font-bold tracking-wider text-amber-600 dark:text-amber-400 uppercase">IMPUTATION CHANTIER OCP</p>
+                                <h3 class="text-3xl font-black text-gray-900 dark:text-white mt-1">Laverie <span class="text-base text-amber-600 dark:text-amber-400 font-bold">61%</span></h3>
                                 <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-1">
                                     Flottation &bull; Épaississage &bull; Trémie
                                 </p>
                             </div>
-                            <div class="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold">
+                            <div class="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold">
                                 <i data-lucide="factory" class="w-6 h-6"></i>
                             </div>
                         </div>
@@ -675,24 +666,23 @@
                     <!-- CACHÉ MAIS GARDÉ EN BASE POUR COMPATIBILITÉ JS ANCIENNE -->
                     <div class="hidden"><span id="kpi-articles-count">83</span><span id="kpi-valorisation-count">20760582</span></div>
                     
-
-                    <!-- 2. BANDEAU ALERTE CRITIQUE STOCK MINIMUM -->
-                    <div class="bg-red-100 dark:bg-red-900/30 border-2 border-red-500/80 p-4 rounded-2xl flex items-center justify-between shadow-lg stagger-item stagger-3 alert-pulse-slow">
+                    <!-- 2. BANDEAU ALERTE CRITIQUE STOCK MINIMUM (DESIGN RAFFINÉ SANS POLLUTION VISUELLE) -->
+                    <div class="bg-red-500/10 border border-red-500/25 p-4 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-sm stagger-item stagger-3">
                         <div class="flex items-center gap-3.5">
-                            <div class="p-2.5 bg-red-500/20 text-red-600 dark:text-red-400 rounded-xl border border-red-500/40">
-                                <i data-lucide="alert-triangle" class="w-6 h-6 animate-pulse"></i>
+                            <div class="p-2.5 bg-red-500/15 text-red-500 dark:text-red-400 rounded-xl border border-red-500/30 flex-shrink-0">
+                                <i data-lucide="alert-triangle" class="w-5 h-5"></i>
                             </div>
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <h4 class="font-bold text-sm text-red-900 dark:text-red-200">ALERTE STOCK MINIMUM : Réapprovisionnement Requis</h4>
-                                    <span class="bg-red-600 text-white font-bold text-[10px] px-2 py-0.5 rounded-full">CRITIQUE</span>
+                                    <h4 class="font-bold text-sm text-gray-900 dark:text-white">Alerte Seuil Minimum : Réapprovisionnement Requis</h4>
+                                    <span class="bg-red-500/20 text-red-600 dark:text-red-300 border border-red-500/40 font-bold text-[10px] px-2 py-0.5 rounded-full">CRITIQUE</span>
                                 </div>
-                                <p class="text-xs text-gray-700 dark:text-gray-300 mt-0.5">
-                                    Article : <strong>Vanne à papillon DN100 (Code: ART-1002)</strong> | Stock actuel : <span class="font-bold text-red-600 dark:text-red-400">12 units</span> (Seuil Min : <strong>25 units</strong>).
+                                <p class="text-xs text-gray-600 dark:text-gray-300 mt-0.5">
+                                    Article : <strong>Vanne à papillon DN100 (Code: ART-1002)</strong> &bull; Stock actuel : <span class="font-bold text-red-500 dark:text-red-400">12 units</span> (Seuil Min : <strong>25 units</strong>).
                                 </p>
                             </div>
                         </div>
-                        <button onclick="switchTab('stock')" class="px-3.5 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-xl shadow transition flex items-center gap-1.5">
+                        <button onclick="switchTab('stock')" class="px-3.5 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-xl shadow-sm transition flex items-center gap-1.5">
                             <i data-lucide="shopping-cart" class="w-3.5 h-3.5"></i> Passer Commande SAP
                         </button>
                     </div>
@@ -709,7 +699,7 @@
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-green-500/50 shadow-sm relative overflow-hidden card-interactive">
+                            <div class="bg-white dark:bg-[#0D2137] p-4 rounded-xl border border-green-500/50 shadow-sm relative overflow-hidden card-interactive">
                                 <div class="w-1.5 h-full bg-green-500 absolute left-0 top-0"></div>
                                 <div class="pl-2 space-y-1.5">
                                     <div class="flex justify-between items-center">
@@ -724,7 +714,7 @@
                                 </div>
                             </div>
 
-                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-blue-500/50 shadow-sm relative overflow-hidden card-interactive">
+                            <div class="bg-white dark:bg-[#0D2137] p-4 rounded-xl border border-blue-500/50 shadow-sm relative overflow-hidden card-interactive">
                                 <div class="w-1.5 h-full bg-blue-500 absolute left-0 top-0"></div>
                                 <div class="pl-2 space-y-1.5">
                                     <div class="flex justify-between items-center">
@@ -739,7 +729,7 @@
                                 </div>
                             </div>
 
-                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-purple-500/50 shadow-sm relative overflow-hidden card-interactive">
+                            <div class="bg-white dark:bg-[#0D2137] p-4 rounded-xl border border-purple-500/50 shadow-sm relative overflow-hidden card-interactive">
                                 <div class="w-1.5 h-full bg-purple-500 absolute left-0 top-0"></div>
                                 <div class="pl-2 space-y-1.5">
                                     <div class="flex justify-between items-center">
@@ -754,7 +744,7 @@
                                 </div>
                             </div>
 
-                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-300 dark:border-gray-700 shadow-sm relative overflow-hidden card-interactive">
+                            <div class="bg-white dark:bg-[#0D2137] p-4 rounded-xl border border-gray-300 dark:border-gray-700 shadow-sm relative overflow-hidden card-interactive">
                                 <div class="w-1.5 h-full bg-gray-500 absolute left-0 top-0"></div>
                                 <div class="pl-2 space-y-1.5">
                                     <div class="flex justify-between items-center">
@@ -779,7 +769,7 @@
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                             <!-- CAMEMBERT 1 : SORTIES PAR CATÉGORIE -->
-                            <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
+                            <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                                 <div class="flex justify-between items-center">
                                     <h3 class="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
                                         <i data-lucide="arrow-up-right" class="w-4 h-4 text-blue-500"></i> Camembert 1 : Répartition des Sorties par Catégorie
@@ -792,7 +782,7 @@
                             </div>
 
                             <!-- CAMEMBERT 2 : ENTRÉES PAR CATÉGORIE -->
-                            <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
+                            <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                                 <div class="flex justify-between items-center">
                                     <h3 class="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
                                         <i data-lucide="arrow-down-left" class="w-4 h-4 text-ocp-light"></i> Camembert 2 : Répartition des Entrées par Catégorie
@@ -818,7 +808,7 @@
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
+                            <div class="bg-white dark:bg-[#0D2137] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                                 <div class="flex justify-between items-start">
                                     <div>
                                         <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">Hangar Rayonnages</span>
@@ -841,7 +831,7 @@
                                 </div>
                             </div>
 
-                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
+                            <div class="bg-white dark:bg-[#0D2137] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                                 <div class="flex justify-between items-start">
                                     <div>
                                         <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">Grand Abri (600 m²)</span>
@@ -864,7 +854,7 @@
                                 </div>
                             </div>
 
-                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
+                            <div class="bg-white dark:bg-[#0D2137] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                                 <div class="flex justify-between items-start">
                                     <div>
                                         <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">Petit Abri</span>
@@ -887,7 +877,7 @@
                                 </div>
                             </div>
 
-                            <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
+                            <div class="bg-white dark:bg-[#0D2137] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                                 <div class="flex justify-between items-start">
                                     <div>
                                         <span class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase">Parc Extérieur</span>
@@ -912,7 +902,7 @@
                         </div>
 
                     <!-- 6. TABLEAU COMPLET DES 83 MOUVEMENTS RÉELS DU GOOGLE SHEET EN DIRECT -->
-                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive stagger-item">
+                    <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive stagger-item">
                         <div class="flex flex-wrap justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-3 gap-3">
                             <div>
                                 <h3 class="font-extrabold text-sm text-gray-900 dark:text-white flex items-center gap-2">
@@ -982,7 +972,7 @@
                     </div>
 
                     <!-- BLOC 1 : ÉVOLUTION DU STOCK AVEC FILTRE TEMPOREL (JOUR, SEMAINE, MOIS, ANNÉE) -->
-                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
+                    <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
                         <div class="flex flex-wrap justify-between items-center gap-3">
                             <div>
                                 <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
@@ -1004,7 +994,7 @@
 
                     <!-- BLOC 2 : ENTRÉES VS SORTIES AVEC FILTRE DYNAMIQUE (JOUR, SEMAINE, MOIS) ET VALEUR DU STOCK -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                             <div class="flex flex-wrap justify-between items-center gap-2">
                                 <div>
                                     <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
@@ -1023,7 +1013,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                             <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
                                 <i data-lucide="coins" class="w-4 h-4 text-amber-500"></i> Activité Réelle des Magasiniers (Nombre de Flux Traités)
                             </h3>
@@ -1035,7 +1025,7 @@
 
                     <!-- BLOC 3 : ROTATION ET HISTOGRAMME ARTICLES SANS MOUVEMENT -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                             <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
                                 <i data-lucide="rotate-cw" class="w-4 h-4 text-purple-500"></i> Répartition des Sorties par Zone OCP (Laverie, Trémie, Liaison)
                             </h3>
@@ -1044,7 +1034,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                             <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
                                 <i data-lucide="clock" class="w-4 h-4 text-red-500"></i> Histogramme : Articles Sans Mouvement (Immobilisés)
                             </h3>
@@ -1057,7 +1047,7 @@
 
                     <!-- BLOC 4 : CLASSEMENTS TOP 20 ARTICLES -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                             <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-2">
                                 <h3 class="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
                                     <i data-lucide="flame" class="w-4 h-4 text-orange-500"></i> Top 20 : Articles les Plus Utilisés (Forte Rotation)
@@ -1086,7 +1076,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
+                        <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3">
                             <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-2">
                                 <h3 class="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
                                     <i data-lucide="archive" class="w-4 h-4 text-red-500"></i> Top 20 : Stock Dormant / Valorisation Immobilisée
@@ -1137,7 +1127,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-white dark:bg-[#132A45] p-3 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-wrap items-center justify-between gap-3 card-interactive">
+                    <div class="bg-white dark:bg-[#0D2137] p-3 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-wrap items-center justify-between gap-3 card-interactive">
                         <div class="flex items-center gap-2">
                             <span class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1">
                                 <i data-lucide="filter" class="w-3.5 h-3.5 text-ocp-light"></i> Origine :
@@ -1155,7 +1145,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
+                    <div class="bg-white dark:bg-[#0D2137] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-xs">
                                 <thead class="bg-gray-100 dark:bg-[#050D17] text-gray-600 dark:text-gray-400 uppercase font-semibold">
@@ -1239,25 +1229,25 @@
                             <p class="font-bold text-xs text-gray-900 dark:text-white">1. Hangar Rayonnage</p>
                             <p class="text-[10px] text-gray-600 dark:text-gray-300">Plan 13085x6485 (6 Allées)</p>
                         </button>
-                        <button onclick="selectZone('grand-abri')" class="p-3 bg-white dark:bg-[#132A45] border border-gray-300 dark:border-gray-700 rounded-xl text-left hover:border-ocp transition">
+                        <button onclick="selectZone('grand-abri')" class="p-3 bg-white dark:bg-[#0D2137] border border-gray-300 dark:border-gray-700 rounded-xl text-left hover:border-ocp transition">
                             <p class="font-bold text-xs text-gray-900 dark:text-white">2. Grand Abri (600 m²)</p>
                             <p class="text-[10px] text-gray-500 dark:text-gray-400">Stockage Matériel Lourd</p>
                         </button>
-                        <button onclick="selectZone('petit-abri')" class="p-3 bg-white dark:bg-[#132A45] border border-gray-300 dark:border-gray-700 rounded-xl text-left hover:border-ocp transition">
+                        <button onclick="selectZone('petit-abri')" class="p-3 bg-white dark:bg-[#0D2137] border border-gray-300 dark:border-gray-700 rounded-xl text-left hover:border-ocp transition">
                             <p class="font-bold text-xs text-gray-900 dark:text-white">3. Petit Abri</p>
                             <p class="text-[10px] text-gray-500 dark:text-gray-400">Consommables & Outillage</p>
                         </button>
-                        <button onclick="selectZone('zone-ext')" class="p-3 bg-white dark:bg-[#132A45] border border-gray-300 dark:border-gray-700 rounded-xl text-left hover:border-ocp transition">
+                        <button onclick="selectZone('zone-ext')" class="p-3 bg-white dark:bg-[#0D2137] border border-gray-300 dark:border-gray-700 rounded-xl text-left hover:border-ocp transition">
                             <p class="font-bold text-xs text-gray-900 dark:text-white">4. Zone Extérieure</p>
                             <p class="text-[10px] text-gray-500 dark:text-gray-400">Parc Tuyauterie & Cuves</p>
                         </button>
-                        <button onclick="selectZone('grand-modulaire')" class="p-3 bg-white dark:bg-[#132A45] border border-gray-300 dark:border-gray-700 rounded-xl text-left hover:border-ocp transition">
+                        <button onclick="selectZone('grand-modulaire')" class="p-3 bg-white dark:bg-[#0D2137] border border-gray-300 dark:border-gray-700 rounded-xl text-left hover:border-ocp transition">
                             <p class="font-bold text-xs text-gray-900 dark:text-white">5. Grand Modulaire</p>
                             <p class="text-[10px] text-gray-500 dark:text-gray-400">Bureaux & Tool Crib</p>
                         </button>
                     </div>
 
-                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-xl space-y-4">
+                    <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-xl space-y-4">
                         <div class="flex justify-between items-center text-xs border-b border-gray-200 dark:border-gray-700/80 pb-3">
                             <div class="flex items-center gap-2">
                                 <i data-lucide="map-pin" class="w-4 h-4 text-ocp-light"></i>
@@ -1267,13 +1257,13 @@
 
                         <div class="relative bg-gray-50 dark:bg-[#050D17] border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-4 overflow-x-auto min-h-[460px]">
                             <div class="w-full min-w-[680px] border-4 border-gray-400 dark:border-gray-600 p-4 rounded-lg bg-gray-100 dark:bg-[#0A1A2E] space-y-6">
-                                <div class="flex justify-between items-center bg-white dark:bg-[#132A45]/80 p-3 rounded-md border border-gray-200 dark:border-gray-700 text-[10px] text-gray-600 dark:text-gray-300">
+                                <div class="flex justify-between items-center bg-white dark:bg-[#0D2137]/80 p-3 rounded-md border border-gray-200 dark:border-gray-700 text-[10px] text-gray-600 dark:text-gray-300">
                                     <span>ZONE MANŒUVRE NORD (Passage Chariot 200cm)</span>
                                     <span class="bg-amber-100 dark:bg-amber-500/20 text-amber-800 dark:text-amber-300 px-2 py-0.5 rounded border border-amber-300 dark:border-amber-500/50">Chariot Élévateur 85x200</span>
                                 </div>
 
                                 <div class="rack-grid text-center">
-                                    <div onclick="inspectRack('Allée 1 - Rack R1')" class="rack-slot cursor-pointer bg-white dark:bg-[#132A45] border-2 border-red-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
+                                    <div onclick="inspectRack('Allée 1 - Rack R1')" class="rack-slot cursor-pointer bg-white dark:bg-[#0D2137] border-2 border-red-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
                                         <span class="text-[10px] font-bold text-red-600 dark:text-red-400">RACK R1 (ALERTE)</span>
                                         <div class="space-y-1">
                                             <div class="bg-green-100 dark:bg-green-600/30 text-[9px] p-1 rounded text-green-800 dark:text-green-200">SKF 6205</div>
@@ -1282,7 +1272,7 @@
                                         <span class="text-[9px] text-gray-500 dark:text-gray-400">Allée 1 (120cm)</span>
                                     </div>
 
-                                    <div onclick="inspectRack('Allée 2 - Rack R2')" class="rack-slot cursor-pointer bg-white dark:bg-[#132A45] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
+                                    <div onclick="inspectRack('Allée 2 - Rack R2')" class="rack-slot cursor-pointer bg-white dark:bg-[#0D2137] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
                                         <span class="text-[10px] font-bold text-green-600 dark:text-green-400">RACK R2</span>
                                         <div class="space-y-1">
                                             <div class="bg-green-100 dark:bg-green-600/30 text-[9px] p-1 rounded text-green-800 dark:text-green-200">Joints Toriques</div>
@@ -1291,7 +1281,7 @@
                                         <span class="text-[9px] text-gray-500 dark:text-gray-400">Allée 2 (120cm)</span>
                                     </div>
 
-                                    <div onclick="inspectRack('Allée 3 - Rack R3')" class="rack-slot cursor-pointer bg-white dark:bg-[#132A45] border-2 border-amber-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
+                                    <div onclick="inspectRack('Allée 3 - Rack R3')" class="rack-slot cursor-pointer bg-white dark:bg-[#0D2137] border-2 border-amber-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
                                         <span class="text-[10px] font-bold text-amber-600 dark:text-amber-400">RACK R3</span>
                                         <div class="space-y-1">
                                             <div class="bg-amber-100 dark:bg-amber-600/30 text-[9px] p-1 rounded text-amber-800 dark:text-amber-200">Filtres Hydr.</div>
@@ -1300,7 +1290,7 @@
                                         <span class="text-[9px] text-gray-500 dark:text-gray-400">Allée 3 (120cm)</span>
                                     </div>
 
-                                    <div onclick="inspectRack('Allée 4 - Rack R4')" class="rack-slot cursor-pointer bg-white dark:bg-[#132A45] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
+                                    <div onclick="inspectRack('Allée 4 - Rack R4')" class="rack-slot cursor-pointer bg-white dark:bg-[#0D2137] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
                                         <span class="text-[10px] font-bold text-green-600 dark:text-green-400">RACK R4</span>
                                         <div class="space-y-1">
                                             <div class="bg-green-100 dark:bg-green-600/30 text-[9px] p-1 rounded text-green-800 dark:text-green-200">Relais 24V</div>
@@ -1309,7 +1299,7 @@
                                         <span class="text-[9px] text-gray-500 dark:text-gray-400">Allée 4 (120cm)</span>
                                     </div>
 
-                                    <div onclick="inspectRack('Allée 5 - Rack R5')" class="rack-slot cursor-pointer bg-white dark:bg-[#132A45] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
+                                    <div onclick="inspectRack('Allée 5 - Rack R5')" class="rack-slot cursor-pointer bg-white dark:bg-[#0D2137] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
                                         <span class="text-[10px] font-bold text-green-600 dark:text-green-400">RACK R5</span>
                                         <div class="space-y-1">
                                             <div class="bg-green-100 dark:bg-green-600/30 text-[9px] p-1 rounded text-green-800 dark:text-green-200">Blindage Broyeur</div>
@@ -1318,7 +1308,7 @@
                                         <span class="text-[9px] text-gray-500 dark:text-gray-400">Allée 5 (120cm)</span>
                                     </div>
 
-                                    <div onclick="inspectRack('Allée 6 - Rack R6')" class="rack-slot cursor-pointer bg-white dark:bg-[#132A45] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
+                                    <div onclick="inspectRack('Allée 6 - Rack R6')" class="rack-slot cursor-pointer bg-white dark:bg-[#0D2137] border-2 border-green-500 hover:border-gray-900 dark:hover:border-white p-2 rounded flex flex-col justify-between h-52 transition">
                                         <span class="text-[10px] font-bold text-green-600 dark:text-green-400">RACK R6</span>
                                         <div class="space-y-1">
                                             <div class="bg-green-100 dark:bg-green-600/30 text-[9px] p-1 rounded text-green-800 dark:text-green-200">Clés Dynamom.</div>
@@ -1328,7 +1318,7 @@
                                     </div>
                                 </div>
 
-                                <div class="flex justify-between items-center bg-white dark:bg-[#132A45]/80 p-3 rounded-md border border-gray-200 dark:border-gray-700 text-[10px] text-gray-600 dark:text-gray-300">
+                                <div class="flex justify-between items-center bg-white dark:bg-[#0D2137]/80 p-3 rounded-md border border-gray-200 dark:border-gray-700 text-[10px] text-gray-600 dark:text-gray-300">
                                     <span class="font-bold text-gray-900 dark:text-white">ENTRÉE PRINCIPALE MAGASIN (Largeur 648.5cm)</span>
                                     <span>Dégagement Réception : 519cm x 625cm</span>
                                 </div>
@@ -1356,7 +1346,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
+                    <div class="bg-white dark:bg-[#0D2137] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                         <h3 class="font-bold text-xs text-gray-900 dark:text-white">Planning de Rotation Mensuel des 5 Magasiniers</h3>
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-xs">
@@ -1434,7 +1424,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
+                    <div class="bg-white dark:bg-[#0D2137] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-xs">
                                 <thead class="bg-gray-100 dark:bg-[#050D17] text-gray-600 dark:text-gray-400 uppercase font-semibold">
@@ -1511,7 +1501,7 @@
                         </div>
                     </div>
 
-                    <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
+                    <div class="bg-white dark:bg-[#0D2137] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left text-xs">
                                 <thead class="bg-gray-100 dark:bg-[#050D17] text-gray-600 dark:text-gray-400 uppercase font-semibold">
@@ -1578,7 +1568,7 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                             <h3 class="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
                                 <i data-lucide="calendar-check" class="w-4 h-4 text-ocp-light"></i> Planning Hebdomadaire des Audits (Octobre 2026)
                             </h3>
@@ -1614,7 +1604,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-3 card-interactive">
                             <h3 class="font-bold text-xs text-gray-900 dark:text-white uppercase tracking-wider">KPIs Qualité Inventaire (Dernier Audit : 04/10/2026)</h3>
                             <div class="grid grid-cols-2 gap-3">
                                 <div class="bg-gray-50 dark:bg-[#050D17] p-3 rounded-xl border border-gray-200 dark:border-gray-800">
@@ -1638,7 +1628,7 @@
                     </div>
 
                     <!-- MATRICE COMPLÈTE DES ACCÈS PAR PERSONNE -->
-                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
+                    <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
                         <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-3">
                             <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
                                 <i data-lucide="shield-check" class="w-4 h-4 text-ocp-light"></i> Matrice Détaillée des Droits d'Accès et Visibilité Web App
@@ -1752,7 +1742,7 @@
                     </div>
 
                     <!-- MODULE DE SYNCHRONISATION GOOGLE FORMS DES MOUVEMENTS DU MAGASIN -->
-                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border-2 border-purple-500/40 shadow-sm space-y-4 max-w-3xl text-xs card-interactive">
+                    <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border-2 border-purple-500/40 shadow-sm space-y-4 max-w-3xl text-xs card-interactive">
                         <div class="flex flex-wrap justify-between items-start border-b border-gray-200 dark:border-gray-800 pb-3 gap-3">
                             <div class="flex items-start gap-3">
                                 <div class="w-10 h-10 rounded-xl bg-purple-500/15 text-purple-500 flex items-center justify-center font-bold flex-shrink-0">
@@ -1798,7 +1788,7 @@
                     </div>
 
                     <!-- CONFIGURATION SYSTEME BASE -->
-                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 max-w-2xl text-xs">
+                    <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 max-w-2xl text-xs">
                         <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-3">
                             <div>
                                 <p class="font-bold text-gray-900 dark:text-white">Connecteur SAP S/4HANA</p>
@@ -1856,7 +1846,7 @@
 
                     <!-- 4 CARTES KPI DE SYNCHRONISATION -->
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm card-interactive">
                             <div class="flex items-center justify-between text-gray-500 text-xs mb-1">
                                 <span>Mouvements Réels Tracés</span>
                                 <i data-lucide="database" class="w-4 h-4 text-purple-400"></i>
@@ -1866,7 +1856,7 @@
                                 <i data-lucide="check" class="w-3 h-3"></i> 100% synchronisé avec Google Sheets
                             </p>
                         </div>
-                        <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm card-interactive">
                             <div class="flex items-center justify-between text-gray-500 text-xs mb-1">
                                 <span>Sorties Chantier & Maintenance</span>
                                 <i data-lucide="arrow-up-right" class="w-4 h-4 text-blue-400"></i>
@@ -1874,7 +1864,7 @@
                             <div class="text-2xl font-black text-blue-500" id="gforms-kpi-sorties">81</div>
                             <p class="text-[10px] text-gray-400 mt-1">97.6% des mouvements mobiles</p>
                         </div>
-                        <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm card-interactive">
                             <div class="flex items-center justify-between text-gray-500 text-xs mb-1">
                                 <span>Entrées Quai & Réception</span>
                                 <i data-lucide="arrow-down-left" class="w-4 h-4 text-green-400"></i>
@@ -1882,7 +1872,7 @@
                             <div class="text-2xl font-black text-green-500" id="gforms-kpi-entrees">2</div>
                             <p class="text-[10px] text-gray-400 mt-1">2.4% réceptions fournisseurs</p>
                         </div>
-                        <div class="bg-white dark:bg-[#132A45] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-4 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm card-interactive">
                             <div class="flex items-center justify-between text-gray-500 text-xs mb-1">
                                 <span>Magasiniers Déclarants</span>
                                 <i data-lucide="users" class="w-4 h-4 text-amber-400"></i>
@@ -1893,7 +1883,7 @@
                     </div>
 
                     <!-- TABLEAU INTERACTIF DÉDIÉ DES 83 MOUVEMENTS RÉELS -->
-                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
+                    <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
                         <div class="flex flex-wrap justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-3 gap-3">
                             <div>
                                 <h3 class="font-extrabold text-sm text-gray-900 dark:text-white flex items-center gap-2">
@@ -1984,7 +1974,7 @@
                             <button onclick="document.getElementById('direct-add-user-card').scrollIntoView({behavior: 'smooth'})" class="px-3.5 py-2 bg-ocp hover:bg-ocp/90 text-white text-xs font-bold rounded-xl flex items-center gap-1.5 shadow-md shadow-ocp/20 transition">
                                 <i data-lucide="user-plus" class="w-4 h-4"></i> + Ajouter directement quelqu'un
                             </button>
-                            <button onclick="openAuthModal('register')" class="px-3.5 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-[#132A45] dark:hover:bg-slate-700 text-xs text-gray-800 dark:text-gray-200 font-medium rounded-xl flex items-center gap-1.5 border border-gray-300 dark:border-gray-700 transition">
+                            <button onclick="openAuthModal('register')" class="px-3.5 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-[#0D2137] dark:hover:bg-slate-700 text-xs text-gray-800 dark:text-gray-200 font-medium rounded-xl flex items-center gap-1.5 border border-gray-300 dark:border-gray-700 transition">
                                 <i data-lucide="send" class="w-4 h-4 text-ocp-light"></i> Tester Formulaire Inscription
                             </button>
                         </div>
@@ -1992,7 +1982,7 @@
 
                     <!-- CARTES STATISTIQUES D'ACCÈS -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-amber-500/30 shadow-sm flex items-center gap-3 card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-4 rounded-xl border border-amber-500/30 shadow-sm flex items-center gap-3 card-interactive">
                             <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold">
                                 <i data-lucide="clock" class="w-5 h-5"></i>
                             </div>
@@ -2002,7 +1992,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center gap-3 card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center gap-3 card-interactive">
                             <div class="w-10 h-10 rounded-xl bg-ocp/10 text-ocp-light flex items-center justify-center font-bold">
                                 <i data-lucide="shield-check" class="w-5 h-5"></i>
                             </div>
@@ -2012,7 +2002,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center gap-3 card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center gap-3 card-interactive">
                             <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center font-bold">
                                 <i data-lucide="mail-check" class="w-5 h-5"></i>
                             </div>
@@ -2022,7 +2012,7 @@
                             </div>
                         </div>
 
-                        <div class="bg-white dark:bg-[#132A45] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center gap-3 card-interactive">
+                        <div class="bg-white dark:bg-[#0D2137] p-4 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex items-center gap-3 card-interactive">
                             <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center font-bold">
                                 <i data-lucide="crown" class="w-5 h-5"></i>
                             </div>
@@ -2034,7 +2024,7 @@
                     </div>
 
                     <!-- BLOC 1 : DEMANDES D'INSCRIPTION PAR EMAIL EN ATTENTE D'ACCORD DU RESPONSABLE -->
-                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
+                    <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
                         <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-3">
                             <div class="flex items-center gap-2">
                                 <i data-lucide="inbox" class="w-4 h-4 text-amber-500"></i>
@@ -2051,7 +2041,7 @@
                     </div>
 
                     <!-- BLOC 2 : AJOUT DIRECT D'UN COLLABORATEUR ("ainsi ajouter quelqu'un") -->
-                    <div id="direct-add-user-card" class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
+                    <div id="direct-add-user-card" class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
                         <div class="border-b border-gray-200 dark:border-gray-800 pb-3">
                             <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
                                 <i data-lucide="user-plus" class="w-4 h-4 text-ocp-light"></i>
@@ -2095,7 +2085,7 @@
                     </div>
 
                     <!-- BLOC 3 : JOURNAL D'AUDIT DES NOTIFICATIONS EMAIL & ENVOIS SMTP (WMS ENTERPRISE) -->
-                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
+                    <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
                         <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-2 border-b border-gray-200 dark:border-gray-800 pb-3">
                             <div>
                                 <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
@@ -2131,7 +2121,7 @@
                     </div>
 
                     <!-- BLOC 4 : ANNUAIRE DES COLLABORATEURS ET COMPTES AUTORISÉS -->
-                    <div class="bg-white dark:bg-[#132A45] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
+                    <div class="bg-white dark:bg-[#0D2137] p-5 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-4 card-interactive">
                         <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-800 pb-3">
                             <h3 class="font-bold text-sm text-gray-900 dark:text-white flex items-center gap-2">
                                 <i data-lucide="users" class="w-4 h-4 text-ocp-light"></i>
@@ -2171,9 +2161,23 @@
         let pieSortiesChartObj, pieEntreesChartObj;
 
         window.addEventListener('DOMContentLoaded', () => {
-            if (window.Chart && Chart.defaults && Chart.defaults.animation) {
-                Chart.defaults.animation.duration = 1500;
-                Chart.defaults.animation.easing = 'easeOutQuart';
+            if (window.Chart && Chart.defaults) {
+                if (Chart.defaults.animation) {
+                    Chart.defaults.animation.duration = 1500;
+                    Chart.defaults.animation.easing = 'easeOutQuart';
+                }
+                Chart.defaults.color = '#94A3B8';
+                Chart.defaults.font.family = "'Inter', system-ui, -apple-system, sans-serif";
+                Chart.defaults.font.size = 11;
+                Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.08)';
+                if (Chart.defaults.plugins && Chart.defaults.plugins.legend) {
+                    Chart.defaults.plugins.legend.labels.color = '#CBD5E1';
+                    Chart.defaults.plugins.legend.labels.boxWidth = 12;
+                    Chart.defaults.plugins.legend.labels.padding = 14;
+                }
+                if (Chart.defaults.scale && Chart.defaults.scale.grid) {
+                    Chart.defaults.scale.grid.color = 'rgba(255, 255, 255, 0.06)';
+                }
             }
             initCharts();
             renderAccessControlView();
@@ -2671,9 +2675,9 @@
                         <span class="text-[10px] bg-red-600 text-white px-2 py-0.5 rounded font-bold alert-pulse-slow">Alerte Stock Critique</span>
                     </div>
                     <div class="grid grid-cols-3 gap-2 text-[11px] pt-1">
-                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg card-interactive"><strong>Niveau 3 :</strong> Roulements SKF 6205 (150 pcs)</div>
+                        <div class="p-2 bg-white dark:bg-[#0D2137] border border-gray-200 dark:border-gray-800 rounded-lg card-interactive"><strong>Niveau 3 :</strong> Roulements SKF 6205 (150 pcs)</div>
                         <div class="p-2 bg-red-100 dark:bg-red-900/40 border border-red-500 rounded-lg text-red-900 dark:text-red-200 font-bold card-interactive"><strong>Niveau 2 :</strong> Vannes à papillon DN100 (12 pcs - MIN: 25)</div>
-                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg card-interactive"><strong>Niveau 1 :</strong> Vannes Guillotine (30 pcs)</div>
+                        <div class="p-2 bg-white dark:bg-[#0D2137] border border-gray-200 dark:border-gray-800 rounded-lg card-interactive"><strong>Niveau 1 :</strong> Vannes Guillotine (30 pcs)</div>
                     </div>
                 `;
             } else {
@@ -2683,9 +2687,9 @@
                         <span class="text-[10px] bg-ocp text-white px-2 py-0.5 rounded font-bold pulse-slow">Statut: Conforme</span>
                     </div>
                     <div class="grid grid-cols-3 gap-2 text-[11px] pt-1">
-                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg card-interactive"><strong>Niveau 3 :</strong> Pièces conformes</div>
-                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg card-interactive"><strong>Niveau 2 :</strong> Outillage & Électrique</div>
-                        <div class="p-2 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-lg card-interactive"><strong>Niveau 1 :</strong> Consommables</div>
+                        <div class="p-2 bg-white dark:bg-[#0D2137] border border-gray-200 dark:border-gray-800 rounded-lg card-interactive"><strong>Niveau 3 :</strong> Pièces conformes</div>
+                        <div class="p-2 bg-white dark:bg-[#0D2137] border border-gray-200 dark:border-gray-800 rounded-lg card-interactive"><strong>Niveau 2 :</strong> Outillage & Électrique</div>
+                        <div class="p-2 bg-white dark:bg-[#0D2137] border border-gray-200 dark:border-gray-800 rounded-lg card-interactive"><strong>Niveau 1 :</strong> Consommables</div>
                     </div>
                 `;
             }
@@ -3103,7 +3107,7 @@
                                         <strong class="text-gray-700 dark:text-gray-300">Email :</strong> ${r.email} | 
                                         <strong class="text-gray-700 dark:text-gray-300">Matricule :</strong> ${r.matricule || 'N/A'}
                                     </p>
-                                    <p class="text-[11px] text-gray-500 dark:text-gray-400 italic bg-white dark:bg-[#132A45] p-2 rounded-lg border border-gray-200 dark:border-gray-800">
+                                    <p class="text-[11px] text-gray-500 dark:text-gray-400 italic bg-white dark:bg-[#0D2137] p-2 rounded-lg border border-gray-200 dark:border-gray-800">
                                         "${r.reason}"
                                     </p>
                                 </div>
@@ -3396,13 +3400,13 @@
             if (tab === 'login') {
                 if (loginForm) loginForm.classList.remove('hidden');
                 if (regForm) regForm.classList.add('hidden');
-                if (tabLogin) tabLogin.className = "flex-1 py-2 rounded-xl bg-white dark:bg-[#132A45] text-ocp-light shadow-sm transition";
+                if (tabLogin) tabLogin.className = "flex-1 py-2 rounded-xl bg-white dark:bg-[#0D2137] text-ocp-light shadow-sm transition";
                 if (tabReg) tabReg.className = "flex-1 py-2 rounded-xl text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition";
             } else {
                 if (loginForm) loginForm.classList.add('hidden');
                 if (regForm) regForm.classList.remove('hidden');
                 if (tabLogin) tabLogin.className = "flex-1 py-2 rounded-xl text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition";
-                if (tabReg) tabReg.className = "flex-1 py-2 rounded-xl bg-white dark:bg-[#132A45] text-ocp-light shadow-sm transition";
+                if (tabReg) tabReg.className = "flex-1 py-2 rounded-xl bg-white dark:bg-[#0D2137] text-ocp-light shadow-sm transition";
                 document.getElementById('register-form').classList.remove('hidden');
                 document.getElementById('register-success-box').classList.add('hidden');
             }
@@ -4448,7 +4452,7 @@
             // Mettre à jour l'apparence des boutons de zones
             const zoneBtns = document.querySelectorAll('#view-carto .grid-cols-2 button, #view-carto .md\:grid-cols-5 button');
             zoneBtns.forEach(btn => {
-                btn.className = 'p-3 bg-white dark:bg-[#132A45] border border-gray-300 dark:border-gray-700 rounded-xl text-left hover:border-ocp transition';
+                btn.className = 'p-3 bg-white dark:bg-[#0D2137] border border-gray-300 dark:border-gray-700 rounded-xl text-left hover:border-ocp transition';
             });
             event.currentTarget.className = 'p-3 bg-ocp/20 border-2 border-ocp rounded-xl text-left hover:bg-ocp/30 transition';
 
@@ -4465,7 +4469,7 @@
             if (zoneKey === 'hangar-racks') {
                 container.className = 'rack-grid text-center';
                 container.innerHTML = data.racks.map(r => `
-                    <div onclick="inspectRackDetailed('${r.id}')" class="rack-slot cursor-pointer bg-white dark:bg-[#132A45] border-2 ${r.color} hover:border-gray-900 dark:hover:border-white p-2.5 rounded-xl flex flex-col justify-between h-56 transition shadow-sm">
+                    <div onclick="inspectRackDetailed('${r.id}')" class="rack-slot cursor-pointer bg-white dark:bg-[#0D2137] border-2 ${r.color} hover:border-gray-900 dark:hover:border-white p-2.5 rounded-xl flex flex-col justify-between h-56 transition shadow-sm">
                         <div class="flex justify-between items-center border-b border-gray-200 dark:border-gray-700 pb-1">
                             <span class="text-[10px] font-extrabold ${r.status === 'critique' ? 'text-red-600' : (r.status === 'alerte' ? 'text-amber-500' : 'text-ocp-light')}">RACK ${r.id}</span>
                             <span class="text-[9px] font-bold text-gray-500">${r.fill}%</span>
@@ -4486,7 +4490,7 @@
             } else {
                 container.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 text-center';
                 container.innerHTML = data.bays.map(b => `
-                    <div onclick="inspectBayDetailed('${b.name}', '${b.items}')" class="rack-slot cursor-pointer bg-white dark:bg-[#132A45] border-2 border-ocp hover:border-gray-900 dark:hover:border-white p-4 rounded-xl flex flex-col justify-between h-52 transition shadow-sm text-left">
+                    <div onclick="inspectBayDetailed('${b.name}', '${b.items}')" class="rack-slot cursor-pointer bg-white dark:bg-[#0D2137] border-2 border-ocp hover:border-gray-900 dark:hover:border-white p-4 rounded-xl flex flex-col justify-between h-52 transition shadow-sm text-left">
                         <div>
                             <span class="text-[10px] bg-ocp/15 text-ocp-light font-bold px-2 py-0.5 rounded">Emplacement Actif</span>
                             <h4 class="font-bold text-xs text-gray-900 dark:text-white mt-2">${b.name}</h4>
@@ -4545,7 +4549,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs pt-2">
                     ${rack.levels.map(l => `
-                        <div class="p-3 bg-white dark:bg-[#132A45] border border-gray-200 dark:border-gray-800 rounded-xl space-y-1.5 shadow-sm card-interactive">
+                        <div class="p-3 bg-white dark:bg-[#0D2137] border border-gray-200 dark:border-gray-800 rounded-xl space-y-1.5 shadow-sm card-interactive">
                             <div class="flex justify-between items-center">
                                 <span class="font-black text-xs text-ocp-light">${l.level}</span>
                                 <span class="px-2 py-0.5 rounded text-[10px] font-bold ${l.status === 'critique' ? 'bg-red-100 text-red-800 dark:bg-red-950 dark:text-red-300' : (l.status === 'alerte' ? 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300' : 'bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300')}">${l.status === 'critique' ? 'Rupture Imminente' : (l.status === 'alerte' ? 'Seuil Alerte' : 'Normal')}</span>
@@ -4575,7 +4579,7 @@
                         <i data-lucide="arrow-up-from-line" class="w-3.5 h-3.5"></i> Prélever / Sortie
                     </button>
                 </div>
-                <div class="p-3 bg-white dark:bg-[#132A45] rounded-xl border border-gray-200 dark:border-gray-800 text-xs">
+                <div class="p-3 bg-white dark:bg-[#0D2137] rounded-xl border border-gray-200 dark:border-gray-800 text-xs">
                     <p class="text-gray-700 dark:text-gray-300">Ce sous-ensemble est géré avec suivi de numéro de série et contrôle métrologique semestriel.</p>
                 </div>
             `;
@@ -8935,7 +8939,7 @@
 
             <!-- ONGLETS : CONNEXION vs DEMANDE D'INSCRIPTION PAR EMAIL -->
             <div class="flex bg-gray-100 dark:bg-[#050D17] p-1 rounded-2xl border border-gray-200 dark:border-gray-800 text-xs font-bold">
-                <button type="button" onclick="switchAuthTab('login')" id="tab-btn-login" class="flex-1 py-2 rounded-xl bg-white dark:bg-[#132A45] text-ocp-light shadow-sm transition">
+                <button type="button" onclick="switchAuthTab('login')" id="tab-btn-login" class="flex-1 py-2 rounded-xl bg-white dark:bg-[#0D2137] text-ocp-light shadow-sm transition">
                     <i data-lucide="log-in" class="w-3.5 h-3.5 inline mr-1"></i> Connexion
                 </button>
                 <button type="button" onclick="switchAuthTab('register')" id="tab-btn-register" class="flex-1 py-2 rounded-xl text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition">
@@ -9435,16 +9439,16 @@
                 <div>
                     <p class="text-[10px] text-gray-500 dark:text-gray-400 mb-1 font-semibold">Échantillons rapides pour test en direct :</p>
                     <div class="flex flex-wrap gap-1.5">
-                        <button onclick="simulateScanCode('MEC-2024-001')" class="px-2 py-0.5 bg-gray-100 hover:bg-gray-200 dark:bg-[#132A45] text-[10px] font-bold rounded-lg border border-gray-300 dark:border-gray-700 transition">
+                        <button onclick="simulateScanCode('MEC-2024-001')" class="px-2 py-0.5 bg-gray-100 hover:bg-gray-200 dark:bg-[#0D2137] text-[10px] font-bold rounded-lg border border-gray-300 dark:border-gray-700 transition">
                             MEC-2024-001 (Roulements SKF)
                         </button>
-                        <button onclick="simulateScanCode('MEC-2024-002')" class="px-2 py-0.5 bg-gray-100 hover:bg-gray-200 dark:bg-[#132A45] text-[10px] font-bold rounded-lg border border-gray-300 dark:border-gray-700 transition">
+                        <button onclick="simulateScanCode('MEC-2024-002')" class="px-2 py-0.5 bg-gray-100 hover:bg-gray-200 dark:bg-[#0D2137] text-[10px] font-bold rounded-lg border border-gray-300 dark:border-gray-700 transition">
                             MEC-2024-002 (Vannes papillon)
                         </button>
-                        <button onclick="simulateScanCode('ELE-2024-012')" class="px-2 py-0.5 bg-gray-100 hover:bg-gray-200 dark:bg-[#132A45] text-[10px] font-bold rounded-lg border border-gray-300 dark:border-gray-700 transition">
+                        <button onclick="simulateScanCode('ELE-2024-012')" class="px-2 py-0.5 bg-gray-100 hover:bg-gray-200 dark:bg-[#0D2137] text-[10px] font-bold rounded-lg border border-gray-300 dark:border-gray-700 transition">
                             ELE-2024-012 (Relais 24V)
                         </button>
-                        <button onclick="simulateScanCode('HYD-2024-005')" class="px-2 py-0.5 bg-gray-100 hover:bg-gray-200 dark:bg-[#132A45] text-[10px] font-bold rounded-lg border border-gray-300 dark:border-gray-700 transition">
+                        <button onclick="simulateScanCode('HYD-2024-005')" class="px-2 py-0.5 bg-gray-100 hover:bg-gray-200 dark:bg-[#0D2137] text-[10px] font-bold rounded-lg border border-gray-300 dark:border-gray-700 transition">
                             HYD-2024-005 (Filtres Hydr.)
                         </button>
                     </div>
@@ -9462,7 +9466,7 @@
                     <span id="scan-res-status" class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-800 dark:bg-green-950 dark:text-green-300">Conforme</span>
                 </div>
                 <div class="flex flex-wrap gap-2 pt-1 border-t border-gray-200 dark:border-gray-800">
-                    <button onclick="actionFromScan('stock')" class="px-2.5 py-1.5 bg-gray-200 hover:bg-gray-300 dark:bg-[#132A45] dark:hover:bg-slate-700 text-xs font-bold rounded-xl transition flex items-center gap-1">
+                    <button onclick="actionFromScan('stock')" class="px-2.5 py-1.5 bg-gray-200 hover:bg-gray-300 dark:bg-[#0D2137] dark:hover:bg-slate-700 text-xs font-bold rounded-xl transition flex items-center gap-1">
                         <i data-lucide="package" class="w-3.5 h-3.5"></i> Voir en Stock
                     </button>
                     <button onclick="actionFromScan('reception')" class="px-2.5 py-1.5 bg-ocp hover:bg-ocp/90 text-white text-xs font-bold rounded-xl transition flex items-center gap-1">
@@ -9645,7 +9649,7 @@
                 <form onsubmit="handleDirectGFormsMovement(event)" class="grid grid-cols-1 md:grid-cols-2 gap-3">
                     <div>
                         <label class="block text-gray-600 dark:text-gray-400 font-semibold mb-1">Type de Mouvement *</label>
-                        <select id="gforms-mov-type" required class="w-full bg-white dark:bg-[#132A45] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-purple-500">
+                        <select id="gforms-mov-type" required class="w-full bg-white dark:bg-[#0D2137] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-purple-500">
                             <option value="ENTRÉE (Réception Quai)">ENTRÉE (Réception Quai / BR)</option>
                             <option value="SORTIE (Picking Atelier)">SORTIE (Picking Atelier / BS)</option>
                             <option value="AJUSTEMENT (Inventaire)">AJUSTEMENT (Écart d'Inventaire)</option>
@@ -9654,7 +9658,7 @@
                     </div>
                     <div>
                         <label class="block text-gray-600 dark:text-gray-400 font-semibold mb-1">Article OCP *</label>
-                        <select id="gforms-mov-item" required class="w-full bg-white dark:bg-[#132A45] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-purple-500">
+                        <select id="gforms-mov-item" required class="w-full bg-white dark:bg-[#0D2137] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-purple-500">
                             <option value="MEC-2024-001 | Roulements SKF 6205">MEC-2024-001 | Roulements SKF 6205</option>
                             <option value="MEC-2024-002 | Vannes papillon DN100">MEC-2024-002 | Vannes papillon DN100</option>
                             <option value="ELE-2024-012 | Relais Omron 24V DC">ELE-2024-012 | Relais Omron 24V DC</option>
@@ -9663,11 +9667,11 @@
                     </div>
                     <div>
                         <label class="block text-gray-600 dark:text-gray-400 font-semibold mb-1">Quantité Mouvementée *</label>
-                        <input type="number" id="gforms-mov-qty" required min="1" placeholder="ex: 10" class="w-full bg-white dark:bg-[#132A45] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-purple-500">
+                        <input type="number" id="gforms-mov-qty" required min="1" placeholder="ex: 10" class="w-full bg-white dark:bg-[#0D2137] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-purple-500">
                     </div>
                     <div>
                         <label class="block text-gray-600 dark:text-gray-400 font-semibold mb-1">Demandeur / Fournisseur / Atelier *</label>
-                        <input type="text" id="gforms-mov-target" required placeholder="ex: Atelier Broyage B02 ou SKF Maroc" class="w-full bg-white dark:bg-[#132A45] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-purple-500">
+                        <input type="text" id="gforms-mov-target" required placeholder="ex: Atelier Broyage B02 ou SKF Maroc" class="w-full bg-white dark:bg-[#0D2137] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-purple-500">
                     </div>
                     <div class="md:col-span-2 flex justify-end gap-2 pt-1">
                         <button type="submit" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl text-xs shadow flex items-center gap-1.5 transition">
