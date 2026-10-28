@@ -395,12 +395,22 @@
         .kpi-glow {
             animation: subtleOcpGlow 4s infinite ease-in-out;
         }
+
+        /* Sécurité stricte anti-ouverture spontanée : Verrouillage et flou total si aucune session active */
+        body.app-locked #app-main-header,
+        body.app-locked #app-main-layout {
+            filter: blur(16px) brightness(0.35) !important;
+            pointer-events: none !important;
+            user-select: none !important;
+            opacity: 0.15 !important;
+            transition: filter 0.4s ease, opacity 0.4s ease;
+        }
     </style>
 </head>
-<body class="bg-[#0A1A2E] dark:bg-[#0A1A2E] text-gray-900 dark:text-gray-100 h-full flex flex-col font-sans transition-colors duration-200">
+<body class="bg-[#0A1A2E] dark:bg-[#0A1A2E] text-gray-900 dark:text-gray-100 h-full flex flex-col font-sans transition-colors duration-200 app-locked">
 
     <!-- BARRE D'ACTION SUPÉRIEURE ÉPURÉE ET PROFESSIONNELLE -->
-    <header class="bg-white/95 dark:bg-[#071322]/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-800/80 px-4 sm:px-6 py-2.5 flex items-center justify-between z-30 transition-colors">
+    <header id="app-main-header" class="bg-white/95 dark:bg-[#071322]/95 backdrop-blur-md border-b border-gray-200 dark:border-gray-800/80 px-4 sm:px-6 py-2.5 flex items-center justify-between z-30 transition-colors">
         <!-- GAUCHE : IDENTITÉ SITE & STATUTS DE SYNCHRONISATION -->
         <div class="flex items-center gap-2.5 sm:gap-3">
             <div class="flex items-center gap-2">
@@ -471,7 +481,7 @@
         </div>
     </header>
 
-    <div class="flex flex-1 overflow-hidden">
+    <div id="app-main-layout" class="flex flex-1 overflow-hidden">
         
         <!-- SIDEBAR NAVIGATION DYNAMIQUE -->
         <aside class="w-64 bg-slate-900 dark:bg-[#050D17] text-white flex flex-col flex-shrink-0 shadow-xl z-20 border-r border-gray-800">
@@ -2184,6 +2194,30 @@
             checkSessionOnLoad();
             runSmoothCounters();
             animateProgressBars();
+
+            // Synchronisation réactive inter-onglets (Accords par les Propriétaires & Révocations immédiates)
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'mc01_access_requests' || e.key === 'mc01_authorized_users') {
+                    renderAccessControlView();
+                    const activeKey = localStorage.getItem('mc01_active_session');
+                    const users = getStoredUsers();
+                    const user = users.find(u => (u.key === activeKey || (u.email && u.email.toLowerCase() === (activeKey || '').toLowerCase())) && u.status === 'Actif');
+                    if (!user) {
+                        checkSessionOnLoad();
+                    }
+                }
+            });
+
+            // Verrouillage anti-échappement Escape
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const user = getActiveSessionUser();
+                    if (!user || user.status !== 'Actif') {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }
+                }
+            });
         });
 
         window.addEventListener('resize', () => {
@@ -2332,61 +2366,39 @@
                 if(btn) btn.style.display = 'flex';
             });
 
-            if (userKey === 'soufiane') {
-                avatar.innerText = 'SB';
-                avatar.className = 'w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-md';
-                nameEl.innerText = 'soufiane BOUHZAM';
-                roleEl.innerText = 'Approvisionneur Mécanique';
-                notifyRole.innerText = 'soufiane BOUHZAM (Approvisionneur Mécanique)';
-                notifyLevel.innerText = 'Accès Métier Mécanique';
+            const users = getStoredUsers();
+            const user = users.find(u => u.key === userKey || (u.email && u.email.toLowerCase() === userKey.toLowerCase())) || 
+                         DEFAULT_USERS.find(u => u.key === userKey);
 
-                // Masquer les sections réservées/non-pertinentes
-                document.getElementById('nav-settings').style.display = 'none';
-                document.getElementById('nav-shifts').style.display = 'none';
-                const navAcO = document.getElementById('nav-access-control'); if(navAcO) navAcO.style.display = 'none';
-                const hBtnO = document.getElementById('header-pending-requests-btn'); if(hBtnO) hBtnO.style.display = 'none';
-                const navAcS = document.getElementById('nav-access-control'); if(navAcS) navAcS.style.display = 'none';
-                const hBtnS = document.getElementById('header-pending-requests-btn'); if(hBtnS) hBtnS.style.display = 'none';
-            } else if (userKey === 'omar') {
-                avatar.innerText = 'OB';
-                avatar.className = 'w-8 h-8 rounded-lg bg-purple-600 text-white flex items-center justify-center font-bold text-xs shadow-md';
-                nameEl.innerText = 'Omar BENALLA';
-                roleEl.innerText = 'Approvisionneur Électrique';
-                notifyRole.innerText = 'Omar BENALLA (Approvisionneur Électrique)';
-                notifyLevel.innerText = 'Accès Métier Électrique';
+            if (!user) return;
 
-                document.getElementById('nav-settings').style.display = 'none';
-                document.getElementById('nav-shifts').style.display = 'none';
-            } else if (userKey === 'azizi') {
-                avatar.innerText = 'YA';
-                avatar.className = 'w-8 h-8 rounded-lg bg-ocp text-white flex items-center justify-center font-bold text-xs shadow-md';
-                nameEl.innerText = 'yassine AZIZI';
-                roleEl.innerText = 'Responsable Magasin / Propriétaire';
-                notifyRole.innerText = 'yassine AZIZI (Responsable Magasin / Propriétaire)';
-                const navAcA = document.getElementById('nav-access-control'); if(navAcA) navAcA.style.display = 'flex';
-                const hBtnA = document.getElementById('header-pending-requests-btn'); if(hBtnA) hBtnA.style.display = 'flex';
-                notifyLevel.innerText = 'Accès Admin Complet';
-            } else if (userKey === 'raid') {
-                avatar.innerText = 'RA';
-                avatar.className = 'w-8 h-8 rounded-lg bg-ocp text-white flex items-center justify-center font-bold text-xs shadow-md';
-                nameEl.innerText = 'EL ATYQY mohamed raid';
-                roleEl.innerText = 'Responsable Magasin / Propriétaire';
-                notifyRole.innerText = 'EL ATYQY mohamed raid (Responsable Magasin / Propriétaire)';
-                const navAcR = document.getElementById('nav-access-control'); if(navAcR) navAcR.style.display = 'flex';
-                const hBtnR = document.getElementById('header-pending-requests-btn'); if(hBtnR) hBtnR.style.display = 'flex';
-                notifyLevel.innerText = 'Accès Admin Complet';
-            } else if (userKey === 'ghizlan') {
-                avatar.innerText = 'GH';
-                avatar.className = 'w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center font-bold text-xs shadow-md';
-                nameEl.innerText = 'Ghizlan';
-                roleEl.innerText = 'Préparatrice';
-                notifyRole.innerText = 'Ghizlan (Préparatrice)';
-                notifyLevel.innerText = 'Accès Picking & Préparation';
+            const isOwner = user.isOwner === true || user.key === 'azizi' || user.key === 'raid' ||
+                            (user.email && (user.email.toLowerCase().includes('azizi') || user.email.toLowerCase().includes('elatyqy')));
 
-                document.getElementById('nav-settings').style.display = 'none';
-                document.getElementById('nav-reception').style.display = 'none';
-                const navAcG = document.getElementById('nav-access-control'); if(navAcG) navAcG.style.display = 'none';
-                const hBtnG = document.getElementById('header-pending-requests-btn'); if(hBtnG) hBtnG.style.display = 'none';
+            if (avatar) {
+                avatar.innerText = user.badge || user.name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase();
+                avatar.className = `w-8 h-8 rounded-lg ${user.color || (isOwner ? 'bg-ocp' : 'bg-blue-600')} text-white flex items-center justify-center font-bold text-xs shadow-md`;
+            }
+            if (nameEl) nameEl.innerText = user.name;
+            if (roleEl) roleEl.innerText = user.role;
+            if (notifyRole) notifyRole.innerText = `${user.name} (${user.role})`;
+            if (notifyLevel) notifyLevel.innerText = isOwner ? 'Accès Admin Complet' : 'Accès Collaborateur Magasin';
+
+            const navAc = document.getElementById('nav-access-control');
+            const hBtn = document.getElementById('header-pending-requests-btn');
+
+            if (isOwner) {
+                if (navAc) navAc.style.display = 'flex';
+                if (hBtn) hBtn.style.display = 'flex';
+            } else {
+                const navSettings = document.getElementById('nav-settings');
+                if (navSettings) navSettings.style.display = 'none';
+                if (hBtn) hBtn.style.display = 'none';
+                // Si rôle préparateur
+                if (user.role.toLowerCase().includes('prépar')) {
+                    const navRec = document.getElementById('nav-reception');
+                    if (navRec) navRec.style.display = 'none';
+                }
             }
         }
 
@@ -2521,6 +2533,13 @@
         const ALL_ANIM_CLASSES = Object.values(VIEW_ANIMATIONS);
 
         function switchTab(viewId) {
+            // Contrôle d'accès strict anti-contournement : navigation bloquée sans session active
+            const activeUser = getActiveSessionUser();
+            if (!activeUser || activeUser.status !== 'Actif') {
+                openAuthModal('login');
+                return;
+            }
+
             const views = Object.keys(VIEW_ANIMATIONS);
             views.forEach(v => {
                 const el = document.getElementById('view-' + v);
@@ -2799,6 +2818,20 @@
             }
         ];
 
+        function getActiveSessionUser() {
+            const activeUserKey = localStorage.getItem('mc01_active_session') || sessionStorage.getItem('mc01_active_session');
+            if (!activeUserKey) return null;
+            const users = getStoredUsers();
+            return users.find(u => u.key === activeUserKey || (u.email && u.email.toLowerCase() === activeUserKey.toLowerCase())) || null;
+        }
+
+        function isCurrentUserOwner() {
+            const user = getActiveSessionUser();
+            if (!user) return false;
+            return user.isOwner === true || user.key === 'azizi' || user.key === 'raid' || 
+                   (user.email && (user.email.toLowerCase().includes('azizi') || user.email.toLowerCase().includes('elatyqy')));
+        }
+
         function findUserByEmailOrAlias(inputRaw) {
             if (!inputRaw) return null;
             const input = inputRaw.trim().toLowerCase();
@@ -2809,12 +2842,10 @@
             for (const u of users) {
                 const uEmail = (u.email || '').toLowerCase().trim();
                 const uKey = (u.key || '').toLowerCase().trim();
-                const uName = (u.name || '').toLowerCase().trim();
                 const uAliases = Array.isArray(u.aliases) ? u.aliases.map(a => a.toLowerCase().trim()) : [];
 
                 if (uEmail === input || uEmail === clean) return u;
                 if (uKey === input || uKey === clean) return u;
-                if (uName === input) return u;
                 if (uAliases.includes(input) || uAliases.includes(clean)) return u;
             }
 
@@ -2826,14 +2857,6 @@
                 if (dEmail === input || dEmail === clean || dKey === input || dKey === clean || dAliases.includes(input) || dAliases.includes(clean)) {
                     return users.find(u => u.key === def.key) || def;
                 }
-            }
-
-            // 3. Détection intelligente par mot-clé pour yassine et raid
-            if (input.includes('azizi') || input.includes('yassine')) {
-                return users.find(u => u.key === 'azizi') || DEFAULT_USERS.find(u => u.key === 'azizi');
-            }
-            if (input.includes('raid') || input.includes('elatyqy') || input.includes('el atyqy')) {
-                return users.find(u => u.key === 'raid') || DEFAULT_USERS.find(u => u.key === 'raid');
             }
 
             return null;
@@ -2974,20 +2997,30 @@
                 return;
             }
 
-            // 2. Vérification de session persistante (localStorage en priorité, fallback sessionStorage)
+            // 2. Vérification de session persistante (accès infini jusqu'à intervention des Responsables)
             const activeUserKey = localStorage.getItem('mc01_active_session') || sessionStorage.getItem('mc01_active_session');
-            if (!activeUserKey) {
-                // VERROUILLAGE STRICT : Aucun accès au dashboard sans authentification préalable
+            const users = getStoredUsers();
+            const activeUser = users.find(u => (u.key === activeUserKey || (u.email && u.email.toLowerCase() === (activeUserKey || '').toLowerCase())) && u.status === 'Actif');
+
+            if (!activeUserKey || !activeUser) {
+                // AUCUNE SESSION VALIDE OU COMPTE RÉVOQUÉ PAR LES RESPONSABLES PROPRIÉTAIRES : VERROUILLAGE TOTAL
+                if (activeUserKey && !activeUser) {
+                    localStorage.removeItem('mc01_active_session');
+                    sessionStorage.removeItem('mc01_active_session');
+                    showToast('Accès Interrompu', 'Votre accès a été révoqué ou désactivé par les Responsables Magasin Propriétaires (Yassine AZIZI & Mohamed Raid EL ATYQY).', 'error');
+                }
+                document.body.classList.add('app-locked');
                 openAuthModal('login');
                 const closeBtn = document.getElementById('auth-modal-close-btn');
                 if (closeBtn) closeBtn.classList.add('hidden'); // Empêcher la fermeture sans connexion
             } else {
-                // Session active persistante : restaurer l'état sans afficher la modale
-                localStorage.setItem('mc01_active_session', activeUserKey);
-                sessionStorage.setItem('mc01_active_session', activeUserKey);
-                changeActiveUser(activeUserKey);
+                // ACCÈS INFINI CONFIRMÉ : Session valide non révoquée, ouverture transparente de l'application
+                document.body.classList.remove('app-locked');
+                localStorage.setItem('mc01_active_session', activeUser.key);
+                sessionStorage.setItem('mc01_active_session', activeUser.key);
+                changeActiveUser(activeUser.key);
                 const switcher = document.getElementById('profile-switcher');
-                if (switcher) switcher.value = activeUserKey;
+                if (switcher) switcher.value = activeUser.key;
                 const closeBtn = document.getElementById('auth-modal-close-btn');
                 if (closeBtn) closeBtn.classList.remove('hidden');
                 const modal = document.getElementById('auth-gate-modal');
@@ -3001,6 +3034,7 @@
         function logoutSession() {
             localStorage.removeItem('mc01_active_session');
             sessionStorage.removeItem('mc01_active_session');
+            document.body.classList.add('app-locked');
             showToast('Déconnexion Réussie', 'Votre session a été fermée avec succès. L\'application est verrouillée.', 'warning');
             openAuthModal('login');
             const closeBtn = document.getElementById('auth-modal-close-btn');
@@ -3020,6 +3054,7 @@
             // Connecter le Responsable d'office et persister dans localStorage
             localStorage.setItem('mc01_active_session', 'raid');
             sessionStorage.setItem('mc01_active_session', 'raid');
+            document.body.classList.remove('app-locked');
             changeActiveUser('raid');
             closeAuthModal();
 
@@ -3049,6 +3084,8 @@
             const reqs = getStoredRequests();
             const users = getStoredUsers();
             const emailLogs = getStoredEmailLogs();
+            const isOwner = isCurrentUserOwner();
+            const activeUser = getActiveSessionUser();
 
             // Mettre à jour les badges
             const count = reqs.length;
@@ -3113,15 +3150,21 @@
                                 </div>
                             </div>
                             <div class="flex flex-col sm:flex-row items-end sm:items-center gap-2 flex-shrink-0">
-                                <a href="${mailtoOwner}" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-semibold text-xs rounded-xl flex items-center gap-1 transition" title="Ouvrir dans votre client de messagerie pour envoyer un email d'accord officiel">
-                                    <i data-lucide="mail" class="w-3.5 h-3.5"></i> Accord par Email
-                                </a>
-                                <button onclick="acceptAccessRequest('${r.id}')" class="px-3.5 py-1.5 bg-ocp hover:bg-ocp/90 text-white font-bold text-xs rounded-xl shadow-md shadow-ocp/20 flex items-center gap-1.5 transition">
-                                    <i data-lucide="check" class="w-3.5 h-3.5"></i> Accepter l'accès
-                                </button>
-                                <button onclick="rejectAccessRequest('${r.id}')" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-semibold text-xs rounded-xl transition">
-                                    <i data-lucide="x" class="w-3.5 h-3.5"></i> Refuser
-                                </button>
+                                ${isOwner ? `
+                                    <a href="${mailtoOwner}" class="px-3 py-1.5 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 font-semibold text-xs rounded-xl flex items-center gap-1 transition" title="Ouvrir dans votre client de messagerie pour envoyer un email d'accord officiel">
+                                        <i data-lucide="mail" class="w-3.5 h-3.5"></i> Accord par Email
+                                    </a>
+                                    <button onclick="acceptAccessRequest('${r.id}')" class="px-3.5 py-1.5 bg-ocp hover:bg-ocp/90 text-white font-bold text-xs rounded-xl shadow-md shadow-ocp/20 flex items-center gap-1.5 transition">
+                                        <i data-lucide="check" class="w-3.5 h-3.5"></i> Accepter l'accès
+                                    </button>
+                                    <button onclick="rejectAccessRequest('${r.id}')" class="px-3 py-1.5 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 text-red-700 dark:text-red-300 font-semibold text-xs rounded-xl transition">
+                                        <i data-lucide="x" class="w-3.5 h-3.5"></i> Refuser
+                                    </button>
+                                ` : `
+                                    <span class="text-[11px] text-amber-500 font-semibold flex items-center gap-1 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/20">
+                                        <i data-lucide="lock" class="w-3.5 h-3.5"></i> Validation réservée à Yassine & Raid
+                                    </span>
+                                `}
                             </div>
                         </div>
                     `;
@@ -3165,7 +3208,10 @@
                             <div class="w-7 h-7 rounded-lg ${u.color || 'bg-ocp'} text-white font-bold flex items-center justify-center text-[10px]">
                                 ${u.badge || u.name.slice(0,2).toUpperCase()}
                             </div>
-                            <span>${u.name} ${u.isOwner ? '👑' : ''}</span>
+                            <div>
+                                <p class="text-xs font-semibold text-gray-900 dark:text-white">${u.name} ${u.isOwner ? '👑' : ''}</p>
+                                ${u.approvedBy ? `<p class="text-[10px] text-emerald-500">Validé par ${u.approvedBy}</p>` : ''}
+                            </div>
                         </td>
                         <td class="py-3 px-3 font-mono text-[11px]">${u.email}</td>
                         <td class="py-3 px-3">
@@ -3175,19 +3221,29 @@
                         </td>
                         <td class="py-3 px-3">
                             <span class="text-[10px] font-bold bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 px-2 py-0.5 rounded-full flex items-center gap-1 w-fit">
-                                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> ${u.status || 'Actif'}
+                                <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> ${u.status || 'Actif'} (Infini)
                             </span>
                         </td>
                         <td class="py-3 px-3 text-[11px] text-gray-400">${u.lastLogin || '04/10/2026'}</td>
                         <td class="py-3 px-3 text-right">
-                            ${u.isOwner ? '<span class="text-[10px] text-gray-400 italic">Propriétaire Inaliénable</span>' : `
-                                <button onclick="revokeUser('${u.key || u.email}')" class="text-red-500 hover:text-red-700 text-[11px] font-semibold">
-                                    Révoquer
+                            ${u.isOwner ? '<span class="text-[10px] text-gray-400 italic">Propriétaire Inaliénable</span>' : (isOwner ? `
+                                <button onclick="revokeUser('${u.key || u.email}')" class="text-red-500 hover:text-red-700 text-[11px] font-semibold transition hover:underline">
+                                    Révoquer l'accès
                                 </button>
-                            `}
+                            ` : '<span class="text-[10px] text-gray-500 italic">Verrouillé</span>')}
                         </td>
                     </tr>
                 `).join('');
+            }
+
+            // Protéger le bloc direct add user si non propriétaire
+            const directAddBlock = document.getElementById('direct-add-user-card');
+            if (directAddBlock) {
+                if (!isOwner) {
+                    directAddBlock.classList.add('opacity-50', 'pointer-events-none');
+                } else {
+                    directAddBlock.classList.remove('opacity-50', 'pointer-events-none');
+                }
             }
 
             // Synchroniser le sélecteur de profils du header
@@ -3211,6 +3267,11 @@
         // =========================================================================
 
         function acceptAccessRequest(reqId, silent = false) {
+            if (!isCurrentUserOwner()) {
+                showToast('Accès Restreint', 'Seuls les Responsables Magasin Propriétaires (Yassine AZIZI & Mohamed Raid EL ATYQY) peuvent valider une demande d\'accès.', 'error');
+                return;
+            }
+
             let reqs = getStoredRequests();
             let users = getStoredUsers();
             let emailLogs = getStoredEmailLogs();
@@ -3219,6 +3280,8 @@
             if (reqIndex === -1) return;
 
             const r = reqs[reqIndex];
+            const activeAdmin = getActiveSessionUser();
+            const validatorName = activeAdmin ? activeAdmin.name : 'Responsable Magasin Propriétaire';
             const newKey = 'user_' + Date.now();
 
             const newUser = {
@@ -3226,11 +3289,14 @@
                 name: r.name,
                 email: r.email,
                 role: r.role,
+                matricule: r.matricule || '',
                 badge: r.name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase(),
                 color: 'bg-emerald-600',
                 isOwner: false,
                 status: 'Actif',
-                lastLogin: 'Tout juste accordé'
+                approvedBy: validatorName,
+                approvedAt: new Date().toLocaleDateString('fr-FR') + ' ' + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}),
+                lastLogin: 'Accordé — Accès infini actif'
             };
 
             users.push(newUser);
@@ -3245,11 +3311,12 @@
                 timestamp: timeStr,
                 type: 'Accord Officiel d\'Accès',
                 to: r.email,
-                subject: `[ACCORD ACCORDÉ] Votre accès au Magasin Central MC01 a été validé par le Responsable Propriétaire`,
+                subject: `[ACCORD VALIDÉ] Votre accès au Magasin Central MC01 a été approuvé par ${validatorName}`,
                 status: 'Délivré',
                 applicantName: r.name,
                 applicantEmail: r.email,
                 role: r.role,
+                validator: validatorName,
                 reqId: reqId
             };
             emailLogs.unshift(newLog);
@@ -3261,20 +3328,27 @@
             renderAccessControlView();
 
             if (!silent) {
-                showToast('Accès Accordé & Email Envoyé !', `L'accord formel a été accordé à ${r.name}. La notification d'activation a été expédiée à ${r.email}.`, 'success');
+                showToast('Accès Accordé & Email Notifié !', `L'accès infini a été validé par ${validatorName} pour ${r.name} (${r.email}).`, 'success');
             }
         }
 
         function rejectAccessRequest(reqId) {
+            if (!isCurrentUserOwner()) {
+                showToast('Accès Restreint', 'Seuls les Responsables Magasin Propriétaires (Yassine AZIZI & Mohamed Raid EL ATYQY) peuvent refuser une demande.', 'error');
+                return;
+            }
+
             let reqs = getStoredRequests();
             const r = reqs.find(item => item.id === reqId);
             if (!r) return;
 
-            if (confirm(`Êtes-vous sûr de vouloir refuser la demande d'accès de ${r.name} ?`)) {
+            const activeAdmin = getActiveSessionUser();
+            const validatorName = activeAdmin ? activeAdmin.name : 'Responsable Magasin';
+
+            if (confirm(`Êtes-vous sûr de vouloir refuser la demande d'accès de ${r.name} (${r.email}) ?`)) {
                 reqs = reqs.filter(item => item.id !== reqId);
                 saveStoredRequests(reqs);
 
-                // Enregistrer log email de refus
                 let emailLogs = getStoredEmailLogs();
                 const now = new Date();
                 emailLogs.unshift({
@@ -3286,17 +3360,23 @@
                     status: 'Délivré',
                     applicantName: r.name,
                     applicantEmail: r.email,
-                    role: r.role
+                    role: r.role,
+                    rejectedBy: validatorName
                 });
                 saveStoredEmailLogs(emailLogs);
 
                 renderAccessControlView();
-                showToast('Demande Refusée', `La demande d'accès de ${r.name} a été rejetée et une notification par email a été envoyée.`, 'warning');
+                showToast('Demande Refusée', `La demande d'accès de ${r.name} a été refusée par ${validatorName}. Notification email expédiée.`, 'warning');
             }
         }
 
         function handleDirectAddUser(e) {
             e.preventDefault();
+            if (!isCurrentUserOwner()) {
+                showToast('Accès Restreint', 'Seuls les Responsables Magasin Propriétaires peuvent ajouter directement un utilisateur.', 'error');
+                return;
+            }
+
             const name = document.getElementById('add-name').value.trim();
             const email = document.getElementById('add-email').value.trim();
             const role = document.getElementById('add-role').value;
@@ -3310,17 +3390,22 @@
                 return;
             }
 
+            const activeAdmin = getActiveSessionUser();
+            const validatorName = activeAdmin ? activeAdmin.name : 'Responsable Magasin';
             const newKey = 'user_' + Date.now();
             const newUser = {
                 key: newKey,
                 name: name,
                 email: email,
                 role: role,
+                matricule: matricule,
                 badge: name.split(' ').map(n=>n[0]).slice(0,2).join('').toUpperCase(),
                 color: role.includes('Propriétaire') ? 'bg-ocp' : 'bg-blue-600',
                 isOwner: role.includes('Propriétaire'),
                 status: 'Actif',
-                lastLogin: 'Créé directement'
+                approvedBy: validatorName,
+                approvedAt: new Date().toLocaleDateString('fr-FR') + ' ' + new Date().toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}),
+                lastLogin: 'Créé directement — Accès infini actif'
             };
 
             users.push(newUser);
@@ -3338,7 +3423,8 @@
                 status: 'Délivré',
                 applicantName: name,
                 applicantEmail: email,
-                role: role
+                role: role,
+                validator: validatorName
             });
             saveStoredEmailLogs(emailLogs);
 
@@ -3347,19 +3433,48 @@
             document.getElementById('add-matricule').value = '';
 
             renderAccessControlView();
-            showToast('Collaborateur Ajouté & Notifié !', `L'accès a été accordé immédiatement à ${name}. L'email d'activation a été expédié à ${email}.`, 'success');
+            showToast('Collaborateur Ajouté & Notifié !', `L'accès infini a été accordé immédiatement à ${name} par ${validatorName}. L'email d'activation a été expédié à ${email}.`, 'success');
         }
 
         function revokeUser(userKey) {
+            if (!isCurrentUserOwner()) {
+                showToast('Accès Restreint', 'Seuls les Responsables Magasin Propriétaires peuvent révoquer un utilisateur.', 'error');
+                return;
+            }
+
             let users = getStoredUsers();
             const target = users.find(u => u.key === userKey || u.email === userKey);
-            if (!target || target.isOwner) return;
+            if (!target) return;
+            if (target.isOwner || target.key === 'azizi' || target.key === 'raid') {
+                showToast('Action Impossible', 'Impossible de révoquer un Responsable Magasin Propriétaire.', 'warning');
+                return;
+            }
 
-            if (confirm(`Voulez-vous révoquer l'accès de ${target.name} ?`)) {
+            const activeAdmin = getActiveSessionUser();
+            const validatorName = activeAdmin ? activeAdmin.name : 'Responsable Magasin';
+
+            if (confirm(`Voulez-vous révoquer l'accès de ${target.name} (${target.email}) ? Dès confirmation, son accès infini sera interrompu et l'application sera verrouillée pour lui.`)) {
                 users = users.filter(u => u.key !== target.key && u.email !== target.email);
                 saveStoredUsers(users);
+
+                let emailLogs = getStoredEmailLogs();
+                const now = new Date();
+                emailLogs.unshift({
+                    id: 'EML-' + Math.floor(100 + Math.random() * 900),
+                    timestamp: now.toLocaleDateString('fr-FR') + ' ' + now.toLocaleTimeString('fr-FR', {hour: '2-digit', minute: '2-digit'}),
+                    type: 'Révocation d\'Accès',
+                    to: target.email,
+                    subject: `[NOTIFICATION] Révocation de vos accès Magasin MC01`,
+                    status: 'Délivré',
+                    applicantName: target.name,
+                    applicantEmail: target.email,
+                    role: target.role,
+                    revokedBy: validatorName
+                });
+                saveStoredEmailLogs(emailLogs);
+
                 renderAccessControlView();
-                showToast('Accès Révoqué', `Le compte de ${target.name} a été désactivé.`, 'warning');
+                showToast('Accès Révoqué', `Le compte de ${target.name} a été révoqué par ${validatorName}. Accès interrompu immédiatement.`, 'warning');
             }
         }
 
@@ -3379,9 +3494,9 @@
 
         function closeAuthModal() {
             // Ne fermer que si une session valide est active
-            const activeUserKey = localStorage.getItem('mc01_active_session') || sessionStorage.getItem('mc01_active_session');
-            if (!activeUserKey) {
-                showToast('Authentification Obligatoire', 'Veuillez renseigner votre email ou identifiant professionnel pour accéder au magasin.', 'warning');
+            const activeUser = getActiveSessionUser();
+            if (!activeUser || activeUser.status !== 'Actif') {
+                showToast('Authentification Obligatoire', 'Veuillez saisir votre adresse email professionnelle autorisée pour accéder au magasin.', 'warning');
                 return;
             }
             const modal = document.getElementById('auth-gate-modal');
@@ -3389,6 +3504,7 @@
                 modal.classList.add('hidden');
                 modal.classList.remove('flex');
             }
+            document.body.classList.remove('app-locked');
         }
 
         function switchAuthTab(tab) {
@@ -3412,44 +3528,97 @@
             }
         }
 
+        function switchToRegisterWithEmail(email) {
+            switchAuthTab('register');
+            const regEmail = document.getElementById('reg-email');
+            if (regEmail && email) {
+                regEmail.value = email;
+            }
+        }
+
         function handleLoginSubmit(e) {
             e.preventDefault();
-            const inputVal = (document.getElementById('login-email').value || '').trim();
+            const inputEl = document.getElementById('login-email');
+            const inputVal = (inputEl.value || '').trim();
+            const feedbackEl = document.getElementById('login-status-feedback');
+            if (feedbackEl) {
+                feedbackEl.classList.add('hidden');
+                feedbackEl.innerHTML = '';
+            }
+
+            if (!inputVal || !inputVal.includes('@')) {
+                if (feedbackEl) {
+                    feedbackEl.className = "p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl text-amber-500 text-xs flex items-center gap-2";
+                    feedbackEl.innerHTML = `<i data-lucide="alert-triangle" class="w-4 h-4 flex-shrink-0"></i><span>Veuillez renseigner votre <strong>adresse email professionnelle complète</strong> (ex: prenom.nom@ocpgroup.ma).</span>`;
+                    feedbackEl.classList.remove('hidden');
+                    lucide.createIcons();
+                } else {
+                    showToast('Format Email Requis', 'Veuillez saisir une adresse email professionnelle valide.', 'warning');
+                }
+                return;
+            }
+
             const user = findUserByEmailOrAlias(inputVal);
 
-            if (user) {
-                // CONNEXION RÉUSSIE & PERSISTANTE DANS LE NAVIGATEUR (SURVIT AUX ACTUALISATIONS F5)
+            if (user && user.status === 'Actif') {
+                // CONNEXION RÉUSSIE & PERSISTANTE : ACCÈS INFINI JUSQU'À RÉVOCATION
                 localStorage.setItem('mc01_active_session', user.key);
                 sessionStorage.setItem('mc01_active_session', user.key);
+                document.body.classList.remove('app-locked');
                 changeActiveUser(user.key);
                 const switcher = document.getElementById('profile-switcher');
                 if (switcher) switcher.value = user.key;
                 const closeBtn = document.getElementById('auth-modal-close-btn');
                 if (closeBtn) closeBtn.classList.remove('hidden');
                 closeAuthModal();
-                showToast('Connexion Réussie', `Bienvenue ${user.name} (${user.role}) — Session persistante active`, 'success');
+                showToast('Connexion Réussie', `Bienvenue ${user.name} (${user.role}) — Accès infini activé`, 'success');
+            } else if (user && user.status !== 'Actif') {
+                if (feedbackEl) {
+                    feedbackEl.className = "p-3.5 bg-red-500/15 border border-red-500/30 rounded-xl text-red-400 text-xs flex items-start gap-2.5";
+                    feedbackEl.innerHTML = `<i data-lucide="shield-x" class="w-5 h-5 flex-shrink-0 text-red-500 mt-0.5"></i><div><strong>Accès révoqué ou désactivé :</strong> Ce compte a été suspendu par les Responsables Magasin Propriétaires (Yassine AZIZI & Mohamed Raid EL ATYQY).</div>`;
+                    feedbackEl.classList.remove('hidden');
+                    lucide.createIcons();
+                }
             } else {
                 // Vérifier si une demande est en attente
                 const reqs = getStoredRequests();
                 const pending = reqs.find(r => (r.email || '').toLowerCase() === inputVal.toLowerCase());
                 if (pending) {
-                    showToast('Demande En Cours d\'Examen', 'Votre demande d\'accès est en cours de validation par les Responsables Magasin Propriétaires (EL ATYQY mohamed raid & yassine AZIZI).', 'warning');
+                    if (feedbackEl) {
+                        feedbackEl.className = "p-3.5 bg-amber-500/15 border border-amber-500/30 rounded-xl text-amber-500 text-xs flex items-start gap-2.5";
+                        feedbackEl.innerHTML = `
+                            <i data-lucide="clock" class="w-5 h-5 flex-shrink-0 text-amber-500 mt-0.5"></i>
+                            <div class="leading-relaxed">
+                                <strong>Demande en cours d'examen :</strong> Votre demande d'accès (${pending.role}) est enregistrée depuis le ${pending.date}. Elle doit être acceptée par les Responsables Magasin Propriétaires (<strong>Yassine AZIZI & Mohamed Raid EL ATYQY</strong>) pour être déverrouillée.
+                            </div>
+                        `;
+                        feedbackEl.classList.remove('hidden');
+                        lucide.createIcons();
+                    } else {
+                        showToast('Demande En Cours d\'Examen', 'Votre demande d\'accès est en cours de validation par Yassine AZIZI et Mohamed Raid EL ATYQY.', 'warning');
+                    }
                 } else {
-                    showToast('Accès Non Autorisé', 'Identifiant ou email non reconnu. Veuillez vérifier votre saisie ou remplir une demande d\'inscription.', 'error');
+                    // Nouvel utilisateur sans inscription préalable : accès verrouillé, inscription obligatoire
+                    if (feedbackEl) {
+                        feedbackEl.className = "p-3.5 bg-red-500/10 border border-red-500/30 rounded-2xl text-red-400 text-xs space-y-2.5";
+                        feedbackEl.innerHTML = `
+                            <div class="flex items-start gap-2.5">
+                                <i data-lucide="shield-alert" class="w-5 h-5 flex-shrink-0 text-red-500 mt-0.5"></i>
+                                <div class="text-[11px] leading-relaxed">
+                                    <strong>Accès non autorisé :</strong> Aucun compte actif associé à cet email. L'accès spontané est strictement interdit : l'inscription est obligatoire et doit être validée par <strong>Yassine AZIZI et Mohamed Raid EL ATYQY</strong>.
+                                </div>
+                            </div>
+                            <button type="button" onclick="switchToRegisterWithEmail('${inputVal.replace(/'/g, "\\'")}')" class="w-full py-2 bg-ocp hover:bg-ocp/90 text-white font-bold rounded-xl text-xs transition flex items-center justify-center gap-1.5 shadow-md">
+                                <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Remplir ma Demande d'Inscription
+                            </button>
+                        `;
+                        feedbackEl.classList.remove('hidden');
+                        lucide.createIcons();
+                    } else {
+                        showToast('Inscription Obligatoire', 'Accès interdit sans inscription préalable validée par les Responsables.', 'error');
+                    }
                 }
             }
-        }
-
-        function quickLogin(key) {
-            localStorage.setItem('mc01_active_session', key);
-            sessionStorage.setItem('mc01_active_session', key);
-            changeActiveUser(key);
-            const switcher = document.getElementById('profile-switcher');
-            if (switcher) switcher.value = key;
-            const closeBtn = document.getElementById('auth-modal-close-btn');
-            if (closeBtn) closeBtn.classList.remove('hidden');
-            closeAuthModal();
-            showToast('Connexion Réussie', `Session ouverte pour le profil ${key.toUpperCase()}`, 'success');
         }
 
         function handleRegisterSubmit(e) {
@@ -3466,15 +3635,23 @@
             let users = getStoredUsers();
             let emailLogs = getStoredEmailLogs();
 
-            if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) {
-                showToast('Compte Déjà Actif', 'Cet email possède déjà un accès autorisé. Vous pouvez vous connecter directement.', 'warning');
+            if (users.some(u => u.email.toLowerCase() === email.toLowerCase() && u.status === 'Actif')) {
+                showToast('Compte Déjà Actif', 'Cet email possède déjà un accès autorisé permanent. Vous pouvez vous connecter directement.', 'warning');
                 switchAuthTab('login');
                 document.getElementById('login-email').value = email;
                 return;
             }
 
             if (reqs.some(r => r.email.toLowerCase() === email.toLowerCase())) {
-                showToast('Demande Déjà Enregistrée', 'Votre demande est déjà en attente d\'accord du Responsable Propriétaire.', 'warning');
+                showToast('Demande Déjà Enregistrée', 'Votre demande est déjà en attente d\'accord des Responsables Magasin Propriétaires (Yassine AZIZI & Mohamed Raid EL ATYQY).', 'warning');
+                switchAuthTab('login');
+                const feedbackEl = document.getElementById('login-status-feedback');
+                if (feedbackEl) {
+                    feedbackEl.className = "p-3.5 bg-amber-500/15 border border-amber-500/30 rounded-xl text-amber-500 text-xs flex items-start gap-2.5";
+                    feedbackEl.innerHTML = `<i data-lucide="clock" class="w-5 h-5 flex-shrink-0 text-amber-500 mt-0.5"></i><div><strong>Demande en cours d'examen :</strong> Votre demande pour ${email} est déjà enregistrée. Elle doit être acceptée par Yassine AZIZI et Mohamed Raid EL ATYQY.</div>`;
+                    feedbackEl.classList.remove('hidden');
+                    lucide.createIcons();
+                }
                 return;
             }
 
@@ -3526,11 +3703,17 @@
 
             saveStoredEmailLogs(emailLogs);
 
-            document.getElementById('register-form').classList.add('hidden');
-            document.getElementById('register-success-box').classList.remove('hidden');
-
+            // Mettre à jour l'interface des badges si un admin est sur la page
             renderAccessControlView();
-            showToast('Demande Enregistrée & Notifiée', `Emails d'accusé de réception et de notification aux Responsables Propriétaires expédiés avec succès !`, 'success');
+
+            // Afficher la boîte de confirmation dans la modale
+            document.getElementById('register-form').classList.add('hidden');
+            const successBox = document.getElementById('register-success-box');
+            if (successBox) {
+                successBox.classList.remove('hidden');
+            }
+
+            showToast('Demande Transmise', `Votre demande d'accès a été transmise aux Responsables Magasin (Yassine AZIZI & Mohamed Raid EL ATYQY).`, 'success');
             lucide.createIcons();
         }
 
@@ -8917,7 +9100,7 @@
     <!-- =========================================================================
          PORTAIL D'ACCÈS SÉCURISÉ & VERROU D'ACCÈS STRICT OBLIGATOIRE
          ========================================================================= -->
-    <div id="auth-gate-modal" class="fixed inset-0 z-50 bg-[#050D17]/90 backdrop-blur-xl hidden items-center justify-center p-4 transition-all duration-300">
+    <div id="auth-gate-modal" class="fixed inset-0 z-50 bg-[#050D17]/95 backdrop-blur-2xl flex items-center justify-center p-4 transition-all duration-300">
         <div class="bg-white dark:bg-[#0D2137] border border-gray-200 dark:border-gray-700/80 rounded-3xl shadow-2xl max-w-lg w-full p-6 md:p-8 space-y-6 text-gray-900 dark:text-gray-100 card-interactive relative max-h-[92vh] overflow-y-auto custom-scrollbar">
             
             <!-- BOUTON FERMER (Actif uniquement si session active) -->
@@ -8940,7 +9123,7 @@
             <!-- ONGLETS : CONNEXION vs DEMANDE D'INSCRIPTION PAR EMAIL -->
             <div class="flex bg-gray-100 dark:bg-[#050D17] p-1 rounded-2xl border border-gray-200 dark:border-gray-800 text-xs font-bold">
                 <button type="button" onclick="switchAuthTab('login')" id="tab-btn-login" class="flex-1 py-2 rounded-xl bg-white dark:bg-[#0D2137] text-ocp-light shadow-sm transition">
-                    <i data-lucide="log-in" class="w-3.5 h-3.5 inline mr-1"></i> Connexion
+                    <i data-lucide="log-in" class="w-3.5 h-3.5 inline mr-1"></i> Connexion par Email
                 </button>
                 <button type="button" onclick="switchAuthTab('register')" id="tab-btn-register" class="flex-1 py-2 rounded-xl text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition">
                     <i data-lucide="mail-plus" class="w-3.5 h-3.5 inline mr-1"></i> Demande d'Inscription
@@ -8951,25 +9134,28 @@
             <div id="auth-form-login" class="space-y-4">
                 <form onsubmit="handleLoginSubmit(event)" class="space-y-4 text-xs">
                     <div>
-                        <label class="block text-gray-700 dark:text-gray-300 font-semibold mb-1.5">Adresse Email Professionnelle ou Identifiant *</label>
+                        <label class="block text-gray-700 dark:text-gray-300 font-semibold mb-1.5">Adresse Email Professionnelle *</label>
                         <div class="relative">
                             <span class="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-gray-400">
-                                <i data-lucide="user" class="w-4 h-4"></i>
+                                <i data-lucide="mail" class="w-4 h-4"></i>
                             </span>
-                            <input type="text" id="login-email" required placeholder="nom@ocpgroup.ma ou identifiant" autocomplete="username" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-white outline-none focus:border-ocp focus:ring-2 focus:ring-ocp/20 transition">
+                            <input type="email" id="login-email" required placeholder="nom.prenom@ocpgroup.ma ou email autorisé" autocomplete="email" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3 text-sm text-gray-900 dark:text-white outline-none focus:border-ocp focus:ring-2 focus:ring-ocp/20 transition">
                         </div>
                     </div>
+
+                    <!-- MESSAGE DE FEEDBACK DYNAMIQUE (Erreur, En attente ou Inscription obligatoire) -->
+                    <div id="login-status-feedback" class="hidden"></div>
 
                     <button type="submit" class="w-full py-3 bg-ocp hover:bg-ocp/90 text-white font-bold rounded-xl shadow-lg shadow-ocp/25 flex items-center justify-center gap-2 transition text-sm">
                         <i data-lucide="shield-check" class="w-4 h-4"></i> Déverrouiller & Accéder à l'Application
                     </button>
                 </form>
 
-                <!-- BANDEAU INFORMATION SESSION PERSISTANTE -->
+                <!-- BANDEAU INFORMATION ACCÈS INFINI -->
                 <div class="p-3.5 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-start gap-2.5 text-blue-600 dark:text-blue-400 text-[11px] leading-relaxed">
                     <i data-lucide="sparkles" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
                     <div>
-                        <strong>Session permanente activée :</strong> Une fois connecté, vous restez connecté sans interruption lors de l'actualisation de la page (F5). La session reste ouverte jusqu'à votre déconnexion volontaire.
+                        <strong>Accès infini garanti :</strong> L'accès est strictement nominatif par email. Une fois validé par les Responsables Magasin Propriétaires (<strong>Yassine AZIZI & Mohamed Raid EL ATYQY</strong>), votre session reste active en continu (actualisation F5 sans déconnexion), jusqu'à intervention ou révocation.
                     </div>
                 </div>
             </div>
@@ -8980,7 +9166,7 @@
                 <div class="p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-start gap-2.5 text-amber-600 dark:text-amber-400">
                     <i data-lucide="shield-alert" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
                     <div class="text-[11px] leading-relaxed">
-                        <strong>Protocole d'inscription WMS :</strong> Renseignez vos coordonnées. Une notification est automatiquement transmise aux Responsables Magasin Propriétaires pour accord formel préalable par email.
+                        <strong>Protocole d'inscription WMS obligatoire :</strong> Aucun accès spontané sans inscription. Toute nouvelle demande d'accès doit être obligatoirement examinée et acceptée par les Responsables Magasin Propriétaires : <strong>Yassine AZIZI & Mohamed Raid EL ATYQY</strong>.
                     </div>
                 </div>
 
