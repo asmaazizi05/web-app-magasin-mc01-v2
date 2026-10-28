@@ -556,7 +556,7 @@
                 <div class="flex items-center gap-4 flex-1 max-w-xl">
                     <div class="relative w-full">
                         <i data-lucide="search" class="w-4 h-4 absolute left-3 top-2.5 text-gray-400"></i>
-                        <input type="text" placeholder="Rechercher code article, désignation, bon, zone..." class="w-full pl-9 pr-4 py-1.5 bg-gray-100 dark:bg-[#0D2137]/60 border border-gray-300 dark:border-gray-700/60 rounded-xl text-xs text-gray-900 dark:text-white focus:ring-2 focus:ring-ocp outline-none transition placeholder-gray-500 dark:placeholder-gray-400">
+                        <input type="text" id="global-header-search" onkeyup="handleGlobalHeaderSearch(event)" placeholder="Rechercher code article, désignation, bon, zone..." class="w-full pl-9 pr-4 py-1.5 bg-gray-100 dark:bg-[#0D2137]/60 border border-gray-300 dark:border-gray-700/60 rounded-xl text-xs text-gray-900 dark:text-white focus:ring-2 focus:ring-ocp outline-none transition placeholder-gray-500 dark:placeholder-gray-400">
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
@@ -1138,15 +1138,21 @@
                     </div>
 
                     <div class="bg-white dark:bg-[#0D2137] p-3 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-wrap items-center justify-between gap-3 card-interactive">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1">
-                                <i data-lucide="filter" class="w-3.5 h-3.5 text-ocp-light"></i> Origine :
-                            </span>
-                            <div class="flex items-center gap-1.5 bg-gray-100 dark:bg-[#050D17] p-1 rounded-xl border border-gray-300 dark:border-gray-700">
-                                <button onclick="filterStock('all')" id="filter-btn-all" class="px-3 py-1 text-xs font-bold rounded-lg bg-ocp text-white shadow transition">Tous</button>
-                                <button onclick="filterStock('jesa')" id="filter-btn-jesa" class="px-3 py-1 text-xs font-medium rounded-lg text-gray-600 dark:text-gray-300 hover:text-white transition">JESA</button>
-                                <button onclick="filterStock('ocp')" id="filter-btn-ocp" class="px-3 py-1 text-xs font-medium rounded-lg text-gray-600 dark:text-gray-300 hover:text-white transition">OCP</button>
-                                <button onclick="filterStock('cession')" id="filter-btn-cession" class="px-3 py-1 text-xs font-medium rounded-lg text-gray-600 dark:text-gray-300 hover:text-white transition">Cession Intra-Site OCP</button>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1">
+                                    <i data-lucide="filter" class="w-3.5 h-3.5 text-ocp-light"></i> Origine :
+                                </span>
+                                <div class="flex items-center gap-1.5 bg-gray-100 dark:bg-[#050D17] p-1 rounded-xl border border-gray-300 dark:border-gray-700">
+                                    <button onclick="filterStock('all')" id="filter-btn-all" class="px-3 py-1 text-xs font-bold rounded-lg bg-ocp text-white shadow transition">Tous</button>
+                                    <button onclick="filterStock('jesa')" id="filter-btn-jesa" class="px-3 py-1 text-xs font-medium rounded-lg text-gray-600 dark:text-gray-300 hover:text-white transition">JESA</button>
+                                    <button onclick="filterStock('ocp')" id="filter-btn-ocp" class="px-3 py-1 text-xs font-medium rounded-lg text-gray-600 dark:text-gray-300 hover:text-white transition">OCP</button>
+                                    <button onclick="filterStock('cession')" id="filter-btn-cession" class="px-3 py-1 text-xs font-medium rounded-lg text-gray-600 dark:text-gray-300 hover:text-white transition">Cession Intra-Site OCP</button>
+                                </div>
+                            </div>
+                            <div class="relative">
+                                <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-2 text-gray-400"></i>
+                                <input type="text" id="stock-search-input" onkeyup="filterStockBySearch()" placeholder="Filtrer par code, désignation..." class="pl-8 pr-3 py-1.5 bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl text-xs text-gray-900 dark:text-white outline-none focus:border-ocp transition w-56">
                             </div>
                         </div>
 
@@ -1168,6 +1174,7 @@
                                         <th class="p-3">Stock Min</th>
                                         <th class="p-3">Prix Unitaire (CMP)</th>
                                         <th class="p-3">Statut Alerte</th>
+                                        <th class="p-3 text-right">Actions Métier</th>
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-200 dark:divide-gray-800" id="stock-table-body">
@@ -1176,50 +1183,75 @@
                                         <td class="p-3 font-bold text-gray-900 dark:text-white">Vanne à papillon DN100</td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300 font-bold rounded">Magasin OCP</span></td>
                                         <td class="p-3 text-gray-600 dark:text-gray-300">Rayonnage R1 - Niv 2</td>
-                                        <td class="p-3 font-extrabold text-red-600 dark:text-red-400">12 units</td>
+                                        <td class="p-3 font-extrabold text-red-600 dark:text-red-400" id="qty-ART-1002">12 units</td>
                                         <td class="p-3 text-gray-500 dark:text-gray-400 font-bold">25 units</td>
                                         <td class="p-3 text-gray-600 dark:text-gray-300">1 450 DH</td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-red-100 dark:bg-red-900/60 text-red-800 dark:text-red-300 rounded-lg font-extrabold flex items-center gap-1 w-fit"><i data-lucide="alert-circle" class="w-3 h-3"></i> ALERTE REAPPRO</span></td>
+                                        <td class="p-3 text-right space-x-1.5 whitespace-nowrap">
+                                            <button onclick="openAdjustStockModal('ART-1002')" class="px-2.5 py-1 bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-400 font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Ajuster la quantité"><i data-lucide="sliders" class="w-3 h-3"></i> Ajuster</button>
+                                            <button onclick="printArticleLabel('ART-1002', 'Vanne à papillon DN100', 'Rayonnage R1 - Niv 2')" class="px-2.5 py-1 bg-ocp/15 hover:bg-ocp/25 text-ocp-light font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Imprimer étiquette QR code"><i data-lucide="qr-code" class="w-3 h-3"></i> Étiquette</button>
+                                            <button onclick="showArticleDetailsModal('ART-1002')" class="px-2.5 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-[#050D17] text-gray-700 dark:text-gray-300 font-bold rounded-lg text-xs transition inline-flex items-center gap-1 border border-gray-300 dark:border-gray-700" title="Voir fiche technique"><i data-lucide="info" class="w-3 h-3"></i> Fiche</button>
+                                        </td>
                                     </tr>
                                     <tr class="stock-row jesa">
                                         <td class="p-3 font-mono text-gray-500 dark:text-gray-400">ART-1001</td>
                                         <td class="p-3 font-bold text-gray-900 dark:text-white">Roulements SKF 6205</td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 font-bold rounded">Projet JESA</span></td>
                                         <td class="p-3 text-gray-600 dark:text-gray-300">Rayonnage R1 - Niv 3</td>
-                                        <td class="p-3 font-bold text-green-600 dark:text-green-400">150 units</td>
+                                        <td class="p-3 font-bold text-green-600 dark:text-green-400" id="qty-ART-1001">150 units</td>
                                         <td class="p-3 text-gray-500 dark:text-gray-400">50 units</td>
                                         <td class="p-3 text-gray-600 dark:text-gray-300">220 DH</td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-lg font-bold">Conforme</span></td>
+                                        <td class="p-3 text-right space-x-1.5 whitespace-nowrap">
+                                            <button onclick="openAdjustStockModal('ART-1001')" class="px-2.5 py-1 bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-400 font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Ajuster la quantité"><i data-lucide="sliders" class="w-3 h-3"></i> Ajuster</button>
+                                            <button onclick="printArticleLabel('ART-1001', 'Roulements SKF 6205', 'Rayonnage R1 - Niv 3')" class="px-2.5 py-1 bg-ocp/15 hover:bg-ocp/25 text-ocp-light font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Imprimer étiquette QR code"><i data-lucide="qr-code" class="w-3 h-3"></i> Étiquette</button>
+                                            <button onclick="showArticleDetailsModal('ART-1001')" class="px-2.5 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-[#050D17] text-gray-700 dark:text-gray-300 font-bold rounded-lg text-xs transition inline-flex items-center gap-1 border border-gray-300 dark:border-gray-700" title="Voir fiche technique"><i data-lucide="info" class="w-3 h-3"></i> Fiche</button>
+                                        </td>
                                     </tr>
                                     <tr class="stock-row cession">
                                         <td class="p-3 font-mono text-gray-500 dark:text-gray-400">ART-1003</td>
                                         <td class="p-3 font-bold text-gray-900 dark:text-white">Clé Dynamométrique 1/2"</td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-300 font-bold rounded flex items-center gap-1 w-fit"><i data-lucide="arrow-right-left" class="w-3 h-3"></i> Cession OCP Jorf</span></td>
                                         <td class="p-3 text-gray-600 dark:text-gray-300">Rayonnage R6 - Niv 3</td>
-                                        <td class="p-3 font-bold text-green-600 dark:text-green-400">5 units</td>
+                                        <td class="p-3 font-bold text-green-600 dark:text-green-400" id="qty-ART-1003">5 units</td>
                                         <td class="p-3 text-gray-500 dark:text-gray-400">2 units</td>
                                         <td class="p-3 text-gray-600 dark:text-gray-300">3 800 DH</td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-lg font-bold">Conforme</span></td>
+                                        <td class="p-3 text-right space-x-1.5 whitespace-nowrap">
+                                            <button onclick="openAdjustStockModal('ART-1003')" class="px-2.5 py-1 bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-400 font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Ajuster la quantité"><i data-lucide="sliders" class="w-3 h-3"></i> Ajuster</button>
+                                            <button onclick="printArticleLabel('ART-1003', 'Clé Dynamométrique 1/2\"', 'Rayonnage R6 - Niv 3')" class="px-2.5 py-1 bg-ocp/15 hover:bg-ocp/25 text-ocp-light font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Imprimer étiquette QR code"><i data-lucide="qr-code" class="w-3 h-3"></i> Étiquette</button>
+                                            <button onclick="showArticleDetailsModal('ART-1003')" class="px-2.5 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-[#050D17] text-gray-700 dark:text-gray-300 font-bold rounded-lg text-xs transition inline-flex items-center gap-1 border border-gray-300 dark:border-gray-700" title="Voir fiche technique"><i data-lucide="info" class="w-3 h-3"></i> Fiche</button>
+                                        </td>
                                     </tr>
                                     <tr class="stock-row cession">
                                         <td class="p-3 font-mono text-gray-500 dark:text-gray-400">ART-1004</td>
                                         <td class="p-3 font-bold text-gray-900 dark:text-white">Filtre Hydraulique Cartouche</td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-300 font-bold rounded flex items-center gap-1 w-fit"><i data-lucide="arrow-right-left" class="w-3 h-3"></i> Cession OCP Khouribga</span></td>
                                         <td class="p-3 text-gray-600 dark:text-gray-300">Rayonnage R3 - Niv 3</td>
-                                        <td class="p-3 font-bold text-amber-600 dark:text-amber-400">18 units</td>
+                                        <td class="p-3 font-bold text-amber-600 dark:text-amber-400" id="qty-ART-1004">18 units</td>
                                         <td class="p-3 text-gray-500 dark:text-gray-400">15 units</td>
                                         <td class="p-3 text-gray-600 dark:text-gray-300">850 DH</td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 rounded-lg font-bold">Limite Approche</span></td>
+                                        <td class="p-3 text-right space-x-1.5 whitespace-nowrap">
+                                            <button onclick="openAdjustStockModal('ART-1004')" class="px-2.5 py-1 bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-400 font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Ajuster la quantité"><i data-lucide="sliders" class="w-3 h-3"></i> Ajuster</button>
+                                            <button onclick="printArticleLabel('ART-1004', 'Filtre Hydraulique Cartouche', 'Rayonnage R3 - Niv 3')" class="px-2.5 py-1 bg-ocp/15 hover:bg-ocp/25 text-ocp-light font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Imprimer étiquette QR code"><i data-lucide="qr-code" class="w-3 h-3"></i> Étiquette</button>
+                                            <button onclick="showArticleDetailsModal('ART-1004')" class="px-2.5 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-[#050D17] text-gray-700 dark:text-gray-300 font-bold rounded-lg text-xs transition inline-flex items-center gap-1 border border-gray-300 dark:border-gray-700" title="Voir fiche technique"><i data-lucide="info" class="w-3 h-3"></i> Fiche</button>
+                                        </td>
                                     </tr>
                                     <tr class="stock-row jesa">
                                         <td class="p-3 font-mono text-gray-500 dark:text-gray-400">ART-1005</td>
                                         <td class="p-3 font-bold text-gray-900 dark:text-white">Tuyauterie Acier DN300 (6m)</td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-300 font-bold rounded">Projet JESA</span></td>
                                         <td class="p-3 text-gray-600 dark:text-gray-300">Zone Extérieure - Parc Lourd</td>
-                                        <td class="p-3 font-bold text-green-600 dark:text-green-400">42 units</td>
+                                        <td class="p-3 font-bold text-green-600 dark:text-green-400" id="qty-ART-1005">42 units</td>
                                         <td class="p-3 text-gray-500 dark:text-gray-400">10 units</td>
                                         <td class="p-3 text-gray-600 dark:text-gray-300">12 500 DH</td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-lg font-bold">Conforme</span></td>
+                                        <td class="p-3 text-right space-x-1.5 whitespace-nowrap">
+                                            <button onclick="openAdjustStockModal('ART-1005')" class="px-2.5 py-1 bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-400 font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Ajuster la quantité"><i data-lucide="sliders" class="w-3 h-3"></i> Ajuster</button>
+                                            <button onclick="printArticleLabel('ART-1005', 'Tuyauterie Acier DN300 (6m)', 'Zone Extérieure - Parc Lourd')" class="px-2.5 py-1 bg-ocp/15 hover:bg-ocp/25 text-ocp-light font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Imprimer étiquette QR code"><i data-lucide="qr-code" class="w-3 h-3"></i> Étiquette</button>
+                                            <button onclick="showArticleDetailsModal('ART-1005')" class="px-2.5 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-[#050D17] text-gray-700 dark:text-gray-300 font-bold rounded-lg text-xs transition inline-flex items-center gap-1 border border-gray-300 dark:border-gray-700" title="Voir fiche technique"><i data-lucide="info" class="w-3 h-3"></i> Fiche</button>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -1458,8 +1490,16 @@
                                         <td class="p-3 font-bold text-gray-900 dark:text-white">50 units</td>
                                         <td class="p-3 text-gray-700 dark:text-gray-300">Mohammed ALAMI</td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-lg font-bold">Validé SAP</span></td>
-                                        <td class="p-3 text-right"><button onclick="logMovementToGoogleForms('ENTRÉE (Réception Quai)', item, qty, supplier);
-            openLastOfficialDoc('BR', { ref: 'BR-2026-0892', supplier: 'SKF Maroc SA', itemCode: 'MEC-2024-001', itemName: 'Roulements SKF 6205', qty: '50' })" class="px-2.5 py-1 bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-700 dark:text-emerald-400 font-bold rounded-lg text-xs transition inline-flex items-center gap-1"><i data-lucide='file-text' class='w-3 h-3'></i> Bon PDF</button></td>
+                                        <td class="p-3 text-right">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                <button onclick="logMovementToGoogleForms('ENTRÉE (Réception Quai)', 'Roulements SKF 6205', 50, 'SKF Maroc SA'); openLastOfficialDoc('BR', { ref: 'BR-2026-0892', supplier: 'SKF Maroc SA', itemCode: 'MEC-2024-001', itemName: 'Roulements SKF 6205', qty: '50' })" class="px-2.5 py-1 bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-700 dark:text-emerald-400 font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Voir Bon de Réception Officiel PDF">
+                                                    <i data-lucide="file-text" class="w-3 h-3"></i> Bon PDF
+                                                </button>
+                                                <button onclick="validateReception('BR-2026-0892')" class="px-2.5 py-1 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Pointer et valider la conformité">
+                                                    <i data-lucide="check" class="w-3 h-3"></i> Valider
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="p-3 font-mono text-ocp-light font-bold">BR-2026-0891</td>
@@ -1469,6 +1509,16 @@
                                         <td class="p-3 font-bold text-gray-900 dark:text-white">5 units</td>
                                         <td class="p-3 text-gray-700 dark:text-gray-300">Youssef CHRAIBI</td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-lg font-bold">Validé SAP</span></td>
+                                        <td class="p-3 text-right">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                <button onclick="openLastOfficialDoc('BR', { ref: 'BR-2026-0891', supplier: 'Cession Site OCP Jorf', itemCode: 'ART-1003', itemName: 'Clé Dynamométrique 1/2&quot;', qty: '5' })" class="px-2.5 py-1 bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-700 dark:text-emerald-400 font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Voir Bon de Réception Officiel PDF">
+                                                    <i data-lucide="file-text" class="w-3 h-3"></i> Bon PDF
+                                                </button>
+                                                <button onclick="validateReception('BR-2026-0891')" class="px-2.5 py-1 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Pointer et valider la conformité">
+                                                    <i data-lucide="check" class="w-3 h-3"></i> Valider
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="p-3 font-mono text-ocp-light font-bold">BR-2026-0890</td>
@@ -1478,6 +1528,16 @@
                                         <td class="p-3 font-bold text-gray-900 dark:text-white">10 units</td>
                                         <td class="p-3 text-gray-700 dark:text-gray-300">Karim BENANI</td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 rounded-lg font-bold">Contrôle Qualité</span></td>
+                                        <td class="p-3 text-right">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                <button onclick="openLastOfficialDoc('BR', { ref: 'BR-2026-0890', supplier: 'Souss Matériel Industrie', itemCode: 'ART-1002', itemName: 'Vannes à papillon DN100', qty: '10' })" class="px-2.5 py-1 bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-700 dark:text-emerald-400 font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Voir Bon de Réception Officiel PDF">
+                                                    <i data-lucide="file-text" class="w-3 h-3"></i> Bon PDF
+                                                </button>
+                                                <button onclick="validateReception('BR-2026-0890')" class="px-2.5 py-1 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Pointer et valider la conformité">
+                                                    <i data-lucide="check" class="w-3 h-3"></i> Valider
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="p-3 font-mono text-ocp-light font-bold">BR-2026-0889</td>
@@ -1487,6 +1547,16 @@
                                         <td class="p-3 font-bold text-gray-900 dark:text-white">18 units</td>
                                         <td class="p-3 text-gray-700 dark:text-gray-300">Omar DRIOUCH</td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-lg font-bold">Validé SAP</span></td>
+                                        <td class="p-3 text-right">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                <button onclick="openLastOfficialDoc('BR', { ref: 'BR-2026-0889', supplier: 'Cession Site OCP Khouribga', itemCode: 'ART-1004', itemName: 'Filtre Hydraulique Cartouche', qty: '18' })" class="px-2.5 py-1 bg-emerald-600/15 hover:bg-emerald-600/25 text-emerald-700 dark:text-emerald-400 font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Voir Bon de Réception Officiel PDF">
+                                                    <i data-lucide="file-text" class="w-3 h-3"></i> Bon PDF
+                                                </button>
+                                                <button onclick="validateReception('BR-2026-0889')" class="px-2.5 py-1 bg-green-600 hover:bg-green-500 text-white font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Pointer et valider la conformité">
+                                                    <i data-lucide="check" class="w-3 h-3"></i> Valider
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -1535,6 +1605,16 @@
                                         <td class="p-3 font-bold text-gray-900 dark:text-white">2 units</td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300 rounded font-bold">Urgent</span></td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/40 text-blue-800 dark:text-blue-300 rounded-lg font-bold">En Picking (Poste 1)</span></td>
+                                        <td class="p-3 text-right">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                <button onclick="openLastOfficialDoc('BS', { ref: 'BS-2026-1403', ot: 'OT-77401', atelier: 'Maintenance Engrais (Urgence)', itemCode: 'ART-1002', itemName: 'Vanne à papillon DN100', qty: '2' })" class="px-2.5 py-1 bg-blue-600/15 hover:bg-blue-600/25 text-blue-700 dark:text-blue-400 font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Voir Bon de Sortie Officiel PDF">
+                                                    <i data-lucide="file-text" class="w-3 h-3"></i> Bon PDF
+                                                </button>
+                                                <button onclick="validateExpedition('BS-2026-1403')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Clôturer le picking et servir les pièces">
+                                                    <i data-lucide="check-circle" class="w-3 h-3"></i> Clôturer
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="p-3 font-mono text-blue-600 dark:text-blue-400 font-bold">BS-2026-1402</td>
@@ -1544,6 +1624,16 @@
                                         <td class="p-3 font-bold text-gray-900 dark:text-white">1 unit</td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-300 rounded font-bold">Normale</span></td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-lg font-bold">Servi / Livré</span></td>
+                                        <td class="p-3 text-right">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                <button onclick="openLastOfficialDoc('BS', { ref: 'BS-2026-1402', ot: 'OT-77402', atelier: 'Projet Extension Modulaire', itemCode: 'ART-1003', itemName: 'Clé Dynamométrique 1/2&quot;', qty: '1' })" class="px-2.5 py-1 bg-blue-600/15 hover:bg-blue-600/25 text-blue-700 dark:text-blue-400 font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Voir Bon de Sortie Officiel PDF">
+                                                    <i data-lucide="file-text" class="w-3 h-3"></i> Bon PDF
+                                                </button>
+                                                <button onclick="validateExpedition('BS-2026-1402')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Clôturer le picking et servir les pièces">
+                                                    <i data-lucide="check-circle" class="w-3 h-3"></i> Clôturer
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td class="p-3 font-mono text-blue-600 dark:text-blue-400 font-bold">BS-2026-1401</td>
@@ -1553,6 +1643,16 @@
                                         <td class="p-3 font-bold text-gray-900 dark:text-white">6 units</td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-300 rounded font-bold">Normale</span></td>
                                         <td class="p-3"><span class="px-2 py-0.5 bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-lg font-bold">Servi / Livré</span></td>
+                                        <td class="p-3 text-right">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                <button onclick="openLastOfficialDoc('BS', { ref: 'BS-2026-1401', ot: 'OT-77400', atelier: 'Chantier Tuyauterie Nord', itemCode: 'ART-1005', itemName: 'Tuyauterie Acier DN300 (6m)', qty: '6' })" class="px-2.5 py-1 bg-blue-600/15 hover:bg-blue-600/25 text-blue-700 dark:text-blue-400 font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Voir Bon de Sortie Officiel PDF">
+                                                    <i data-lucide="file-text" class="w-3 h-3"></i> Bon PDF
+                                                </button>
+                                                <button onclick="validateExpedition('BS-2026-1401')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg text-xs transition inline-flex items-center gap-1" title="Clôturer le picking et servir les pièces">
+                                                    <i data-lucide="check-circle" class="w-3 h-3"></i> Clôturer
+                                                </button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -2717,14 +2817,7 @@
             box.classList.add('view-animated');
         }
 
-        function selectZone(zoneKey) {
-            const title = document.getElementById('zone-title');
-            if(zoneKey === 'grand-abri') title.innerText = 'Grand Abri (Surface: 600 m² - Stockage Matériel Lourd)';
-            else if(zoneKey === 'petit-abri') title.innerText = 'Petit Abri (Outillage spécialisé & Consommables rapides)';
-            else if(zoneKey === 'zone-ext') title.innerText = 'Zone Extérieure (Parc Lourd - Tuyauteries DN300 & Conteneurs)';
-            else if(zoneKey === 'grand-modulaire') title.innerText = 'Grand Modulaire (Bureaux Magasiniers & Tool Crib Outillage)';
-            else title.innerText = 'Aménagement Hangar Rayonnages (Dimension: 13 085mm x 6 485mm)';
-        }
+
     
         // =========================================================================
         // GESTION DES ACCÈS OBLIGATOIRES, VALIDATION PAR EMAIL ET NOTIFICATIONS (WMS)
@@ -3813,8 +3906,11 @@
 
         function checkRolePermission(actionName, requiredRoles = ['Responsable / Propriétaire']) {
             const users = getStoredUsers();
-            const activeKey = localStorage.getItem('mc01_active_session') || sessionStorage.getItem('mc01_active_session') || currentActiveUserKey || 'raid';
-            const user = users.find(u => u.key === activeKey);
+            const activeKey = localStorage.getItem('mc01_active_session') || sessionStorage.getItem('mc01_active_session') || (window.currentActiveUserKey || 'azizi');
+            const user = users.find(u => u.key === activeKey || (u.email && u.email.toLowerCase() === (activeKey || '').toLowerCase())) ||
+                         users.find(u => u.key === 'azizi') ||
+                         users.find(u => u.key === 'raid') ||
+                         users[0];
 
             if (!user) {
                 showToast('Connexion Requise', 'Veuillez vous authentifier pour réaliser cette action.', 'error');
@@ -4050,21 +4146,326 @@
             }
         }
 
+        // --- CENTRE DE NOTIFICATIONS ACTIONS ---
+        function markAllNotificationsAsRead() {
+            const notifDot = document.getElementById('notif-badge-dot');
+            if (notifDot) notifDot.classList.add('hidden');
+            showToast('Notifications Marquées comme Lues', 'Toutes les alertes opérationnelles ont été archivées.', 'success');
+            closeNotificationsModal();
+        }
+
+        function goToCriticalStock() {
+            closeNotificationsModal();
+            switchTab('stock');
+            const searchInput = document.getElementById('stock-search-input');
+            if (searchInput) {
+                searchInput.value = 'critique';
+                filterStockBySearch();
+            } else {
+                filterStock('critical');
+            }
+        }
+
+        // --- RECHERCHE GLOBALE ET FILTRAGE STOCK ---
+        function filterStockBySearch() {
+            const input = document.getElementById('stock-search-input');
+            if (!input) return;
+            const q = input.value.toLowerCase().trim();
+            const rows = document.querySelectorAll('#stock-table-body tr');
+            rows.forEach(tr => {
+                const text = tr.innerText.toLowerCase();
+                if (!q || text.includes(q)) {
+                    tr.style.display = '';
+                } else {
+                    tr.style.display = 'none';
+                }
+            });
+        }
+
+        function handleGlobalHeaderSearch(e) {
+            const val = e.target.value.toLowerCase().trim();
+            if (e.key === 'Enter' && val) {
+                if (val.includes('stock') || val.includes('vanne') || val.includes('roulement') || val.includes('filtre') || val.includes('art-') || val.includes('tuyau')) {
+                    switchTab('stock');
+                    const stockInput = document.getElementById('stock-search-input');
+                    if (stockInput) {
+                        stockInput.value = val;
+                        filterStockBySearch();
+                    }
+                } else if (val.includes('br') || val.includes('reception') || val.includes('skf') || val.includes('souss')) {
+                    switchTab('reception');
+                } else if (val.includes('bs') || val.includes('sortie') || val.includes('picking') || val.includes('chantier')) {
+                    switchTab('expedition');
+                } else if (val.includes('shift') || val.includes('planning') || val.includes('alami')) {
+                    switchTab('shifts');
+                } else if (val.includes('audit') || val.includes('ira') || val.includes('inventaire')) {
+                    switchTab('inventory');
+                } else {
+                    showToast('Recherche Globale MC01', `Filtrage contextuel pour : "${val}"`, 'info');
+                }
+            }
+        }
+
         // --- AUDIT INVENTAIRE & RÉGULARISATION ---
         function openStartAuditModal() {
             if (!checkRolePermission("le lancement d'audit contradictoire", ['Contrôleur Inventaire', 'Propriétaire', 'Responsable'])) return;
-            showToast('Lancement Audit Contradictoire', 'Génération des fiches de comptage à blanc pour les rayonnages R1 et R2. Bon de contrôle émis.', 'success');
+            const modal = document.getElementById('start-audit-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                if (window.lucide) lucide.createIcons();
+            }
+        }
+
+        function closeStartAuditModal() {
+            const modal = document.getElementById('start-audit-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function printAuditCountingSheet() {
+            const zone = document.getElementById('audit-zone-select') ? document.getElementById('audit-zone-select').value : 'Zone A (R1-R2)';
+            showToast('Génération Fiche d\'Audit', `Impression de la fiche de comptage physique à blanc pour ${zone}...`, 'success');
+            setTimeout(() => window.print(), 300);
+        }
+
+        function handleStartAudit(e) {
+            e.preventDefault();
+            const zone = document.getElementById('audit-zone-select').value;
+            const method = document.getElementById('audit-method-select').value;
+            const team = document.getElementById('audit-team-input').value;
+            const date = document.getElementById('audit-date-input').value;
+
+            closeStartAuditModal();
+            showToast('Campagne d\'Audit Démarrée', `Audit physique contradictoire lancé sur ${zone} par le binôme ${team}. Date : ${date}.`, 'success');
         }
 
         function openReconciliationModal() {
             if (!checkRolePermission("la régularisation des écarts de stock", ['Propriétaire', 'Responsable'])) return;
-            showToast('Écarts de Stock Régularisés', 'Ajustement comptable validé par le Responsable Magasin Propriétaire. Taux IRA maintenu à 99.1%.', 'success');
+            const modal = document.getElementById('reconciliation-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                if (window.lucide) lucide.createIcons();
+            }
+        }
+
+        function closeReconciliationModal() {
+            const modal = document.getElementById('reconciliation-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function handleReconcileStock(e) {
+            e.preventDefault();
+            const art = document.getElementById('reconcile-article-select').value;
+            const mvt = document.getElementById('reconcile-mvt-code').value;
+            const qty = document.getElementById('reconcile-qty-input').value;
+            const cause = document.getElementById('reconcile-cause-select').value;
+
+            closeReconciliationModal();
+            showToast('Régularisation SAP 701/702 Validée', `Mouvement ${mvt} enregistré pour ${art} (Qté: ${qty}). Motif : ${cause}. Taux IRA maintenu à 99.1%.`, 'success');
         }
 
         // --- MODIFICATION DU PLANNING DES SHIFTS ---
         function openEditShiftModal() {
             if (!checkRolePermission("la modification du planning des magasiniers", ['Propriétaire', 'Responsable'])) return;
-            showToast('Mode Édition Planning Activé', 'Vous pouvez réassigner les postes de travail (Matin, Soir, Nuit) des 5 magasiniers.', 'success');
+            const modal = document.getElementById('edit-shift-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                if (window.lucide) lucide.createIcons();
+            }
+        }
+
+        function closeEditShiftModal() {
+            const modal = document.getElementById('edit-shift-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function handleSaveShiftAssignment(e) {
+            e.preventDefault();
+            const mag = document.getElementById('shift-magasinier-select').value;
+            const week = document.getElementById('shift-week-select').value;
+            const team = document.getElementById('shift-team-select').value;
+            const zone = document.getElementById('shift-zone-select').value;
+
+            closeEditShiftModal();
+            showToast('Planning Magasinier Mis à Jour', `${mag} affecté au ${team} sur la zone : ${zone} pour la ${week}.`, 'success');
+        }
+
+        // --- FICHE TECHNIQUE ARTICLE DÉTAILLÉE ---
+        const MC01_ARTICLES_CATALOG = {
+            'ART-1001': {
+                code: 'ART-1001',
+                sapMaterial: 'SAP-MAT-990142',
+                name: 'Roulements SKF 6205',
+                category: 'Mécanique & Transmission',
+                norme: 'DIN 625-1 / ISO 15 - Jeu C3 haute vitesse',
+                supplier: 'SKF Maroc SA',
+                location: 'Allée A • Rayonnage R1 • Niveau 3 • Alvéole A-03',
+                stock: 150,
+                stockMin: 40,
+                unit: 'units',
+                unitPrice: 145,
+                desc: 'Roulement rigide à une rangée de billes pour convoyeurs d\'extraction phosphorique. Équipé de flasques métalliques 2Z anti-poussière.'
+            },
+            'ART-1002': {
+                code: 'ART-1002',
+                sapMaterial: 'SAP-MAT-884019',
+                name: 'Vanne à papillon DN100',
+                category: 'Robinetterie Industrielle',
+                norme: 'EN 593 / ISO 5752 PN16 Corps Fonte Ductile GGG40',
+                supplier: 'Souss Matériel Industrie',
+                location: 'Allée A • Rayonnage R1 • Niveau 2 • Alvéole B-04',
+                stock: 12,
+                stockMin: 25,
+                unit: 'units',
+                unitPrice: 1250,
+                desc: 'Vanne papillon à commande manuelle par réducteur, disque inox 316L et manchette PTFE/EPDM haute résistance aux acides sulfuriques et phosphoriques.'
+            },
+            'ART-1003': {
+                code: 'ART-1003',
+                sapMaterial: 'SAP-MAT-770512',
+                name: 'Clé Dynamométrique 1/2"',
+                category: 'Outillage de Précision',
+                norme: 'ISO 6789-1:2017 Plage 40 - 200 Nm Certifié Métrologie',
+                supplier: 'Facom Maroc Industrial',
+                location: 'Allée C • Rayonnage R6 • Niveau 3 • Casier Outillage S-02',
+                stock: 5,
+                stockMin: 2,
+                unit: 'units',
+                unitPrice: 3400,
+                desc: 'Clé de serrage au couple à déclenchement sensitif et sonore pour interventions sur brides sous pression des réacteurs phosphoriques.'
+            },
+            'ART-1004': {
+                code: 'ART-1004',
+                sapMaterial: 'SAP-MAT-651098',
+                name: 'Filtre Hydraulique Cartouche',
+                category: 'Hydraulique & Filtration',
+                norme: 'ISO 16889 Filtration 10 microns Beta >= 200',
+                supplier: 'Parker Hannifin Maroc',
+                location: 'Allée B • Rayonnage R3 • Niveau 3 • Alvéole H-01',
+                stock: 18,
+                stockMin: 15,
+                unit: 'units',
+                unitPrice: 420,
+                desc: 'Élément filtrant en microfibre de verre pour centrales hydrauliques de basculement des filtres rotatifs à godets.'
+            },
+            'ART-1005': {
+                code: 'ART-1005',
+                sapMaterial: 'SAP-MAT-510044',
+                name: 'Tuyauterie Acier DN300 (6m)',
+                category: 'Tuyauterie & Matériel Lourd',
+                norme: 'ASTM A106 Grade B Sans soudure Sch 40 Revêtement Ébonite',
+                supplier: 'Maghreb Tubes SA',
+                location: 'Parc Lourd Extérieur • Allée 4 • Berceau Acier B-12',
+                stock: 42,
+                stockMin: 10,
+                unit: 'units',
+                unitPrice: 4800,
+                desc: 'Tube en acier carbone étiré à chaud sans soudure pour le transport de pulpe de phosphate vers les unités de décantation Jorf Lasfar.'
+            }
+        };
+
+        function showArticleDetailsModal(artCode) {
+            const data = MC01_ARTICLES_CATALOG[artCode] || {
+                code: artCode,
+                name: 'Article Magasin MC01',
+                category: 'Fourniture Industrielle OCP',
+                norme: 'Spécification Technique OCP Jorf Lasfar',
+                supplier: 'Fournisseur Agréé OCP',
+                location: 'Magasin Central MC01',
+                stock: 10,
+                stockMin: 5,
+                unit: 'units',
+                unitPrice: 250,
+                desc: 'Référence standard pour maintenance industrielle des unités de production phosphorique.'
+            };
+
+            const qtyEl = document.getElementById('qty-' + artCode);
+            const currentStock = qtyEl ? parseInt(qtyEl.innerText) || data.stock : data.stock;
+            const totalVal = currentStock * data.unitPrice;
+
+            document.getElementById('art-detail-title').innerText = data.name;
+            document.getElementById('art-detail-code-badge').innerText = data.code;
+            document.getElementById('art-detail-category').innerText = data.category;
+            document.getElementById('art-detail-desc').innerText = data.desc;
+            document.getElementById('art-detail-norme').innerText = 'Norme : ' + data.norme;
+            document.getElementById('art-detail-stock').innerText = currentStock + ' ' + (data.unit || 'units');
+            document.getElementById('art-detail-min').innerText = data.stockMin + ' ' + (data.unit || 'units');
+            document.getElementById('art-detail-price').innerText = data.unitPrice.toLocaleString('fr-FR') + ' MAD';
+            document.getElementById('art-detail-total').innerText = totalVal.toLocaleString('fr-FR') + ' MAD';
+            document.getElementById('art-detail-location').innerHTML = '<i data-lucide="map-pin" class="w-3.5 h-3.5 text-red-500"></i> ' + data.location;
+            document.getElementById('art-detail-supplier').innerHTML = '<i data-lucide="truck" class="w-3.5 h-3.5 text-blue-500"></i> ' + data.supplier;
+
+            const adjustBtn = document.getElementById('art-detail-adjust-btn');
+            if (adjustBtn) {
+                adjustBtn.onclick = function() {
+                    closeArticleDetailsModal();
+                    openAdjustStockModal(data.code);
+                };
+            }
+            const qrBtn = document.getElementById('art-detail-qr-btn');
+            if (qrBtn) {
+                qrBtn.onclick = function() {
+                    closeArticleDetailsModal();
+                    printArticleLabel(data.code, data.name, data.location);
+                };
+            }
+
+            const modal = document.getElementById('article-detail-modal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                if (window.lucide) lucide.createIcons();
+            }
+        }
+
+        function closeArticleDetailsModal() {
+            const modal = document.getElementById('article-detail-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        // --- GÉNÉRATEUR DOCUMENT MOUVEMENT (DASHBOARD) ---
+        function generateMovementDoc(movementId) {
+            let r = null;
+            if (window.rawGoogleSheetRecords && window.rawGoogleSheetRecords.length) {
+                r = window.rawGoogleSheetRecords.find(item => item.id === movementId);
+            }
+            if (!r) {
+                openLastOfficialDoc('BR');
+                return;
+            }
+            const isEntree = (r.type === 'Entrée' || (r.flux && r.flux.includes('ENTR')));
+            if (isEntree) {
+                openLastOfficialDoc('BR', {
+                    ref: 'BR-2026-' + (r.id ? r.id.replace('MVT-', '') : '0892'),
+                    supplier: r.fournisseur || 'PETROLAF (FUCHS)',
+                    itemCode: r.id || 'ART-1001',
+                    itemName: r.item || 'Article Magasin MC01',
+                    qty: (r.qty || '1') + ' ' + (r.unit || 'U')
+                });
+            } else {
+                openLastOfficialDoc('BS', {
+                    ref: 'BS-2026-' + (r.id ? r.id.replace('MVT-', '') : '1401'),
+                    ot: 'OT-77341',
+                    atelier: r.zoneFull || r.demandeur || 'Maintenance MC01',
+                    itemCode: r.id || 'ART-1002',
+                    itemName: r.item || 'Article Magasin MC01',
+                    qty: (r.qty || '1') + ' ' + (r.unit || 'U')
+                });
+            }
         }
 
         // --- SYNCHRONISATION SAP FORCÉE ---
@@ -9092,7 +9493,7 @@
                                 <button onclick="openMovementDetailModal('${r.id}')" class="px-2.5 py-1 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-lg text-[11px] transition shadow flex items-center gap-1" title="Voir les 17 champs complets de la réponse Google Form">
                                     <i data-lucide="eye" class="w-3.5 h-3.5"></i> Fiche
                                 </button>
-                                <button onclick="if('${r.type}' === 'Entrée') { openLastOfficialDoc('BR', { ref: 'BR-2026-${r.id.replace('MVT-','')}', supplier: '${r.fournisseur}', itemCode: '${r.id}', itemName: '${r.item}', qty: '${r.qty} ${r.unit}' }); } else { openLastOfficialDoc('BS', { ref: 'BS-2026-${r.id.replace('MVT-','')}', ot: 'OT-77341', atelier: '${zoneDisplay}', itemCode: '${r.id}', itemName: '${r.item}', qty: '${r.qty} ${r.unit}' }); }" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-[#050D17] dark:hover:bg-slate-700 text-gray-700 dark:text-gray-200 font-bold rounded-lg text-[11px] transition border border-gray-300 dark:border-gray-700" title="Générer le Bon Officiel PDF">
+                                <button onclick="generateMovementDoc('${r.id}')" class="px-2 py-1 bg-gray-100 hover:bg-gray-200 dark:bg-[#050D17] dark:hover:bg-slate-700 text-gray-700 dark:text-gray-200 font-bold rounded-lg text-[11px] transition border border-gray-300 dark:border-gray-700" title="Générer le Bon Officiel PDF">
                                     <i data-lucide="file-text" class="w-3.5 h-3.5"></i> PDF
                                 </button>
                             </div>
@@ -9568,10 +9969,18 @@
                     </div>
                 </div>
             </div>
-            <div class="pt-2 border-t border-gray-200 dark:border-gray-800 flex justify-end">
-                <button onclick="closeNotificationsModal()" class="px-4 py-2 bg-ocp text-white font-bold rounded-xl text-xs">
-                    Compris
+            <div class="pt-2 border-t border-gray-200 dark:border-gray-800 flex flex-wrap items-center justify-between gap-2">
+                <button onclick="goToCriticalStock()" class="px-3 py-1.5 bg-red-600/15 hover:bg-red-600/25 text-red-700 dark:text-red-400 font-bold rounded-xl text-xs transition flex items-center gap-1.5" title="Accéder directement aux articles en rupture ou seuil critique">
+                    <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Voir Stock Critique
                 </button>
+                <div class="flex items-center gap-2">
+                    <button onclick="markAllNotificationsAsRead()" class="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 font-bold rounded-xl text-xs transition flex items-center gap-1.5">
+                        <i data-lucide="check-check" class="w-3.5 h-3.5"></i> Tout marquer comme lu
+                    </button>
+                    <button onclick="closeNotificationsModal()" class="px-4 py-1.5 bg-ocp hover:bg-ocp/90 text-white font-bold rounded-xl text-xs transition">
+                        Fermer
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -10014,6 +10423,293 @@
                         Fermer
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         MODAL 11 : ÉDITION PLANNING DES SHIFTS MAGASINIERS
+         ========================================================================= -->
+    <div id="edit-shift-modal" class="fixed inset-0 z-50 bg-[#050D17]/85 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#0D2137] border border-gray-200 dark:border-gray-700/80 rounded-3xl shadow-2xl max-w-lg w-full p-6 space-y-4 text-gray-900 dark:text-gray-100 card-interactive relative">
+            <button onclick="closeEditShiftModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 dark:hover:text-white transition">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-3 border-b border-gray-200 dark:border-gray-700 pb-3">
+                <div class="w-10 h-10 rounded-2xl bg-slate-800 text-white flex items-center justify-center">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-base">Planification des Shifts Magasiniers</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Affectation des postes de travail et rotations d'équipes MC01</p>
+                </div>
+            </div>
+
+            <form onsubmit="handleSaveShiftAssignment(event)" class="space-y-3.5 text-xs">
+                <div>
+                    <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300">Magasinier</label>
+                    <select id="shift-magasinier-select" required class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                        <option value="Mohammed ALAMI">Mohammed ALAMI • Chef d'équipe Quai A</option>
+                        <option value="Youssef CHRAIBI">Youssef CHRAIBI • Cariste Rayonnages</option>
+                        <option value="Karim BENANI">Karim BENANI • Contrôleur Réceptions</option>
+                        <option value="Omar DRIOUCH">Omar DRIOUCH • Préparateur Picking</option>
+                        <option value="Rachid TAZI">Rachid TAZI • Magasinier Polyvalent</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300">Semaine / Période</label>
+                        <select id="shift-week-select" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                            <option value="S41">Semaine S41 (06 - 12 Octobre 2026)</option>
+                            <option value="S42">Semaine S42 (13 - 19 Octobre 2026)</option>
+                            <option value="S43">Semaine S43 (20 - 26 Octobre 2026)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300">Poste / Rotation</label>
+                        <select id="shift-team-select" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                            <option value="1er Poste (06:00 - 14:00)">1er Poste : Matin (06:00 - 14:00)</option>
+                            <option value="2ème Poste (14:00 - 22:00)">2ème Poste : Après-midi (14:00 - 22:00)</option>
+                            <option value="3ème Poste (22:00 - 06:00)">3ème Poste : Nuit (22:00 - 06:00)</option>
+                            <option value="Repos Réglementaire">Repos Réglementaire (OFF)</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300">Zone d'Affectation Opérationnelle</label>
+                    <select id="shift-zone-select" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                        <option value="Quai Réception A">Quai Réception A (Déchargement & Pointage)</option>
+                        <option value="Allées R1-R4 (Mécanique/Robinetterie)">Allées R1 - R4 (Mécanique & Robinetterie)</option>
+                        <option value="Allées R5-R6 (Outillage/Quincaillerie)">Allées R5 - R6 (Outillage & Quincaillerie)</option>
+                        <option value="Comptoir Sorties / Picking">Comptoir Sorties & Picking Expéditions</option>
+                        <option value="Parc Lourd Extérieur">Parc Lourd Extérieur & Tuyauteries</option>
+                    </select>
+                </div>
+                <div class="p-3 bg-blue-50 dark:bg-blue-950/30 border border-blue-500/30 rounded-xl text-[11px] text-blue-700 dark:text-blue-300 flex items-center gap-2">
+                    <i data-lucide="info" class="w-4 h-4 flex-shrink-0"></i>
+                    <span>Toute modification d'affectation est enregistrée au journal de bord et synchronisée avec le planning RH OCP.</span>
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                    <button type="button" onclick="closeEditShiftModal()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 font-bold rounded-xl transition">
+                        Annuler
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition flex items-center gap-1.5 shadow">
+                        <i data-lucide="save" class="w-4 h-4"></i> Enregistrer l'Affectation
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         MODAL 12 : DÉMARRAGE AUDIT PHYSIQUE & INVENTAIRE TOURNANT (IRA)
+         ========================================================================= -->
+    <div id="start-audit-modal" class="fixed inset-0 z-50 bg-[#050D17]/85 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#0D2137] border border-gray-200 dark:border-gray-700/80 rounded-3xl shadow-2xl max-w-lg w-full p-6 space-y-4 text-gray-900 dark:text-gray-100 card-interactive relative">
+            <button onclick="closeStartAuditModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 dark:hover:text-white transition">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-3 border-b border-gray-200 dark:border-gray-700 pb-3">
+                <div class="w-10 h-10 rounded-2xl bg-ocp/20 text-ocp-light flex items-center justify-center font-bold">
+                    <i data-lucide="clipboard-check" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-base">Campagne d'Audit Physique Contradictoire</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Programme de comptage à blanc et fiabilisation du taux IRA (Objectif >= 99%)</p>
+                </div>
+            </div>
+
+            <form onsubmit="handleStartAudit(event)" class="space-y-3.5 text-xs">
+                <div>
+                    <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300">Périmètre / Zone à Auditer</label>
+                    <select id="audit-zone-select" required class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                        <option value="Zone A (R1-R2)">Zone A : Rayonnages R1 & R2 • Mécanique & Robinetterie (48 alvéoles)</option>
+                        <option value="Zone B (R3-R4)">Zone B : Rayonnages R3 & R4 • Filtration & Hydraulique (36 alvéoles)</option>
+                        <option value="Zone C (R5-R6)">Zone C : Rayonnages R5 & R6 • Outillage & Quincaillerie (52 alvéoles)</option>
+                        <option value="Parc Lourd">Zone Extérieure : Parc Lourd & Tuyauteries DN300 (12 berceaux)</option>
+                        <option value="Complet MC01">Audit Général Exhaustif 100% Stock Magasin MC01</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300">Méthodologie de Contrôle</label>
+                        <select id="audit-method-select" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                            <option value="Blanc">Comptage Contradictoire à Blanc (Sans stock théorique)</option>
+                            <option value="Flash">Audit Flash Échantillonné (Articles à forte valeur)</option>
+                            <option value="Fiscal">Inventaire Réglementaire Annuel Fiscal OCP</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300">Date Prévue</label>
+                        <input type="date" id="audit-date-input" value="2026-10-28" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300">Binôme de Contrôle Affecté</label>
+                    <input type="text" id="audit-team-input" value="Mohammed ALAMI (Magasin) & Youssef CHRAIBI (Contrôle Exploitation)" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                </div>
+                <div class="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-500/30 rounded-xl text-[11px] text-amber-800 dark:text-amber-300">
+                    <span class="flex items-center gap-1.5"><i data-lucide="file-spreadsheet" class="w-4 h-4"></i> Fiche de pointage physique vierge</span>
+                    <button type="button" onclick="printAuditCountingSheet()" class="px-2.5 py-1 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg transition inline-flex items-center gap-1">
+                        <i data-lucide="printer" class="w-3 h-3"></i> Imprimer Fiche
+                    </button>
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                    <button type="button" onclick="closeStartAuditModal()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 font-bold rounded-xl transition">
+                        Annuler
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-ocp hover:bg-ocp/90 text-white font-bold rounded-xl transition flex items-center gap-1.5 shadow">
+                        <i data-lucide="play" class="w-4 h-4"></i> Démarrer la Campagne
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         MODAL 13 : RÉGULARISATION DES ÉCARTS DE STOCK SAP (CODES 701 & 702)
+         ========================================================================= -->
+    <div id="reconciliation-modal" class="fixed inset-0 z-50 bg-[#050D17]/85 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#0D2137] border border-gray-200 dark:border-gray-700/80 rounded-3xl shadow-2xl max-w-lg w-full p-6 space-y-4 text-gray-900 dark:text-gray-100 card-interactive relative">
+            <button onclick="closeReconciliationModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 dark:hover:text-white transition">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-3 border-b border-gray-200 dark:border-gray-700 pb-3">
+                <div class="w-10 h-10 rounded-2xl bg-purple-600/20 text-purple-400 flex items-center justify-center font-bold">
+                    <i data-lucide="sliders" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h3 class="font-extrabold text-base">Régularisation des Écarts SAP S/4HANA</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Génération du bordereau comptable de régularisation (Mvt 701 Surplus / 702 Manquant)</p>
+                </div>
+            </div>
+
+            <form onsubmit="handleReconcileStock(event)" class="space-y-3.5 text-xs">
+                <div>
+                    <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300">Article avec Écart Constaté</label>
+                    <select id="reconcile-article-select" required class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                        <option value="ART-1002">ART-1002 • Vanne à papillon DN100 (Écart inventaire : -1 unit)</option>
+                        <option value="ART-1004">ART-1004 • Filtre Hydraulique Cartouche (Écart inventaire : +2 units)</option>
+                        <option value="ART-1001">ART-1001 • Roulements SKF 6205 (Écart inventaire : 0 - Conforme)</option>
+                        <option value="ART-1003">ART-1003 • Clé Dynamométrique 1/2" (Écart inventaire : 0 - Conforme)</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300">Code Mouvement SAP</label>
+                        <select id="reconcile-mvt-code" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                            <option value="702">Mvt 702 : Sortie pour écart inventaire négatif</option>
+                            <option value="701">Mvt 701 : Entrée pour écart inventaire positif</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300">Quantité à Ajuster</label>
+                        <input type="number" id="reconcile-qty-input" value="1" min="1" max="1000" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp font-bold">
+                    </div>
+                </div>
+                <div>
+                    <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300">Cause Justificative de l'Écart</label>
+                    <select id="reconcile-cause-select" class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">
+                        <option value="Erreur d'affectation d'emplacement physique">Erreur d'affectation d'emplacement physique (corrigée)</option>
+                        <option value="Casse manutention ou détérioration quai">Casse manutention ou détérioration quai</option>
+                        <option value="Reliquat picking non enregistré">Reliquat picking non enregistré</option>
+                        <option value="Écart de comptage lors de la réception fournisseur">Écart de comptage lors de la réception fournisseur</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold mb-1 text-gray-700 dark:text-gray-300">Visa & Observations Responsable</label>
+                    <textarea id="reconcile-notes-input" rows="2" placeholder="Précisez les actions correctives mises en œuvre..." class="w-full bg-gray-50 dark:bg-[#050D17] border border-gray-300 dark:border-gray-700 rounded-xl px-3 py-2 text-gray-900 dark:text-white outline-none focus:border-ocp">Ajustement validé suite à double pointage contradictoire. Conforme aux règles d'audit OCP MC01.</textarea>
+                </div>
+                <div class="flex justify-end gap-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                    <button type="button" onclick="closeReconciliationModal()" class="px-4 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 font-bold rounded-xl transition">
+                        Annuler
+                    </button>
+                    <button type="submit" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold rounded-xl transition flex items-center gap-1.5 shadow">
+                        <i data-lucide="check-circle" class="w-4 h-4"></i> Valider Régularisation SAP
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         MODAL 14 : FICHE TECHNIQUE ARTICLE DÉTAILLÉE SAP MC01
+         ========================================================================= -->
+    <div id="article-detail-modal" class="fixed inset-0 z-50 bg-[#050D17]/85 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-white dark:bg-[#0D2137] border border-gray-200 dark:border-gray-700/80 rounded-3xl shadow-2xl max-w-xl w-full p-6 space-y-4 text-gray-900 dark:text-gray-100 card-interactive relative">
+            <button onclick="closeArticleDetailsModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 dark:hover:text-white transition">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-3 border-b border-gray-200 dark:border-gray-700 pb-3">
+                <div class="w-10 h-10 rounded-2xl bg-ocp/20 text-ocp-light flex items-center justify-center font-bold">
+                    <i data-lucide="box" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h3 class="font-extrabold text-base" id="art-detail-title">Fiche Article</h3>
+                        <span id="art-detail-code-badge" class="px-2 py-0.5 rounded-lg text-xs font-mono font-bold bg-ocp/15 text-ocp-light">ART-1001</span>
+                    </div>
+                    <p class="text-xs text-gray-500 dark:text-gray-400" id="art-detail-category">Catégorie Matériel & Norme Industrielle OCP</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div class="p-3 bg-gray-50 dark:bg-[#050D17] rounded-2xl border border-gray-200 dark:border-gray-800 space-y-1.5">
+                    <div class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Description Technique Officielle</div>
+                    <p class="text-gray-700 dark:text-gray-300 leading-relaxed font-medium" id="art-detail-desc">-</p>
+                    <div class="pt-1.5 text-[11px] text-gray-500 dark:text-gray-400 flex items-center gap-2">
+                        <i data-lucide="shield" class="w-3.5 h-3.5 text-ocp-light"></i>
+                        <span id="art-detail-norme">Norme : -</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <div class="p-3 bg-gray-50 dark:bg-[#050D17] rounded-xl border border-gray-200 dark:border-gray-800 text-center">
+                        <span class="text-[10px] text-gray-400 uppercase block font-semibold">Stock Physique</span>
+                        <span id="art-detail-stock" class="text-base font-extrabold text-gray-900 dark:text-white">0</span>
+                    </div>
+                    <div class="p-3 bg-gray-50 dark:bg-[#050D17] rounded-xl border border-gray-200 dark:border-gray-800 text-center">
+                        <span class="text-[10px] text-gray-400 uppercase block font-semibold">Seuil Minimum</span>
+                        <span id="art-detail-min" class="text-base font-extrabold text-amber-500">0</span>
+                    </div>
+                    <div class="p-3 bg-gray-50 dark:bg-[#050D17] rounded-xl border border-gray-200 dark:border-gray-800 text-center">
+                        <span class="text-[10px] text-gray-400 uppercase block font-semibold">Prix Unitaire</span>
+                        <span id="art-detail-price" class="text-base font-extrabold text-gray-900 dark:text-white">0 MAD</span>
+                    </div>
+                    <div class="p-3 bg-gray-50 dark:bg-[#050D17] rounded-xl border border-gray-200 dark:border-gray-800 text-center">
+                        <span class="text-[10px] text-gray-400 uppercase block font-semibold">Valeur Stock</span>
+                        <span id="art-detail-total" class="text-base font-extrabold text-ocp-light">0 MAD</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div class="p-3 bg-gray-50 dark:bg-[#050D17] rounded-xl border border-gray-200 dark:border-gray-800 space-y-1">
+                        <span class="text-[10px] text-gray-400 uppercase block font-semibold">Emplacement Physique</span>
+                        <p class="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-1.5" id="art-detail-location">
+                            <i data-lucide="map-pin" class="w-3.5 h-3.5 text-red-500"></i> -
+                        </p>
+                    </div>
+                    <div class="p-3 bg-gray-50 dark:bg-[#050D17] rounded-xl border border-gray-200 dark:border-gray-800 space-y-1">
+                        <span class="text-[10px] text-gray-400 uppercase block font-semibold">Fournisseur Homologué</span>
+                        <p class="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-1.5" id="art-detail-supplier">
+                            <i data-lucide="truck" class="w-3.5 h-3.5 text-blue-500"></i> -
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-3 border-t border-gray-200 dark:border-gray-700 flex flex-wrap justify-between items-center gap-2">
+                <div class="flex items-center gap-2">
+                    <button id="art-detail-adjust-btn" class="px-3 py-1.5 bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-400 font-bold rounded-xl text-xs transition flex items-center gap-1.5">
+                        <i data-lucide="sliders" class="w-3.5 h-3.5"></i> Ajuster Stock
+                    </button>
+                    <button id="art-detail-qr-btn" class="px-3 py-1.5 bg-ocp/15 hover:bg-ocp/25 text-ocp-light font-bold rounded-xl text-xs transition flex items-center gap-1.5">
+                        <i data-lucide="qr-code" class="w-3.5 h-3.5"></i> Étiquette QR
+                    </button>
+                </div>
+                <button onclick="closeArticleDetailsModal()" class="px-4 py-1.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 font-bold rounded-xl text-xs transition">
+                    Fermer
+                </button>
             </div>
         </div>
     </div>
