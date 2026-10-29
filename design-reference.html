@@ -4904,6 +4904,382 @@
         }
 
         // --- E. DOCUMENTS OFFICIELS OCP (BON DE RECEPTION & BON DE SORTIE) ---
+        let currentDocPreparateur = 'K. EL IDRISSI • Magasinier Principal';
+        let currentDocSignatureData = null;
+        let attachedSignaturesList = [];
+        let docSignaturePadCanvas = null;
+        let docSignaturePadCtx = null;
+        let docPadCurrentColor = '#1e40af';
+        let isDocPadDrawing = false;
+
+        // Générateur de signatures échantillons vectorisées au format PNG
+        function createSampleSignatureDataUrl(style = 1) {
+            const cvs = document.createElement('canvas');
+            cvs.width = 240;
+            cvs.height = 80;
+            const ctx = cvs.getContext('2d');
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            if (style === 1) {
+                // Demandeur Atelier (Bleu OCP)
+                ctx.strokeStyle = '#1d4ed8';
+                ctx.lineWidth = 2.8;
+                ctx.beginPath();
+                ctx.moveTo(20, 50);
+                ctx.bezierCurveTo(45, 10, 75, 70, 110, 35);
+                ctx.bezierCurveTo(135, 10, 160, 60, 200, 25);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(40, 58);
+                ctx.quadraticCurveTo(120, 65, 210, 50);
+                ctx.stroke();
+                ctx.font = 'italic 10px sans-serif';
+                ctx.fillStyle = '#64748b';
+                ctx.fillText('Validé Atelier', 145, 72);
+            } else if (style === 2) {
+                // Chef de Maintenance (Vert OCP)
+                ctx.strokeStyle = '#059669';
+                ctx.lineWidth = 2.6;
+                ctx.beginPath();
+                ctx.moveTo(25, 40);
+                ctx.bezierCurveTo(50, 15, 80, 55, 130, 20);
+                ctx.bezierCurveTo(155, 5, 175, 45, 210, 30);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.arc(195, 35, 16, 0, Math.PI * 2);
+                ctx.setLineDash([3, 2]);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                ctx.font = 'bold 9px sans-serif';
+                ctx.fillStyle = '#059669';
+                ctx.fillText('MC01', 183, 38);
+            } else {
+                // Visa Contrôle Qualité / SAP (Noir Anthracite)
+                ctx.strokeStyle = '#0f172a';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(30, 30);
+                ctx.bezierCurveTo(50, 65, 80, 15, 120, 45);
+                ctx.bezierCurveTo(150, 10, 170, 60, 210, 35);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(50, 55);
+                ctx.lineTo(190, 52);
+                ctx.stroke();
+                ctx.font = '10px monospace';
+                ctx.fillStyle = '#64748b';
+                ctx.fillText('REF: SAP-MVT-SIG', 25, 72);
+            }
+            return cvs.toDataURL('image/png');
+        }
+
+        // Initialisation de la bibliothèque de signatures en pièce jointe
+        function initAttachedSignatures() {
+            if (attachedSignaturesList.length === 0) {
+                attachedSignaturesList = [
+                    { id: 'sig-1', name: 'Signature_Demandeur_Atelier.png', dataUrl: createSampleSignatureDataUrl(1) },
+                    { id: 'sig-2', name: 'Visa_Chef_Maintenance.png', dataUrl: createSampleSignatureDataUrl(2) },
+                    { id: 'sig-3', name: 'Griffe_Controle_Quai.png', dataUrl: createSampleSignatureDataUrl(3) }
+                ];
+            }
+        }
+
+        // Rendu des badges de pièces jointes cliquables
+        function renderAttachedSignatures() {
+            const container = document.getElementById('doc-attached-signatures-container');
+            if (!container) return;
+            initAttachedSignatures();
+
+            container.innerHTML = attachedSignaturesList.map((sig, index) => `
+                <button type="button" onclick="applyAttachedSignatureByIndex(${index})" class="group relative flex items-center gap-2 px-3 py-1.5 bg-white hover:bg-purple-50 border border-purple-200 hover:border-purple-400 rounded-xl text-left shadow-sm transition-all transform hover:-translate-y-0.5" title="Cliquer pour déplacer cette signature vers son cadre officiel">
+                    <span class="text-sm">📎</span>
+                    <div class="flex items-center gap-1.5">
+                        <img src="${sig.dataUrl}" alt="Signature" class="h-6 w-14 object-contain bg-slate-50 rounded border border-gray-200 p-0.5">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] font-bold text-gray-800 leading-tight">${sig.name}</span>
+                            <span class="text-[9px] text-purple-600 font-semibold flex items-center gap-0.5">
+                                <span>👆 Déplacer vers la case</span> &rarr;
+                            </span>
+                        </div>
+                    </div>
+                </button>
+            `).join('');
+        }
+
+        // Action de déplacement de la signature en pièce jointe vers son emplacement officiel
+        function applyAttachedSignatureByIndex(index) {
+            if (!attachedSignaturesList[index]) return;
+            const sig = attachedSignaturesList[index];
+            applyAttachedSignature(sig.dataUrl, sig.name);
+        }
+
+        function applyAttachedSignature(dataUrl, name = 'Signature') {
+            currentDocSignatureData = dataUrl;
+            lastCapturedSignatureData = dataUrl;
+
+            const sigDisplay = document.getElementById('doc-signature-display');
+            const targetBox = document.getElementById('doc-signature-target-box');
+            const statusBadge = document.getElementById('doc-signature-status-badge');
+
+            if (sigDisplay) {
+                sigDisplay.innerHTML = `
+                    <div class="relative w-full h-full flex items-center justify-center p-1">
+                        <img src="${dataUrl}" alt="Signature" class="max-h-12 object-contain mx-auto transition-transform">
+                        <span class="absolute -top-1.5 -right-1 px-1.5 py-0.5 bg-emerald-500 text-white text-[8px] font-extrabold rounded-full shadow-md flex items-center gap-0.5">
+                            ✓ Insérée
+                        </span>
+                    </div>
+                `;
+            }
+
+            if (statusBadge) {
+                statusBadge.innerText = '✓ Validée (' + (name.length > 20 ? name.slice(0, 18) + '...' : name) + ')';
+                statusBadge.className = 'text-[9px] font-bold text-emerald-600';
+            }
+
+            // Animation visuelle de déplacement réussi
+            if (targetBox) {
+                targetBox.classList.add('ring-2', 'ring-emerald-500', 'scale-[1.02]');
+                setTimeout(() => {
+                    targetBox.classList.remove('ring-2', 'ring-emerald-500', 'scale-[1.02]');
+                }, 900);
+            }
+
+            showToast('Signature Positionnée', "La pièce jointe '" + name + "' a été déplacée avec succès dans le cadre officiel.", 'success');
+        }
+
+        // Upload d'une nouvelle signature en pièce jointe
+        function handleSignatureAttachmentUpload(e) {
+            const file = e.target.files && e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                const dataUrl = evt.target.result;
+                const newSig = {
+                    id: 'sig-upload-' + Date.now(),
+                    name: file.name || 'Signature_Jointe.png',
+                    dataUrl: dataUrl
+                };
+                attachedSignaturesList.unshift(newSig);
+                renderAttachedSignatures();
+                applyAttachedSignature(dataUrl, newSig.name);
+            };
+            reader.readAsDataURL(file);
+            e.target.value = '';
+        }
+
+        // Gestion de l'édition du préparateur / magasinier
+        function toggleEditPreparateur() {
+            const displayMode = document.getElementById('preparateur-display-mode');
+            const editMode = document.getElementById('preparateur-edit-mode');
+            if (!displayMode || !editMode) return;
+
+            if (editMode.classList.contains('hidden')) {
+                editMode.classList.remove('hidden');
+                displayMode.classList.add('hidden');
+                populatePreparateurSelect();
+            } else {
+                editMode.classList.add('hidden');
+                displayMode.classList.remove('hidden');
+            }
+        }
+
+        function populatePreparateurSelect() {
+            const select = document.getElementById('doc-preparateur-select');
+            if (!select) return;
+
+            const users = (typeof getStoredUsers === 'function') ? getStoredUsers() : [];
+            const activeUser = (typeof getActiveSessionUser === 'function') ? getActiveSessionUser() : null;
+
+            let html = '';
+            if (activeUser) {
+                const activeVal = `${activeUser.name} • ${activeUser.role || 'Magasinier'}`;
+                html += `<option value="${activeVal}">⭐ Utilisateur Connecté : ${activeVal}</option>`;
+            }
+
+            // Utilisateurs usuels
+            const defaultTeam = [
+                'K. EL IDRISSI • Magasinier Principal',
+                'Ghizlan • Préparatrice Magasin',
+                'Fatima Zohra NACIRI • Contrôleur Inventaire',
+                'soufiane BOUHZAM • Approvisionneur Mécanique',
+                'Omar BENALLA • Approvisionneur Électrique',
+                'yassine AZIZI • Responsable Magasin',
+                'EL ATYQY mohamed raid • Responsable Magasin'
+            ];
+
+            defaultTeam.forEach(member => {
+                html += `<option value="${member}">${member}</option>`;
+            });
+
+            // Options personnalisées
+            html += `<option value="CUSTOM_ENTRY">✏️ Saisie libre (Autre nom / matricule)...</option>`;
+
+            select.innerHTML = html;
+
+            // Présélectionner la valeur courante si présente
+            for (let i = 0; i < select.options.length; i++) {
+                if (select.options[i].value === currentDocPreparateur) {
+                    select.selectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        function onPreparateurSelectChanged(val) {
+            const customWrap = document.getElementById('doc-preparateur-custom-wrap');
+            const customInput = document.getElementById('doc-preparateur-custom-input');
+            if (val === 'CUSTOM_ENTRY') {
+                if (customWrap) customWrap.classList.remove('hidden');
+                if (customInput) customInput.focus();
+            } else {
+                if (customWrap) customWrap.classList.add('hidden');
+            }
+        }
+
+        function savePreparateurChange() {
+            const select = document.getElementById('doc-preparateur-select');
+            const customWrap = document.getElementById('doc-preparateur-custom-wrap');
+            const customInput = document.getElementById('doc-preparateur-custom-input');
+            let chosen = currentDocPreparateur;
+
+            if (select) {
+                if (select.value === 'CUSTOM_ENTRY' && customInput && customInput.value.trim()) {
+                    chosen = customInput.value.trim();
+                } else if (select.value && select.value !== 'CUSTOM_ENTRY') {
+                    chosen = select.value;
+                }
+            }
+
+            currentDocPreparateur = chosen;
+            const docVisa = document.getElementById('doc-visa-magasinier');
+            if (docVisa) {
+                docVisa.innerHTML = chosen;
+            }
+
+            toggleEditPreparateur();
+            showToast('Préparateur Modifié', "Le visa préparateur a été mis à jour : " + chosen, 'info');
+        }
+
+        function clearDocSignature() {
+            currentDocSignatureData = null;
+            lastCapturedSignatureData = null;
+
+            const sigDisplay = document.getElementById('doc-signature-display');
+            const statusBadge = document.getElementById('doc-signature-status-badge');
+
+            if (sigDisplay) {
+                sigDisplay.innerHTML = '<span class="text-gray-400 italic text-xs">En attente de signature</span>';
+            }
+            if (statusBadge) {
+                statusBadge.innerText = 'En attente';
+                statusBadge.className = 'text-[9px] font-bold text-amber-500';
+            }
+            showToast('Signature Réinitialisée', "La case de signature a été effacée.", 'info');
+        }
+
+        // Modal Tracé de Signature Tactile
+        function openDocSignaturePadModal() {
+            const modal = document.getElementById('doc-signature-pad-modal');
+            if (!modal) return;
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+
+            setTimeout(initInteractiveDocSignaturePad, 100);
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function closeDocSignaturePadModal() {
+            const modal = document.getElementById('doc-signature-pad-modal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+
+        function initInteractiveDocSignaturePad() {
+            docSignaturePadCanvas = document.getElementById('interactive-doc-signature-pad');
+            if (!docSignaturePadCanvas) return;
+            docSignaturePadCtx = docSignaturePadCanvas.getContext('2d');
+            docSignaturePadCtx.lineCap = 'round';
+            docSignaturePadCtx.lineJoin = 'round';
+            docSignaturePadCtx.lineWidth = 2.8;
+            docSignaturePadCtx.strokeStyle = docPadCurrentColor;
+
+            // Clear previous
+            clearInteractiveDocSignaturePad();
+
+            function getPos(e) {
+                const rect = docSignaturePadCanvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                return {
+                    x: (clientX - rect.left) * (docSignaturePadCanvas.width / rect.width),
+                    y: (clientY - rect.top) * (docSignaturePadCanvas.height / rect.height)
+                };
+            }
+
+            function start(e) {
+                e.preventDefault();
+                isDocPadDrawing = true;
+                const p = getPos(e);
+                docSignaturePadCtx.beginPath();
+                docSignaturePadCtx.moveTo(p.x, p.y);
+            }
+
+            function move(e) {
+                if (!isDocPadDrawing) return;
+                e.preventDefault();
+                const p = getPos(e);
+                docSignaturePadCtx.lineTo(p.x, p.y);
+                docSignaturePadCtx.stroke();
+            }
+
+            function stop(e) {
+                if (isDocPadDrawing) {
+                    e.preventDefault();
+                    isDocPadDrawing = false;
+                }
+            }
+
+            docSignaturePadCanvas.onmousedown = start;
+            docSignaturePadCanvas.onmousemove = move;
+            window.onmouseup = stop;
+
+            docSignaturePadCanvas.ontouchstart = start;
+            docSignaturePadCanvas.ontouchmove = move;
+            window.ontouchend = stop;
+        }
+
+        function setDocPadColor(col) {
+            docPadCurrentColor = col;
+            if (docSignaturePadCtx) {
+                docSignaturePadCtx.strokeStyle = col;
+            }
+        }
+
+        function clearInteractiveDocSignaturePad() {
+            if (docSignaturePadCanvas && docSignaturePadCtx) {
+                docSignaturePadCtx.clearRect(0, 0, docSignaturePadCanvas.width, docSignaturePadCanvas.height);
+            }
+        }
+
+        function saveInteractiveDocSignaturePad() {
+            if (!docSignaturePadCanvas) return;
+            const dataUrl = docSignaturePadCanvas.toDataURL('image/png');
+            const newSig = {
+                id: 'sig-pad-' + Date.now(),
+                name: 'Signature_Tactile_' + new Date().getHours() + 'h' + new Date().getMinutes() + '.png',
+                dataUrl: dataUrl
+            };
+            attachedSignaturesList.unshift(newSig);
+            renderAttachedSignatures();
+            applyAttachedSignature(dataUrl, newSig.name);
+            closeDocSignaturePadModal();
+        }
+
         function openLastOfficialDoc(docType = 'BR', customData = null) {
             currentViewingDocType = docType;
             currentViewingDocData = customData;
@@ -4920,10 +5296,25 @@
             const photoSection = document.getElementById('doc-photo-section');
             const photoImg = document.getElementById('doc-photo-img');
             const sigDisplay = document.getElementById('doc-signature-display');
+            const docVisa = document.getElementById('doc-visa-magasinier');
 
             const now = new Date();
             const dateFormatted = now.toLocaleDateString('fr-FR') + ' à ' + now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
             dateDisplay.innerText = 'Date: ' + dateFormatted;
+
+            // Déterminer le préparateur adapté (dynamique)
+            const activeUser = (typeof getActiveSessionUser === 'function') ? getActiveSessionUser() : null;
+            if (customData && customData.preparateur) {
+                currentDocPreparateur = customData.preparateur;
+            } else if (activeUser) {
+                currentDocPreparateur = activeUser.name + ' • ' + (activeUser.role || (docType === 'BR' ? 'Magasinier Quai' : 'Préparateur Magasin'));
+            } else {
+                currentDocPreparateur = (docType === 'BR') ? 'K. EL IDRISSI • Magasinier Quai' : 'Ghizlan • Préparatrice Magasin';
+            }
+
+            if (docVisa) {
+                docVisa.innerHTML = currentDocPreparateur;
+            }
 
             if (docType === 'BR') {
                 badge.innerText = 'BON DE RÉCEPTION OFFICIEL (BR)';
@@ -4950,8 +5341,6 @@
                 } else {
                     photoSection.classList.add('hidden');
                 }
-
-                sigDisplay.innerHTML = '<span class="text-emerald-700 font-bold">&check; Validé par Contrôle Qualité Quai</span>';
             } else {
                 badge.innerText = 'BON DE SORTIE ET PICKING (BS)';
                 badge.className = 'px-3 py-1 bg-blue-100 text-blue-800 text-xs font-black rounded-lg border border-blue-300 uppercase';
@@ -4971,11 +5360,22 @@
                     </tr>
                 `;
                 photoSection.classList.add('hidden');
+            }
 
-                if (lastCapturedSignatureData) {
-                    sigDisplay.innerHTML = '<img src="' + lastCapturedSignatureData + '" alt="Signature" class="h-10 object-contain mx-auto">';
-                } else {
-                    sigDisplay.innerHTML = '<span class="text-blue-600 font-semibold italic">Signature Électronique Validée</span>';
+            // Gestion de la signature adaptable
+            initAttachedSignatures();
+            renderAttachedSignatures();
+
+            if (customData && customData.signature) {
+                applyAttachedSignature(customData.signature, 'Signature_Enregistree.png');
+            } else if (lastCapturedSignatureData) {
+                applyAttachedSignature(lastCapturedSignatureData, 'Signature_Derniere.png');
+            } else {
+                // Par défaut : insérer la 1ère signature en pièce jointe ou afficher validé
+                if (attachedSignaturesList.length > 0) {
+                    applyAttachedSignature(attachedSignaturesList[0].dataUrl, attachedSignaturesList[0].name);
+                } else if (sigDisplay) {
+                    sigDisplay.innerHTML = '<span class="text-blue-600 font-semibold italic text-xs">Signature Électronique Validée</span>';
                 }
             }
 
@@ -5022,7 +5422,7 @@
 
                 doc.setFontSize(10);
                 doc.setFont('helvetica', 'normal');
-                const ref = isBR ? 'Ref: BR-2024-OCP-0089' : 'Ref: BS-2024-MC01-0142';
+                const ref = isBR ? (currentViewingDocData?.ref || 'Ref: BR-2024-OCP-0089') : (currentViewingDocData?.ref || 'Ref: BS-2024-MC01-0142');
                 doc.text(ref + '  |  Date: ' + new Date().toLocaleDateString('fr-FR'), 14, 45);
 
                 // Ligne de séparation
@@ -5036,14 +5436,14 @@
                 doc.text('INFORMATIONS GENERALES :', 14, 57);
                 doc.setFont('helvetica', 'normal');
                 if (isBR) {
-                    doc.text('Fournisseur: SKF Maroc SA', 14, 64);
-                    doc.text('Bon de Livraison: BL-993821', 14, 70);
-                    doc.text('Magasinier Quai: K. EL IDRISSI', 14, 76);
+                    doc.text('Fournisseur: ' + (currentViewingDocData?.supplier || 'SKF Maroc SA'), 14, 64);
+                    doc.text('Bon de Livraison: ' + (currentViewingDocData?.bl || 'BL-993821'), 14, 70);
+                    doc.text('Magasinier Quai: ' + currentDocPreparateur, 14, 76);
                     doc.text('Affectation: Stock Magasin MC01 (SAP Mvt 101)', 14, 82);
                 } else {
-                    doc.text('Ordre de Travail: OT-77341 (Maintenance Broyeur)', 14, 64);
-                    doc.text('Atelier Demandeur: Atelier Broyage & Laverie', 14, 70);
-                    doc.text('Préparatrice: Ghizlan', 14, 76);
+                    doc.text('Ordre de Travail: ' + (currentViewingDocData?.ot || 'OT-77341 (Maintenance Broyeur)'), 14, 64);
+                    doc.text('Atelier Demandeur: ' + (currentViewingDocData?.atelier || 'Atelier Broyage & Laverie'), 14, 70);
+                    doc.text('Préparateur / Visa: ' + currentDocPreparateur, 14, 76);
                     doc.text('Imputation: Centre de Frais Maintenance 4410', 14, 82);
                 }
 
@@ -5058,15 +5458,15 @@
 
                 doc.setFont('helvetica', 'normal');
                 if (isBR) {
-                    doc.text('MEC-2024-001', 18, 108);
-                    doc.text('Roulements SKF 6205-2RSH', 55, 108);
+                    doc.text(currentViewingDocData?.itemCode || 'MEC-2024-001', 18, 108);
+                    doc.text(currentViewingDocData?.itemName || 'Roulements SKF 6205-2RSH', 55, 108);
                     doc.text('Allee 1 - Rack R1', 130, 108);
-                    doc.text('50 pcs', 180, 108);
+                    doc.text((currentViewingDocData?.qty || '50') + ' pcs', 180, 108);
                 } else {
-                    doc.text('MEC-2024-002', 18, 108);
-                    doc.text('Vannes a papillon DN100 PN16', 55, 108);
+                    doc.text(currentViewingDocData?.itemCode || 'MEC-2024-002', 18, 108);
+                    doc.text(currentViewingDocData?.itemName || 'Vannes a papillon DN100 PN16', 55, 108);
                     doc.text('Allee 1 - Rack R1', 130, 108);
-                    doc.text('4 pcs', 180, 108);
+                    doc.text((currentViewingDocData?.qty || '4') + ' pcs', 180, 108);
                 }
 
                 // Visas & Signatures
@@ -5075,20 +5475,24 @@
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(8);
                 doc.text('VISA MAGASIN CENTRAL MC01', 16, 156);
-                doc.text('SIGNATURE DEMANDEUR / ATELIER', 113, 156);
+                doc.text(isBR ? 'SIGNATURE LIVREUR / RECEPTIONNAIRE' : 'SIGNATURE DEMANDEUR / ATELIER', 113, 156);
 
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8);
+                doc.text(currentDocPreparateur, 16, 164);
                 doc.setFont('helvetica', 'italic');
-                doc.setFontSize(9);
-                doc.text('Controle Qualite Valide', 16, 170);
+                doc.setFontSize(8);
+                doc.text('Controle Qualite & SAP Valide', 16, 172);
 
-                if (lastCapturedSignatureData && !isBR) {
+                const activeSig = currentDocSignatureData || lastCapturedSignatureData;
+                if (activeSig) {
                     try {
-                        doc.addImage(lastCapturedSignatureData, 'PNG', 115, 160, 45, 15);
+                        doc.addImage(activeSig, 'PNG', 115, 158, 45, 18);
                     } catch(e) {
                         doc.text('Signature Tactile Numerique Conforme', 113, 170);
                     }
                 } else {
-                    doc.text('Approbation Numerique OCP', 113, 170);
+                    doc.text('Signature Electronique Validee OCP', 113, 170);
                 }
 
                 // Pied de page
@@ -10310,19 +10714,101 @@
                 </div>
             </div>
 
-            <!-- ZONE DE SIGNATURES OFFICIELLES ET VISA TACTILE -->
-            <div class="grid grid-cols-2 gap-4 pt-2 border-t border-gray-200">
-                <div class="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-1">
-                    <p class="text-[10px] uppercase font-bold text-gray-500">Visa Magasinier / Préparateur :</p>
-                    <p class="text-xs font-bold text-slate-800" id="doc-visa-magasinier">K. EL IDRISSI &bull; Magasinier Principal</p>
-                    <p class="text-[10px] text-emerald-700 font-semibold">&check; Enregistré et pointé dans SAP</p>
-                </div>
-                <div class="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-1">
-                    <p class="text-[10px] uppercase font-bold text-gray-500">Signature Demandeur / Réceptionnaire :</p>
-                    <div id="doc-signature-display" class="h-12 flex items-center justify-center bg-white border border-gray-300 rounded text-[11px] text-gray-400 font-italic">
-                        Signature enregistrée
+            <!-- ZONE DE SIGNATURES OFFICIELLES, VISA MODIFIABLE ET PIÈCES JOINTES DE SIGNATURE -->
+            <div class="space-y-3 pt-2 border-t border-gray-200">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- 1. VISA MAGASINIER / PRÉPARATEUR (ADAPTABLE & MODIFIABLE) -->
+                    <div class="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-2 relative">
+                        <div class="flex items-center justify-between">
+                            <p class="text-[10px] uppercase font-bold text-gray-500 flex items-center gap-1">
+                                <i data-lucide="user-check" class="w-3.5 h-3.5 text-emerald-600"></i> Visa Magasinier / Préparateur :
+                            </p>
+                            <button type="button" onclick="toggleEditPreparateur()" class="px-2 py-0.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-md text-[10px] font-bold flex items-center gap-1 transition" title="Modifier le préparateur de ce bon">
+                                <i data-lucide="edit-3" class="w-3 h-3"></i> Modifier
+                            </button>
+                        </div>
+                        
+                        <!-- Mode Affichage -->
+                        <div id="preparateur-display-mode" class="cursor-pointer group" onclick="toggleEditPreparateur()" title="Cliquer pour changer de préparateur">
+                            <p class="text-xs font-black text-slate-800 flex items-center gap-1.5" id="doc-visa-magasinier">
+                                K. EL IDRISSI &bull; Magasinier Principal
+                            </p>
+                            <p class="text-[10px] text-emerald-700 font-semibold flex items-center gap-1 mt-0.5">
+                                <i data-lucide="check" class="w-3 h-3 text-emerald-600"></i> Enregistré et pointé dans SAP
+                            </p>
+                        </div>
+
+                        <!-- Mode Édition Rapide -->
+                        <div id="preparateur-edit-mode" class="hidden space-y-2 pt-1 border-t border-gray-200">
+                            <div class="space-y-1">
+                                <label class="text-[9px] font-bold text-gray-500 uppercase">Choisir ou saisir un préparateur :</label>
+                                <select id="doc-preparateur-select" onchange="onPreparateurSelectChanged(this.value)" class="w-full text-xs bg-white border border-gray-300 rounded-lg px-2.5 py-1.5 text-slate-800 font-semibold outline-none focus:border-ocp">
+                                    <!-- Options injectées dynamiquement -->
+                                </select>
+                            </div>
+                            <div id="doc-preparateur-custom-wrap" class="hidden">
+                                <input type="text" id="doc-preparateur-custom-input" placeholder="ex: K. EL IDRISSI • Magasinier Principal" class="w-full text-xs bg-white border border-gray-300 rounded-lg px-2.5 py-1.5 text-slate-800 outline-none focus:border-ocp">
+                            </div>
+                            <div class="flex justify-end gap-1.5 pt-1">
+                                <button type="button" onclick="toggleEditPreparateur()" class="px-2 py-1 text-gray-500 hover:text-gray-700 text-[10px] font-semibold">Annuler</button>
+                                <button type="button" onclick="savePreparateurChange()" class="px-3 py-1 bg-[#008343] hover:bg-[#005C2F] text-white text-[10px] font-bold rounded-lg shadow-sm transition">Appliquer</button>
+                            </div>
+                        </div>
                     </div>
-                    <p class="text-[10px] text-gray-500">Pour accord et décharge matériel</p>
+
+                    <!-- 2. SIGNATURE DEMANDEUR / RÉCEPTIONNAIRE (ADAPTABLE & DÉPLAÇABLE) -->
+                    <div class="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-2 relative">
+                        <div class="flex items-center justify-between">
+                            <p class="text-[10px] uppercase font-bold text-gray-500 flex items-center gap-1">
+                                <i data-lucide="pen-tool" class="w-3.5 h-3.5 text-blue-600"></i> Signature Demandeur / Réceptionnaire :
+                            </p>
+                            <div class="flex items-center gap-1">
+                                <button type="button" onclick="openDocSignaturePadModal()" class="px-2 py-0.5 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 rounded-md text-[10px] font-bold flex items-center gap-1 transition" title="Dessiner une signature tactile">
+                                    <i data-lucide="edit-2" class="w-3 h-3"></i> Signer
+                                </button>
+                                <button type="button" onclick="clearDocSignature()" class="px-2 py-0.5 bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 rounded-md text-[10px] font-bold transition" title="Effacer la signature">
+                                    Effacer
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- CADRE OFFICIEL DE LA SIGNATURE (ZONE CIBLE DU DÉPLACEMENT) -->
+                        <div id="doc-signature-target-box" class="relative group">
+                            <div id="doc-signature-display" class="h-14 flex items-center justify-center bg-white border-2 border-dashed border-gray-300 hover:border-blue-400 rounded-xl p-1 transition-all">
+                                <span class="text-blue-600 font-semibold italic text-xs">Signature Électronique Validée</span>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-gray-500 flex items-center justify-between">
+                            <span>Pour accord et décharge matériel</span>
+                            <span id="doc-signature-status-badge" class="text-[9px] font-bold text-emerald-600">✓ Conforme</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- 3. ZONE DE DÉPLACEMENT DE LA SIGNATURE EN PIÈCE JOINTE (CLIQUEZ POUR DÉPLACER) -->
+                <div class="p-3 bg-purple-50/70 border border-purple-200/80 rounded-2xl space-y-2">
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-purple-600 animate-pulse"></span>
+                            <span class="text-[11px] font-bold text-purple-900 uppercase tracking-wide flex items-center gap-1">
+                                <i data-lucide="paperclip" class="w-3.5 h-3.5 text-purple-600"></i> Signatures en Pièce Jointe Disponibles :
+                            </span>
+                        </div>
+                        <label class="px-2.5 py-1 bg-white hover:bg-purple-100 text-purple-700 border border-purple-300 rounded-lg text-[10px] font-bold cursor-pointer flex items-center gap-1.5 transition shadow-sm">
+                            <i data-lucide="upload" class="w-3 h-3"></i> Joindre un fichier signature (PNG / JPG)
+                            <input type="file" id="doc-signature-file-uploader" accept="image/*" class="hidden" onchange="handleSignatureAttachmentUpload(event)">
+                        </label>
+                    </div>
+
+                    <!-- LISTE DES SIGNATURES EN PIÈCE JOINTE CLIQUABLES POUR DÉPLACEMENT -->
+                    <div id="doc-attached-signatures-container" class="flex flex-wrap items-center gap-2 pt-1">
+                        <!-- Badges cliquables générés en JS -->
+                    </div>
+
+                    <div class="flex items-center gap-1.5 text-[10px] text-purple-700 font-medium">
+                        <i data-lucide="mouse-pointer-click" class="w-3.5 h-3.5 text-purple-600"></i>
+                        <span>Cliquez sur n'importe quelle signature en pièce jointe ci-dessus pour la <strong>déplacer automatiquement</strong> dans son cadre officiel.</span>
+                    </div>
                 </div>
             </div>
 
@@ -10337,6 +10823,44 @@
                         <i data-lucide="printer" class="w-4 h-4"></i> Imprimer Document A4
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================================
+         MODAL 8.5 : TRACÉ INTERACTIF DE SIGNATURE TACTILE POUR LES BONS
+         ========================================================================= -->
+    <div id="doc-signature-pad-modal" class="fixed inset-0 z-[60] bg-[#050D17]/85 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="bg-white border border-gray-300 rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-4 text-slate-800 relative">
+            <button onclick="closeDocSignaturePadModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-700">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-2.5 border-b border-gray-200 pb-2.5">
+                <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
+                    <i data-lucide="pen-tool" class="w-4 h-4"></i>
+                </div>
+                <div>
+                    <h4 class="font-extrabold text-sm text-slate-900">Tracé de Signature Électronique Tactile</h4>
+                    <p class="text-[10px] text-gray-500">Signez au doigt sur écran tactile ou à la souris.</p>
+                </div>
+            </div>
+            <div class="space-y-1.5">
+                <div class="flex justify-between items-center text-[10px] font-bold text-gray-500">
+                    <div class="flex items-center gap-2">
+                        <span>Couleur :</span>
+                        <button type="button" onclick="setDocPadColor('#1e40af')" class="w-3.5 h-3.5 rounded-full bg-blue-800 border border-white shadow" title="Bleu OCP"></button>
+                        <button type="button" onclick="setDocPadColor('#059669')" class="w-3.5 h-3.5 rounded-full bg-emerald-600 border border-white shadow" title="Vert OCP"></button>
+                        <button type="button" onclick="setDocPadColor('#0f172a')" class="w-3.5 h-3.5 rounded-full bg-slate-900 border border-white shadow" title="Noir Anthracite"></button>
+                    </div>
+                    <button type="button" onclick="clearInteractiveDocSignaturePad()" class="text-red-500 hover:underline">Effacer le tracé</button>
+                </div>
+                <canvas id="interactive-doc-signature-pad" width="400" height="130" class="w-full bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl cursor-crosshair shadow-inner"></canvas>
+            </div>
+            <div class="flex justify-between items-center pt-2 border-t border-gray-200">
+                <button type="button" onclick="closeDocSignaturePadModal()" class="px-3.5 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold rounded-xl text-xs">Annuler</button>
+                <button type="button" onclick="saveInteractiveDocSignaturePad()" class="px-4 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 shadow">
+                    <i data-lucide="check" class="w-4 h-4"></i> Valider et Déplacer vers le Bon
+                </button>
             </div>
         </div>
     </div>
