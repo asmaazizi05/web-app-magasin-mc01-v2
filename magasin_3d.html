@@ -432,20 +432,6 @@ window.addEventListener('error', function(e) {
 </div>
 
 <div id="resizer"></div>
-<div id="lang-selector" style="position:fixed;top:8px;right:220px;z-index:10001;display:flex;gap:4px;">
-  <select id="lang-select" onchange="setLanguage(this.value)" style="background:#1a1a2e;color:#00d4ff;border:1px solid #00d4ff;border-radius:4px;padding:4px 8px;font-size:12px;font-weight:bold;cursor:pointer;">
-    <option value="fr">🇫🇷 Français</option>
-    <option value="en">🇬🇧 English</option>
-    <option value="ar">🇲🇦 العربية</option>
-    <option value="de">🇩🇪 Deutsch</option>
-    <option value="es">🇪🇸 Español</option>
-    <option value="it">🇮🇹 Italiano</option>
-    <option value="pt">🇵🇹 Português</option>
-    <option value="zh">🇨🇳 中文</option>
-    <option value="ru">🇷🇺 Русский</option>
-    <option value="ja">🇯🇵 日本語</option>
-  </select>
-</div>
 <button id="burger">☰ Réglages</button>
 
 <div id="rail">
@@ -6505,7 +6491,7 @@ function createWmsHud() {
 
     <!-- BOUTONS VUES CAMERA -->
     <div style="position:absolute; top:12px; right:16px; display:flex; flex-wrap:wrap; align-items:center; gap:6px;">
-      <button onclick="goto('iso')" class="wms-btn-interactive" style="background:rgba(13,33,55,0.9); border:1px solid rgba(255,255,255,0.12); color:#e2e8f0; font-weight:700; font-size:11px; padding:6px 12px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.3);">🌐 ISO</button>
+      <button onclick="goto('iso')" class="wms-btn-interactive" style="background:rgba(13,33,55,0.9); border:1px solid rgba(255,255,255,0.12); color:#e2e8f0; font-weight:700; font-size:11px; padding:6px 12px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.3);">📐 ISO</button>
       <button onclick="goto('top')" class="wms-btn-interactive" style="background:rgba(13,33,55,0.9); border:1px solid rgba(255,255,255,0.12); color:#e2e8f0; font-weight:700; font-size:11px; padding:6px 12px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.3);">🧭 Top (2D)</button>
       <button onclick="goto('quai')" class="wms-btn-interactive" style="background:rgba(13,33,55,0.9); border:1px solid rgba(255,255,255,0.12); color:#e2e8f0; font-weight:700; font-size:11px; padding:6px 12px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.3);">🚚 Quai A</button>
       <button onclick="goto('aisle')" class="wms-btn-interactive" style="background:rgba(13,33,55,0.9); border:1px solid rgba(255,255,255,0.12); color:#e2e8f0; font-weight:700; font-size:11px; padding:6px 12px; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.3);">📦 Allées R1-R4</button>
